@@ -1,0 +1,16 @@
+{
+  "$comment": "Project-scoped MCP servers; this file is committed, so every entry runs npx -y on session start and must earn its place. shadcn-studio is an authoring aid only — nothing in check/typecheck/test depends on it, its output is DATA under the /cui and /rui commands' guardrails, and it needs SHADCN_STUDIO_API_KEY and SHADCN_STUDIO_EMAIL in the environment: personal credentials, supplied by the gitignored .env and .claude/settings.local.json, never committed.",
+  "mcpServers": {
+    "shadcn-studio": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "shadcn-studio-mcp",
+        "API_KEY=${SHADCN_STUDIO_API_KEY}",
+        "EMAIL=${SHADCN_STUDIO_EMAIL}"
+      ],
+      "env": {}
+    }
+  }
+}
