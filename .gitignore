@@ -52,3 +52,6 @@ playwright/.cache/
 
 # claude code personal overrides
 .claude/settings.local.json
+
+# committed example env (the .env* rule above ignores real env files)
+!.env.example

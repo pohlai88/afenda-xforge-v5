@@ -13,12 +13,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@xforge/contracts": "workspace:*",
     "@xforge/design": "workspace:*",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "server-only": "catalog:"
   },
   "devDependencies": {
     "@playwright/test": "catalog:",

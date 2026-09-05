@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@xforge/design/*": ["../../packages/design/src/*"]
+      "@xforge/design/*": ["../../packages/design/src/*"],
+      "@xforge/contracts/*": ["../../packages/contracts/src/*"]
     },
     "plugins": [
       {
