@@ -45,7 +45,15 @@ test.describe("members mutations", () => {
     await page
       .getByRole("button", { name: "Actions for Annie Easley" })
       .click();
-    await page.getByRole("menuitem", { name: "Remove from workspace" }).click();
+    await page
+      .getByRole("menuitem", { name: "Remove from workspace…" })
+      .click();
+    const confirm = page.getByRole("alertdialog", {
+      name: "Remove Annie Easley?",
+    });
+    await expect(confirm).toBeVisible();
+    await expectNoSeriousViolations(page);
+    await confirm.getByRole("button", { name: "Remove" }).click();
     await expect(
       page.getByText("An organization must keep at least one active owner")
     ).toBeVisible();

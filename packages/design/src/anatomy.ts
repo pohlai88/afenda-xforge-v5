@@ -55,6 +55,18 @@ export const NO_PARTS: Readonly<Record<string, string>> = {
  * so the two together are the reviewed anatomy.
  */
 export const PARTS: Readonly<Record<string, PartClass>> = {
+  "alert-dialog": "structural",
+  "alert-dialog-action": "action",
+  "alert-dialog-cancel": "action",
+  "alert-dialog-content": "container",
+  "alert-dialog-description": "supporting",
+  "alert-dialog-footer": "structural",
+  "alert-dialog-header": "structural",
+  "alert-dialog-media": "media",
+  "alert-dialog-overlay": "scrim",
+  "alert-dialog-portal": "structural",
+  "alert-dialog-title": "label",
+  "alert-dialog-trigger": "action",
   avatar: "container",
   "avatar-badge": "indicator",
   "avatar-fallback": "container",

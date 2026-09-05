@@ -26,7 +26,7 @@ describe("MemberRowActions", () => {
     vi.clearAllMocks();
   });
 
-  it("removes with the slug from props, never an organization id, and reports success", async () => {
+  it("removes only through the confirm dialog, with the slug from props", async () => {
     mocks.removeMember.mockResolvedValue({ data: undefined, ok: true });
     const user = userEvent.setup();
     render(<MemberRowActions member={ada} orgSlug="acme" />);
@@ -34,8 +34,12 @@ describe("MemberRowActions", () => {
       screen.getByRole("button", { name: `Actions for ${ada.name}` })
     );
     await user.click(
-      await screen.findByRole("menuitem", { name: "Remove from workspace" })
+      await screen.findByRole("menuitem", { name: "Remove from workspace…" })
     );
+    // The menu item only opens the dialog; the act is not yet done (§6.3).
+    await screen.findByRole("alertdialog", { name: `Remove ${ada.name}?` });
+    expect(mocks.removeMember).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Remove" }));
     await vi.waitFor(() =>
       expect(mocks.removeMember).toHaveBeenCalledWith({
         memberId: ada.id,
@@ -43,6 +47,23 @@ describe("MemberRowActions", () => {
       })
     );
     expect(mocks.toast.success).toHaveBeenCalledWith(`Removed ${ada.name}`);
+  });
+
+  it("cancelling the confirm dialog removes nobody", async () => {
+    const user = userEvent.setup();
+    render(<MemberRowActions member={ada} orgSlug="acme" />);
+    await user.click(
+      screen.getByRole("button", { name: `Actions for ${ada.name}` })
+    );
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Remove from workspace…" })
+    );
+    await screen.findByRole("alertdialog", { name: `Remove ${ada.name}?` });
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(
+      screen.queryByRole("alertdialog", { name: `Remove ${ada.name}?` })
+    ).toBeNull();
+    expect(mocks.removeMember).not.toHaveBeenCalled();
   });
 
   it("surfaces an expected failure as a toast, not a crash", async () => {

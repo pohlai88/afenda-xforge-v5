@@ -34,6 +34,20 @@ const OWNS_FIELD_BOUNDARY: ReadonlySet<PartClass> = new Set([
 
 /** The reviewed anatomy. Change a component, and this diff is the review. */
 const ANATOMY: Readonly<Record<string, readonly string[]>> = {
+  "alert-dialog": [
+    "alert-dialog",
+    "alert-dialog-action",
+    "alert-dialog-cancel",
+    "alert-dialog-content",
+    "alert-dialog-description",
+    "alert-dialog-footer",
+    "alert-dialog-header",
+    "alert-dialog-media",
+    "alert-dialog-overlay",
+    "alert-dialog-portal",
+    "alert-dialog-title",
+    "alert-dialog-trigger",
+  ],
   avatar: [
     "avatar",
     "avatar-badge",
