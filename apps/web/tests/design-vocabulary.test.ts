@@ -346,6 +346,27 @@ describe("R10 — motion is a preference", () => {
 // this sees every source line. The rules without a static shape — one
 // default-variant per region (001), destructive acts use the destructive
 // variant (003) — stay review-enforced prose per the register's grammar.
+// A third check refuses superseded vendored imports: once a block exists,
+// its shadcn twin exports the same names and an auto-importer will offer
+// either, so "the block is the way" needs teeth in app code. The vendored
+// layer itself may keep importing its own (dialog's close button does).
+
+/** Vendored modules a block has superseded, and the block that replaces each. */
+const SUPERSEDED: Readonly<Record<string, string>> = {
+  "@xforge/design/components/button": "@xforge/design/blocks/common-button",
+};
+
+const supersededFindings = (source: string, where: string): string[] => {
+  const out: string[] = [];
+  for (const [index, line] of source.split("\n").entries()) {
+    for (const [vendored, block] of Object.entries(SUPERSEDED)) {
+      if (line.includes(`"${vendored}"`)) {
+        out.push(`${where}:${index + 1} superseded-import: use ${block}`);
+      }
+    }
+  }
+  return out;
+};
 
 const BUTTON_OPEN = /<Button(?=[\s/>])/g;
 const ICON_SIZE = /\bsize="icon(?:-sm)?"/;
@@ -446,5 +467,28 @@ describe("R16 — a contract's statically shaped rules hold at every call site",
       '<ButtonPrimitive size="icon" />',
     ].join("\n");
     expect(contractFindings(allowed, "fixture")).toEqual([]);
+  });
+
+  it("finds no superseded vendored import in app code", () => {
+    const findings = files.flatMap((file) =>
+      supersededFindings(readFileSync(file, "utf8"), relative(ROOT, file))
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("proves itself on an import of the vendored button", () => {
+    const planted =
+      'import { Button } from "@xforge/design/components/button";';
+    expect(supersededFindings(planted, "fixture")).toEqual([
+      "fixture:1 superseded-import: use @xforge/design/blocks/common-button",
+    ]);
+  });
+
+  it("leaves the block and the unsuperseded components alone", () => {
+    const allowed = [
+      'import { Button } from "@xforge/design/blocks/common-button";',
+      'import { Dialog } from "@xforge/design/components/dialog";',
+    ].join("\n");
+    expect(supersededFindings(allowed, "fixture")).toEqual([]);
   });
 });
