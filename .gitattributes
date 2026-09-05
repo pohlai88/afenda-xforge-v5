@@ -1,0 +1,14 @@
+# Normalise every text file to LF in the repository and on checkout, on every
+# OS — Biome formats to LF, and CRLF working copies otherwise show up as
+# "CRLF will be replaced by LF" warnings on Windows.
+* text=auto eol=lf
+
+# Binary assets: never normalise.
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary

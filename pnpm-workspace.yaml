@@ -2,6 +2,10 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# pnpm 11 reads these from here only; in .npmrc they are silently ignored.
+saveExact: true
+engineStrict: true
+
 # Shared versions, pinned exactly. Workspaces reference these with "catalog:".
 catalog:
   "@playwright/test": 1.62.1

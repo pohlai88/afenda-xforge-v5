@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Afenda xForge v5 — a SaaS being built **frontend-first**. pnpm workspaces + Turborepo; Next.js 16 App Router; shadcn/ui on the Radix base; Ultracite on the Biome backend for lint/format. No database, server or auth exists yet — that is sequencing, not the product's shape. The planned data layer is Drizzle + Neon Postgres with Better Auth; adding it is a deliberate decision that updates this file before it changes code. Until then, screens are built against local/mocked data at the UI edge — do not add Route Handlers, Server Actions or server-side `fetch` to satisfy a screen.
 
-Also read `AGENTS.md` (Next.js 16 is not the Next.js in training data — consult `node_modules/next/dist/docs/`; Ultracite code standards) and load the `nextjs-16` skill before touching `apps/web`. `next dev` regenerates `apps/web/AGENTS.md` and `apps/web/CLAUDE.md` on every run; commit them rather than fighting them.
+Also read `AGENTS.md` (Next.js 16 is not the Next.js in training data — consult `node_modules/next/dist/docs/`; Ultracite code standards) and load the `nextjs-16` skill before touching `apps/web`. The architecture — boundaries, the contract/data seam, design-system layers, the ADR register — is `docs/architecture.md`; read it before adding a package, a route group or a data source. `next dev` regenerates `apps/web/AGENTS.md` and `apps/web/CLAUDE.md` on every run; commit them rather than fighting them.
 
 ## Commands
 
-All from the repo root. pnpm 11, Node ≥ 22. `.npmrc` sets `save-exact`, so `pnpm add` pins exact versions.
+All from the repo root. pnpm 11, Node ≥ 22. `pnpm-workspace.yaml` sets `saveExact` (so `pnpm add` pins exact versions) and `engineStrict` (so an install on Node < 22 or pnpm < 11 fails rather than warns). pnpm 11 ignores both in `.npmrc` — that file is gone; do not reintroduce it.
 
 | Task | Command |
 | --- | --- |
@@ -30,7 +30,7 @@ All from the repo root. pnpm 11, Node ≥ 22. `.npmrc` sets `save-exact`, so `pn
 
 The `.claude/settings.json` PostToolUse hook runs the single-file fix after every Write/Edit; still run `pnpm check` before calling a change done.
 
-**Version pins live in one place:** `pnpm-workspace.yaml` `catalog:` (workspaces reference entries as `"catalog:"`). Bump there, then `pnpm install`. Two pins are deliberate ceilings: TypeScript 5.9.3 (Next's tooling and Biome's type inference are validated against 5.x; TS 7 is a separate decision), and `radix-ui` 1.6.7 rather than Base UI (still `1.0.0-rc`) — see _Planned direction_. pnpm blocks install scripts by default; `allowBuilds` in the workspace file is the allowlist. pnpm's `minimumReleaseAge` policy is on; it appends `minimumReleaseAgeExclude` entries itself when a pinned version is younger than the cutoff.
+**Version pins live in one place:** `pnpm-workspace.yaml` `catalog:` (workspaces reference entries as `"catalog:"`). Bump there, then `pnpm install`. Two pins are deliberate ceilings: TypeScript 5.9.3 (Next's tooling and Biome's type inference are validated against 5.x; TS 7 is a separate decision), and `radix-ui` 1.6.7 rather than Base UI — a deliberate start on the primitives the team knows, not a maturity wait: `@base-ui/react` is stable (1.8.0) and has been shadcn's default base since July 2026 — see _Planned direction_. pnpm blocks install scripts by default; `allowBuilds` in the workspace file is the allowlist. pnpm's `minimumReleaseAge` policy is on; it appends `minimumReleaseAgeExclude` entries itself when a pinned version is younger than the cutoff.
 
 ## Layout
 
@@ -69,5 +69,5 @@ Carried over from v4 and trimmed to what still applies: `launch.json` (preview: 
 
 ## Planned direction (not yet in code)
 
-- **Design primitives: Radix → Base UI.** shadcn's CLI supports `--base base`; the Base UI docs are already in `.claude/llmx/base-ui/`. Until the switch is made, do not mix `@base-ui/react` into `packages/design`.
+- **Design primitives: Radix → Base UI.** `@base-ui/react` is stable (1.8.0) and shadcn's default since July 2026; Radix stays supported and every shadcn component ships for both. Migrate per component with the `migrate-radix-to-base` skill (shadcn's documented route); reference docs in `.claude/llmx/base-ui/`. Until that decision, do not mix `@base-ui/react` into `packages/design`.
 - **Backend:** Drizzle + Neon Postgres, Better Auth. Nothing in the repo assumes it yet.
