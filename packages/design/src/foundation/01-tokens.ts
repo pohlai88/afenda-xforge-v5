@@ -52,14 +52,14 @@
 // -----------------------------------------------------------------------------
 
 export const TOKEN_LANGUAGE = {
-  id: "token",
   code: "TOK",
+  id: "token",
   level: 1,
   order: 1,
-  version: "1.0.0",
 
   purpose:
     "Define how Afenda names, relates, resolves, exposes, and governs design tokens without defining their implementation values.",
+  version: "1.0.0",
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -69,42 +69,42 @@ export const TOKEN_LANGUAGE = {
 export const TOKEN_PRINCIPLES = [
   {
     id: "AF-TOK-001",
-    strength: "must",
 
     statement:
       "A token represents a stable design decision or semantic role, not an arbitrary implementation value.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-002",
-    strength: "must",
 
     statement:
       "Consumers request semantic meaning; Level 2 resolves that meaning to implementation values.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-003",
-    strength: "must",
 
     statement:
       "Token indirection exists only where it creates semantic ownership, contextual resolution, reuse, or governable change.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-004",
-    strength: "must",
 
     statement:
       "Token names describe what a value means or where it belongs, never what the current value happens to look like.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-005",
-    strength: "must",
 
     statement:
       "A token has one authoritative owner and may be referenced by many consumers.",
+    strength: "must",
   },
 ] as const;
 
@@ -130,11 +130,27 @@ export const TOKEN_PRINCIPLES = [
  * roles rather than reference tokens.
  */
 export const TOKEN_TIERS = {
-  reference: {
-    code: "ref",
+  component: {
+    code: "comp",
+
+    examples: [
+      "button container",
+      "field border",
+      "data-grid selected row",
+      "dialog scrim",
+    ],
+
+    intendedConsumers: ["owning-component"],
+
+    mayResolveTo: ["system", "reference"],
+
+    publicToProductCode: false,
 
     purpose:
-      "Context-independent design options from which semantic decisions may resolve.",
+      "Component-scoped semantic decisions required when a system role alone cannot accurately describe a component part.",
+  },
+  reference: {
+    code: "ref",
 
     examples: [
       "colour scale step",
@@ -144,18 +160,18 @@ export const TOKEN_TIERS = {
       "motion duration option",
     ],
 
-    mayResolveTo: ["literal"],
-
     intendedConsumers: ["system-token"],
 
+    mayResolveTo: ["literal"],
+
     publicToProductCode: false,
+
+    purpose:
+      "Context-independent design options from which semantic decisions may resolve.",
   },
 
   system: {
     code: "sys",
-
-    purpose:
-      "Product-wide semantic design decisions whose meaning remains stable across contexts.",
 
     examples: [
       "surface role",
@@ -167,8 +183,6 @@ export const TOKEN_TIERS = {
       "feedback motion",
     ],
 
-    mayResolveTo: ["reference"],
-
     intendedConsumers: [
       "component-token",
       "component",
@@ -177,27 +191,12 @@ export const TOKEN_TIERS = {
       "application",
     ],
 
-    publicToProductCode: true,
-  },
+    mayResolveTo: ["reference"],
 
-  component: {
-    code: "comp",
+    publicToProductCode: true,
 
     purpose:
-      "Component-scoped semantic decisions required when a system role alone cannot accurately describe a component part.",
-
-    examples: [
-      "button container",
-      "field border",
-      "data-grid selected row",
-      "dialog scrim",
-    ],
-
-    mayResolveTo: ["system", "reference"],
-
-    intendedConsumers: ["owning-component"],
-
-    publicToProductCode: false,
+      "Product-wide semantic design decisions whose meaning remains stable across contexts.",
   },
 } as const;
 
@@ -210,58 +209,58 @@ export type TokenTier = keyof typeof TOKEN_TIERS;
 export const TOKEN_TIER_RULES = [
   {
     id: "AF-TOK-006",
-    strength: "must",
 
     rule: "Reference tokens resolve to implementation literals and do not carry product semantics.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-007",
-    strength: "must",
 
     rule: "System tokens carry Afenda-wide semantic meaning and normally resolve through reference tokens.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-008",
-    strength: "must",
 
     rule: "Component tokens exist only when a component-specific semantic decision cannot be represented accurately by an existing system token.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-009",
-    strength: "must",
 
     rule: "Component tokens may resolve to system or reference tokens but must not resolve directly to implementation literals.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-010",
-    strength: "must",
 
     rule: "Reference tokens must not depend on system or component tokens.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-011",
-    strength: "must",
 
     rule: "System tokens must not depend on component tokens.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-012",
-    strength: "must",
 
     rule: "A component token must belong to exactly one component contract.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-013",
-    strength: "should",
 
     rule: "A component should consume system tokens directly when no component-specific semantic decision is required.",
+    strength: "should",
   },
 ] as const;
 
@@ -354,16 +353,16 @@ export type TokenCategory = (typeof TOKEN_CATEGORIES)[number]["id"];
 
 export const TOKEN_CATEGORY_OWNERS = {
   color: "color",
-  type: "typography",
-
-  space: "geometry",
-  size: "geometry",
-  shape: "geometry",
   elevation: "geometry",
   layer: "geometry",
-  opacity: "geometry",
 
   motion: "motion",
+  opacity: "geometry",
+  shape: "geometry",
+  size: "geometry",
+
+  space: "geometry",
+  type: "typography",
 } as const satisfies Readonly<Record<TokenCategory, string>>;
 
 // -----------------------------------------------------------------------------
@@ -387,23 +386,23 @@ export const NON_TOKEN_DOMAINS = [
 export const NON_TOKEN_RULES = [
   {
     id: "AF-TOK-014",
-    strength: "must",
 
     rule: "A concept does not become a token merely because Level 2 needs a configurable value.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-015",
-    strength: "must",
 
     rule: "Behavioural states select or alter design roles but remain interaction semantics rather than token categories.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-016",
-    strength: "must",
 
     rule: "Business and workflow states remain product semantics even when colour or typography tokens represent them visually.",
+    strength: "must",
   },
 ] as const;
 
@@ -430,15 +429,14 @@ export const NON_TOKEN_RULES = [
  * Tailwind names, JSON paths, or generated artifacts to use identical syntax.
  */
 export const TOKEN_IDENTITY = {
+  grammar: {
+    component: "af.comp.<component>.<part>.<property>",
+    reference: "af.ref.<category>.<option>",
+    system: "af.sys.<category>.<role>",
+  },
   prefix: "af",
 
   separator: ".",
-
-  grammar: {
-    reference: "af.ref.<category>.<option>",
-    system: "af.sys.<category>.<role>",
-    component: "af.comp.<component>.<part>.<property>",
-  },
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -446,42 +444,41 @@ export const TOKEN_IDENTITY = {
 // -----------------------------------------------------------------------------
 
 export const TOKEN_NAME_SEGMENTS = {
-  prefix: {
-    required: true,
-    description: "Identifies the Afenda design language.",
-  },
-
-  tier: {
-    required: true,
-    description:
-      "Identifies reference, system, or component semantic ownership.",
-  },
-
   category: {
-    required: true,
     description: "Identifies the design property family governed by the token.",
-  },
-
-  role: {
     required: true,
-    description: "Identifies the semantic purpose or reference option.",
   },
 
   component: {
-    requiredFor: ["component"],
     description: "Identifies the owning component for a component token.",
+    requiredFor: ["component"],
   },
 
   part: {
-    requiredFor: ["component"],
     description:
       "Identifies the semantic anatomy part governed by a component token.",
+    requiredFor: ["component"],
+  },
+  prefix: {
+    description: "Identifies the Afenda design language.",
+    required: true,
   },
 
   property: {
-    requiredFor: ["component"],
     description:
       "Identifies the governed design property of the component part.",
+    requiredFor: ["component"],
+  },
+
+  role: {
+    description: "Identifies the semantic purpose or reference option.",
+    required: true,
+  },
+
+  tier: {
+    description:
+      "Identifies reference, system, or component semantic ownership.",
+    required: true,
   },
 } as const;
 
@@ -492,51 +489,51 @@ export const TOKEN_NAME_SEGMENTS = {
 export const TOKEN_NAMING_RULES = [
   {
     id: "AF-TOK-017",
-    strength: "must",
 
     rule: "Token names progress from general ownership to specific semantic purpose.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-018",
-    strength: "must",
 
     rule: "System and component token names describe semantic purpose rather than current visual appearance.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-019",
-    strength: "must",
 
     rule: "Token names must not encode literal implementation values.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-020",
-    strength: "must",
 
     rule: "Token names must not encode implementation frameworks, CSS technologies, or utility-library terminology.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-021",
-    strength: "must",
 
     rule: "Token names must not encode theme names, tenant names, or other contextual values that belong to resolution.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-022",
-    strength: "must",
 
     rule: "A semantic token keeps the same identity when its resolved value changes.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-023",
-    strength: "should",
 
     rule: "Use the shortest token name that uniquely communicates the token's semantic ownership and purpose.",
+    strength: "should",
   },
 ] as const;
 
@@ -585,23 +582,23 @@ export const APPEARANCE_BASED_SYSTEM_NAMING_ALLOWED = false;
 export const REFERENCE_TOKEN_RULES = [
   {
     id: "AF-TOK-024",
-    strength: "must",
 
     rule: "Reference tokens identify context-independent design options rather than product semantics.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-025",
-    strength: "must",
 
     rule: "Reference scale names must remain stable independently of which system roles currently resolve to them.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-026",
-    strength: "must",
 
     rule: "Reference-token naming may describe scale position, family, or measurable option identity because reference tokens are not semantic product roles.",
+    strength: "must",
   },
 ] as const;
 
@@ -612,30 +609,30 @@ export const REFERENCE_TOKEN_RULES = [
 export const SYSTEM_TOKEN_RULES = [
   {
     id: "AF-TOK-027",
-    strength: "must",
 
     rule: "A system token represents one Afenda-wide semantic decision.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-028",
-    strength: "must",
 
     rule: "A system token may vary by governed context without changing its semantic identity.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-029",
-    strength: "must",
 
     rule: "If two uses have different semantic meaning, they must not share a system-token identity merely because their current values are equal.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-030",
-    strength: "should",
 
     rule: "If two uses have the same stable semantic meaning, prefer one shared system role over duplicating roles by component.",
+    strength: "should",
   },
 ] as const;
 
@@ -668,37 +665,37 @@ export type ComponentTokenPart = (typeof COMPONENT_TOKEN_PARTS)[number];
 export const COMPONENT_TOKEN_RULES = [
   {
     id: "AF-TOK-031",
-    strength: "must",
 
     rule: "A component token exists only for anatomy declared by the owning Level-1 component contract.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-032",
-    strength: "must",
 
     rule: "Component-token semantics must not conflict with the meaning of the system token to which they resolve.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-033",
-    strength: "must",
 
     rule: "Component tokens must not become an alternative global semantic vocabulary.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-034",
-    strength: "should",
 
     rule: "Prefer direct system-token consumption over introducing a component alias whose only purpose is renaming the same meaning.",
+    strength: "should",
   },
 
   {
     id: "AF-TOK-035",
-    strength: "must",
 
     rule: "Component-token existence does not imply that the token is part of the component's application-facing API.",
+    strength: "must",
   },
 ] as const;
 
@@ -717,37 +714,37 @@ export const COMPONENT_TOKEN_RULES = [
 export const TOKEN_ALIAS_RULES = [
   {
     id: "AF-TOK-036",
-    strength: "must",
 
     rule: "A token alias points from a more specific semantic decision toward an allowed dependency tier.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-037",
-    strength: "must",
 
     rule: "Token alias graphs must be acyclic.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-038",
-    strength: "must",
 
     rule: "Every token resolution path must terminate in exactly one implementation value for the active context.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-039",
-    strength: "must",
 
     rule: "An unresolved token is a conformance failure rather than an instruction for consumers to provide a fallback value.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-040",
-    strength: "must",
 
     rule: "A consumer must not bypass a missing semantic token by reaching into a lower token tier.",
+    strength: "must",
   },
 ] as const;
 
@@ -756,6 +753,10 @@ export const TOKEN_ALIAS_RULES = [
 // -----------------------------------------------------------------------------
 
 export const TOKEN_DEPENDENCY = {
+  component: {
+    mayReference: ["system", "reference"],
+    resolvesTo: ["system", "reference"],
+  },
   reference: {
     mayReference: [],
     resolvesTo: ["literal"],
@@ -764,11 +765,6 @@ export const TOKEN_DEPENDENCY = {
   system: {
     mayReference: ["reference"],
     resolvesTo: ["reference"],
-  },
-
-  component: {
-    mayReference: ["system", "reference"],
-    resolvesTo: ["system", "reference"],
   },
 } as const satisfies Readonly<
   Record<
@@ -791,16 +787,16 @@ export const TOKEN_CONSUMERS = {
     forbidden: ["reference", "component"],
   },
 
-  pattern: {
-    allowed: ["system"],
-    discouraged: ["component"],
-    forbidden: ["reference"],
-  },
-
   component: {
     allowed: ["system", "own-component"],
     discouraged: [],
     forbidden: ["reference", "foreign-component"],
+  },
+
+  pattern: {
+    allowed: ["system"],
+    discouraged: ["component"],
+    forbidden: ["reference"],
   },
 
   tokenImplementation: {
@@ -813,30 +809,30 @@ export const TOKEN_CONSUMERS = {
 export const TOKEN_CONSUMPTION_RULES = [
   {
     id: "AF-TOK-041",
-    strength: "must",
 
     rule: "Application code consumes system semantics and does not consume reference tokens directly.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-042",
-    strength: "must",
 
     rule: "A component must not consume another component's private component-token namespace.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-043",
-    strength: "must",
 
     rule: "A pattern must not create cross-component dependencies by consuming private component tokens.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-044",
-    strength: "must",
 
     rule: "Level-2 token implementation is the only layer permitted to bind token identities to literal design values.",
+    strength: "must",
   },
 ] as const;
 
@@ -863,54 +859,59 @@ export const TOKEN_CONSUMPTION_RULES = [
  */
 export const TOKEN_CONTEXTS = [
   {
+    examples: ["light", "dark"],
     id: "theme",
 
     purpose: "Resolve appearance appropriate to the selected visual theme.",
-
-    examples: ["light", "dark"],
 
     semanticChangeAllowed: false,
   },
 
   {
+    examples: ["standard", "increased"],
     id: "contrast",
 
     purpose:
       "Resolve values appropriate to the user's supported contrast preference.",
 
-    examples: ["standard", "increased"],
-
     semanticChangeAllowed: false,
   },
 
   {
+    examples: ["comfortable", "compact", "dense"],
     id: "density",
 
     purpose:
       "Resolve governed geometry where density is permitted to alter physical presentation.",
 
-    examples: ["comfortable", "compact", "dense"],
-
     semanticChangeAllowed: false,
   },
 
   {
+    examples: ["ltr", "rtl"],
     id: "direction",
 
     purpose: "Resolve directional geometry for supported writing directions.",
 
-    examples: ["ltr", "rtl"],
+    semanticChangeAllowed: false,
+  },
+
+  {
+    examples: ["latin", "cyrillic", "arabic", "thai", "han", "devanagari"],
+    id: "script",
+
+    purpose:
+      "Resolve typeface and typographic metrics appropriate to the active writing script without changing semantic type roles.",
 
     semanticChangeAllowed: false,
   },
 
   {
+    examples: ["default", "tenant-defined"],
     id: "tenant",
 
     purpose:
       "Resolve tenant-controlled expression through the set of roles explicitly declared tenant-customisable.",
-
-    examples: ["default", "tenant-defined"],
 
     semanticChangeAllowed: false,
   },
@@ -925,44 +926,44 @@ export type TokenContext = (typeof TOKEN_CONTEXTS)[number]["id"];
 export const TOKEN_CONTEXT_RULES = [
   {
     id: "AF-TOK-045",
-    strength: "must",
 
     rule: "Context changes token resolution, not token semantic identity.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-046",
-    strength: "must",
 
     rule: "Context axes are independent unless a Level-1 domain explicitly defines a dependency between them.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-047",
-    strength: "must",
 
     rule: "The absence of a context-specific override means the token retains its applicable default resolution.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-048",
-    strength: "must",
 
     rule: "A context must not be introduced merely to represent a component interaction state.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-049",
-    strength: "must",
 
     rule: "Hover, focus, pressed, selected, disabled, invalid, loading, and similar interaction states belong to the interaction or component language and must not become global token-context axes.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-050",
-    strength: "must",
 
     rule: "Viewport and container conditions belong to layout adaptation unless they genuinely alter a reusable token resolution.",
+    strength: "must",
   },
 ] as const;
 
@@ -984,9 +985,8 @@ export const TOKEN_CONTEXT_RULES = [
  * Level 3 proves deterministic resolution.
  */
 export const TOKEN_CONTEXT_COMPOSITION = {
+  axes: ["tenant", "theme", "contrast", "density", "direction", "script"],
   composable: true,
-
-  axes: ["tenant", "theme", "contrast", "density", "direction"],
 
   deterministicResolutionRequired: true,
 
@@ -998,11 +998,12 @@ export const TOKEN_CONTEXT_COMPOSITION = {
 // -----------------------------------------------------------------------------
 
 export const TOKEN_CONTEXT_OWNERS = {
-  theme: "color",
   contrast: "accessibility",
   density: "geometry",
   direction: "content",
+  script: "typography",
   tenant: "token",
+  theme: "color",
 } as const satisfies Readonly<Record<TokenContext, string>>;
 
 // -----------------------------------------------------------------------------
@@ -1017,14 +1018,14 @@ export const TOKEN_CONTEXT_OWNERS = {
 export const TENANT_TOKEN_POLICY = {
   default: "closed",
 
-  meaning:
-    "A token is not tenant-customisable unless its owning Level-1 domain explicitly permits tenant variation.",
-
   mayCustomise: [
     "declared brand-expression roles",
     "declared tenant typography roles",
     "declared tenant shape expression where permitted",
   ],
+
+  meaning:
+    "A token is not tenant-customisable unless its owning Level-1 domain explicitly permits tenant variation.",
 
   mustNotCustomise: [
     "semantic meaning",
@@ -1040,37 +1041,37 @@ export const TENANT_TOKEN_POLICY = {
 export const TENANT_TOKEN_RULES = [
   {
     id: "AF-TOK-051",
-    strength: "must",
 
     rule: "Tenant token customisation is deny-by-default.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-052",
-    strength: "must",
 
     rule: "A Level-1 domain explicitly declares which of its semantic roles are tenant-customisable.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-053",
-    strength: "must",
 
     rule: "Tenant customisation may alter expression but must not alter semantic meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-054",
-    strength: "must",
 
     rule: "Tenant customisation must remain subject to all accessibility contracts.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-055",
-    strength: "must",
 
     rule: "Tenant customisation must resolve through governed token identities rather than arbitrary consumer-supplied style values.",
+    strength: "must",
   },
 ] as const;
 
@@ -1090,37 +1091,37 @@ export type TokenLifecycle = (typeof TOKEN_LIFECYCLE)[number];
 export const TOKEN_LIFECYCLE_RULES = [
   {
     id: "AF-TOK-056",
-    strength: "must",
 
     rule: "An active token has defined ownership, semantics, tier, category, and resolution.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-057",
-    strength: "must",
 
     rule: "A deprecated token remains resolvable during its supported migration period.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-058",
-    strength: "must",
 
     rule: "A retired semantic token identity must not be silently reassigned to a different meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-059",
-    strength: "must",
 
     rule: "Replacing a token value does not create a new token identity when semantic meaning is unchanged.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-060",
-    strength: "must",
 
     rule: "Changing the semantic meaning of a token requires a new semantic identity.",
+    strength: "must",
   },
 ] as const;
 
@@ -1134,16 +1135,16 @@ export const TOKEN_LIFECYCLE_RULES = [
  * It does NOT prescribe storage format.
  */
 export interface TokenDefinition {
-  readonly id: string;
-  readonly tier: TokenTier;
   readonly category: TokenCategory;
-  readonly role: string;
-  readonly owner: string;
-  readonly lifecycle: TokenLifecycle;
 
   readonly contexts?: readonly TokenContext[];
 
   readonly description?: string;
+  readonly id: string;
+  readonly lifecycle: TokenLifecycle;
+  readonly owner: string;
+  readonly role: string;
+  readonly tier: TokenTier;
 }
 
 // -----------------------------------------------------------------------------
@@ -1151,13 +1152,12 @@ export interface TokenDefinition {
 // -----------------------------------------------------------------------------
 
 export interface SystemTokenDefinition extends TokenDefinition {
-  readonly tier: "system";
-
   /**
    * Whether the owning Level-1 semantic domain permits this token's value
    * to vary within the tenant context.
    */
   readonly tenantCustomisable?: boolean;
+  readonly tier: "system";
 }
 
 // -----------------------------------------------------------------------------
@@ -1165,13 +1165,12 @@ export interface SystemTokenDefinition extends TokenDefinition {
 // -----------------------------------------------------------------------------
 
 export interface ComponentTokenDefinition extends TokenDefinition {
-  readonly tier: "component";
-
   readonly component: string;
 
   readonly part: string;
 
   readonly property: TokenCategory;
+  readonly tier: "component";
 }
 
 // -----------------------------------------------------------------------------
@@ -1179,14 +1178,13 @@ export interface ComponentTokenDefinition extends TokenDefinition {
 // -----------------------------------------------------------------------------
 
 export interface ReferenceTokenDefinition extends TokenDefinition {
-  readonly tier: "reference";
-
   /**
    * Identifies an option in a design-value scale or family.
    *
    * The implementation value itself belongs to Level 2.
    */
   readonly option: string;
+  readonly tier: "reference";
 }
 
 // -----------------------------------------------------------------------------
@@ -1209,13 +1207,13 @@ export interface ReferenceTokenDefinition extends TokenDefinition {
 export const TOKEN_PUBLIC_API = {
   applicationMayRequest: ["system-role"],
 
-  componentMayRequest: ["system-role", "own-component-role"],
-
   applicationMustNotRequest: [
     "reference-option",
     "foreign-component-role",
     "literal-design-value",
   ],
+
+  componentMayRequest: ["system-role", "own-component-role"],
 
   semanticIdentityIsImplementationIndependent: true,
 } as const;
@@ -1239,6 +1237,11 @@ export const TOKEN_PUBLIC_API = {
  * The latter is NOT automatically a token.
  */
 export const TOKEN_ESCAPE_HATCH = {
+  doesNotImply: [
+    "new reference token",
+    "new system token",
+    "new component token",
+  ],
   permitted: true,
 
   requires: [
@@ -1247,34 +1250,28 @@ export const TOKEN_ESCAPE_HATCH = {
     "the owning product/component has a legitimate local requirement",
     "the value does not bypass accessibility or tenant constraints",
   ],
-
-  doesNotImply: [
-    "new reference token",
-    "new system token",
-    "new component token",
-  ],
 } as const;
 
 export const TOKEN_ESCAPE_HATCH_RULES = [
   {
     id: "AF-TOK-061",
-    strength: "must",
 
     rule: "A one-off implementation value does not automatically justify creation of a token.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-062",
-    strength: "must",
 
     rule: "An escape value must not duplicate an existing semantic token merely to avoid using the governed token.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-063",
-    strength: "should",
 
     rule: "Repeated escape values with shared semantic purpose should trigger review for promotion into the token language.",
+    strength: "should",
   },
 ] as const;
 
@@ -1297,23 +1294,23 @@ export const TOKEN_CREATION_REASONS = [
 export const TOKEN_CREATION_RULES = [
   {
     id: "AF-TOK-064",
-    strength: "must",
 
     rule: "A token is created because its semantic or governance role justifies indirection, not merely because a literal value exists.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-065",
-    strength: "should",
 
     rule: "Do not create a component token when a stable system token already expresses exactly the same meaning.",
+    strength: "should",
   },
 
   {
     id: "AF-TOK-066",
-    strength: "should",
 
     rule: "Do not create a system token solely because several unrelated components currently share the same literal value.",
+    strength: "should",
   },
 ] as const;
 
@@ -1323,72 +1320,63 @@ export const TOKEN_CREATION_RULES = [
 
 export const TOKEN_FORBIDS = [
   {
-    id: "AF-TOK-067",
-    strength: "must",
-
     behaviour:
       "application code directly consumes reference tokens for governed design semantics",
+    id: "AF-TOK-067",
+    strength: "must",
   },
 
   {
-    id: "AF-TOK-068",
-    strength: "must",
-
     behaviour:
       "system tokens resolve directly to hardcoded values when a governed reference scale exists for that category",
+    id: "AF-TOK-068",
+    strength: "must",
   },
 
   {
+    behaviour: "component tokens contain hardcoded implementation values",
     id: "AF-TOK-069",
     strength: "must",
-
-    behaviour: "component tokens contain hardcoded implementation values",
   },
 
   {
+    behaviour: "tenant names appear in canonical semantic-token identities",
     id: "AF-TOK-070",
     strength: "must",
-
-    behaviour: "tenant names appear in canonical semantic-token identities",
   },
 
   {
-    id: "AF-TOK-071",
-    strength: "must",
-
     behaviour:
       "light, dark, density, contrast, or direction variants become separate semantic token identities solely because their values differ",
+    id: "AF-TOK-071",
+    strength: "must",
   },
 
   {
+    behaviour: "interaction-state meaning is encoded as a global token context",
     id: "AF-TOK-072",
     strength: "must",
-
-    behaviour: "interaction-state meaning is encoded as a global token context",
   },
 
   {
-    id: "AF-TOK-073",
-    strength: "must",
-
     behaviour:
       "component-private tokens are treated as application-level public APIs",
+    id: "AF-TOK-073",
+    strength: "must",
   },
 
   {
-    id: "AF-TOK-074",
-    strength: "must",
-
     behaviour:
       "generated token names introduce semantic decisions absent from Level 1",
+    id: "AF-TOK-074",
+    strength: "must",
   },
 
   {
-    id: "AF-TOK-075",
-    strength: "must",
-
     behaviour:
       "the same semantic identity resolves nondeterministically under the same active contexts",
+    id: "AF-TOK-075",
+    strength: "must",
   },
 ] as const;
 
@@ -1397,16 +1385,6 @@ export const TOKEN_FORBIDS = [
 // -----------------------------------------------------------------------------
 
 export const TOKEN_ADAPTATION = {
-  theme: {
-    mayChange: ["resolved values permitted by the owning domain"],
-
-    mustPreserve: [
-      "token identity",
-      "semantic meaning",
-      "accessibility requirements",
-    ],
-  },
-
   contrast: {
     mayChange: [
       "resolved values required to satisfy the supported contrast preference",
@@ -1445,6 +1423,15 @@ export const TOKEN_ADAPTATION = {
       "accessibility requirements",
     ],
   },
+  theme: {
+    mayChange: ["resolved values permitted by the owning domain"],
+
+    mustPreserve: [
+      "token identity",
+      "semantic meaning",
+      "accessibility requirements",
+    ],
+  },
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1453,13 +1440,8 @@ export const TOKEN_ADAPTATION = {
 
 export const TOKEN_SOURCES = [
   {
-    id: "m3-design-tokens",
-
-    system: "Material 3",
-
-    kind: "design-system",
-
-    disposition: "adapt",
+    adaptation:
+      "Afenda preserves the three-tier semantic model but defines its own categories, contexts, public consumption boundaries, tenant rules, and governance requirements.",
 
     contribution: [
       "reference, system, and component token tiers",
@@ -1468,8 +1450,12 @@ export const TOKEN_SOURCES = [
       "contextual token resolution",
     ],
 
-    adaptation:
-      "Afenda preserves the three-tier semantic model but defines its own categories, contexts, public consumption boundaries, tenant rules, and governance requirements.",
+    disposition: "adapt",
+    id: "m3-design-tokens",
+
+    kind: "design-system",
+
+    system: "Material 3",
   },
 ] as const;
 
@@ -1478,21 +1464,20 @@ export const TOKEN_SOURCES = [
 // -----------------------------------------------------------------------------
 
 export const TOKEN_SOURCE_DISPOSITION = {
-  "three-token-classes": "adopt",
-
-  "system-to-reference-indirection": "adopt",
-
   "component-to-system-or-reference-indirection": "adopt",
 
   "contextual-values": "adopt",
-
-  "m3-token-prefix": "reject",
 
   "m3-category-taxonomy": "adapt",
 
   "m3-context-taxonomy": "adapt",
 
+  "m3-token-prefix": "reject",
+
   "material-component-token-naming": "adapt",
+
+  "system-to-reference-indirection": "adopt",
+  "three-token-classes": "adopt",
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1507,40 +1492,40 @@ export const TOKEN_SOURCE_DISPOSITION = {
 export const TOKEN_IMPLEMENTATION_OBLIGATIONS = [
   {
     id: "AF-TOK-076",
-    strength: "must",
 
     obligation:
       "Every active Level-1 token identity has exactly one valid Level-2 resolution for every supported applicable context.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-077",
-    strength: "must",
 
     obligation: "Level 2 preserves token-tier dependency direction.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-078",
-    strength: "must",
 
     obligation:
       "Level 2 exposes system-token identities to their permitted consumers.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-079",
-    strength: "must",
 
     obligation:
       "Level 2 prevents private component tokens from becoming accidental application APIs.",
+    strength: "must",
   },
 
   {
     id: "AF-TOK-080",
-    strength: "must",
 
     obligation: "Context resolution is deterministic.",
+    strength: "must",
   },
 ] as const;
 
@@ -1618,15 +1603,7 @@ export const TOKEN_GOVERNANCE_REQUIREMENTS = [
 // -----------------------------------------------------------------------------
 
 export const TOKEN_CONFORMANCE = {
-  language: [
-    "tier-defined",
-    "category-defined",
-    "semantic-identity-defined",
-    "owner-defined",
-    "context-policy-defined",
-  ],
-
-  implementation: ["resolvable", "dependency-valid", "consumer-boundary-valid"],
+  completeWhen: ["language-defined", "implemented", "proven"],
 
   governance: [
     "unique",
@@ -1636,7 +1613,14 @@ export const TOKEN_CONFORMANCE = {
     "consumer-safe",
   ],
 
-  completeWhen: ["language-defined", "implemented", "proven"],
+  implementation: ["resolvable", "dependency-valid", "consumer-boundary-valid"],
+  language: [
+    "tier-defined",
+    "category-defined",
+    "semantic-identity-defined",
+    "owner-defined",
+    "context-policy-defined",
+  ],
 } as const;
 
 // -----------------------------------------------------------------------------

@@ -37,13 +37,8 @@
 
 export const AFENDA_DESIGN_LANGUAGE = {
   id: "afenda-design-language",
-  name: "Afenda Design Language",
-  shortName: "ADL",
   level: 1,
-  version: "1.0.0",
-
-  purpose:
-    "Define the semantic, behavioural, accessibility, adaptive, and public API contract of Afenda user interfaces.",
+  name: "Afenda Design Language",
 
   productContext: [
     "enterprise SaaS",
@@ -53,6 +48,28 @@ export const AFENDA_DESIGN_LANGUAGE = {
     "multi-locale deployment",
     "keyboard, pointer, touch, and assistive-technology access",
   ],
+
+  purpose:
+    "Define the semantic, behavioural, accessibility, adaptive, and public API contract of Afenda user interfaces.",
+  shortName: "ADL",
+  version: "1.0.0",
+} as const;
+
+/**
+ * The principle domain's own identity.
+ *
+ * Every Level-1 domain file declares this block; the domain that defines
+ * the requirement is not exempt from it.
+ */
+export const PRINCIPLE_LANGUAGE = {
+  code: "PRI",
+  id: "principle",
+  level: 1,
+  order: 0,
+
+  purpose:
+    "Define the authority, philosophy, language grammar, provenance, and cross-domain invariants of the Afenda design language.",
+  version: "1.0.0",
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -61,22 +78,22 @@ export const AFENDA_DESIGN_LANGUAGE = {
 
 export const DESIGN_LEVELS = {
   1: {
-    name: "language",
     authority: "normative",
+    name: "language",
     responsibility:
       "Defines principles, taxonomy, semantics, rules, legal public APIs, constraints, and adaptation.",
   },
 
   2: {
-    name: "implementation",
     authority: "implementing",
+    name: "implementation",
     responsibility:
       "Implements Level 1 through tokens, styles, primitives, components, layouts, recipes, and patterns.",
   },
 
   3: {
-    name: "governance",
     authority: "verifying",
+    name: "governance",
     responsibility:
       "Validates, generates, tests, measures, and proves that Level 2 conforms to Level 1.",
   },
@@ -173,104 +190,110 @@ export const LEVEL_1_MUST_NOT_DEFINE = [
  */
 export const LANGUAGE_DOMAINS = [
   {
-    order: 0,
-    id: "principle",
     code: "PRI",
     file: "00-principles.ts",
+    id: "principle",
+    order: 0,
     responsibility:
       "Authority, philosophy, language grammar, provenance, and cross-domain invariants.",
   },
 
   {
-    order: 1,
-    id: "token",
     code: "TOK",
     file: "01-tokens.ts",
+    id: "token",
+    order: 1,
     responsibility:
       "Token tiers, categories, semantic indirection, context, and legal dependency direction.",
   },
 
   {
-    order: 2,
-    id: "color",
     code: "COL",
     file: "02-color.ts",
+    id: "color",
+    order: 2,
     responsibility:
       "Surface, content, action, status, border, tenant, and data-visualisation colour semantics.",
   },
 
   {
-    order: 3,
-    id: "typography",
     code: "TYP",
     file: "03-typography.ts",
+    id: "typography",
+    order: 3,
     responsibility:
       "Text roles, hierarchy, emphasis, data typography, numeric typography, and readable content structure.",
   },
 
   {
-    order: 4,
-    id: "geometry",
     code: "GEO",
     file: "04-geometry.ts",
+    id: "geometry",
+    order: 4,
     responsibility:
       "Spacing, sizing, density, targets, shape, icon geometry, elevation, and stacking semantics.",
   },
 
   {
-    order: 5,
-    id: "layout",
     code: "LAY",
     file: "05-layout.ts",
+    id: "layout",
+    order: 5,
     responsibility:
       "Window, container, scaffold, pane, grid, composition, responsive, and adaptive behaviour.",
   },
 
   {
-    order: 6,
-    id: "motion",
     code: "MOT",
     file: "06-motion.ts",
+    id: "motion",
+    order: 6,
     responsibility:
       "Motion intent, transition relationships, temporal semantics, and reduced-motion behaviour.",
   },
 
   {
-    order: 7,
-    id: "interaction",
     code: "INT",
     file: "07-interaction.ts",
+    id: "interaction",
+    order: 7,
     responsibility:
       "Interactive states, selection, focus, disclosure, dragging, modality, and gesture behaviour.",
   },
 
   {
-    order: 8,
-    id: "accessibility",
     code: "A11Y",
     file: "08-accessibility.ts",
+    id: "accessibility",
+    order: 8,
     responsibility:
       "Perceivability, operability, understandability, robustness, and component accessibility invariants.",
   },
 
   {
-    order: 9,
-    id: "content",
     code: "CON",
     file: "09-content.ts",
+    id: "content",
+    order: 9,
     responsibility:
       "UX writing, labels, errors, transactions, internationalisation, formatting, and bidirectionality.",
   },
 
   {
-    order: 10,
-    id: "component",
     code: "CMP",
     file: "10-components/*",
+    id: "component",
+    order: 10,
     responsibility:
       "Purpose, anatomy, features, states, public API, accessibility, and constraints of UI components.",
   },
-] as const;
+] as const satisfies readonly {
+  order: number;
+  id: string;
+  code: string;
+  file: string;
+  responsibility: string;
+}[];
 
 export type LanguageDomain = (typeof LANGUAGE_DOMAINS)[number]["id"];
 export type LanguageDomainCode = (typeof LANGUAGE_DOMAINS)[number]["code"];
@@ -321,20 +344,19 @@ export const RULE_ID_RULES = [
 // -----------------------------------------------------------------------------
 
 export const RULE_STRENGTH = {
+  may: {
+    meaning:
+      "Permitted capability. Implementations may use it when applicable.",
+    normative: false,
+  },
   must: {
-    normative: true,
     meaning: "Required. A conforming implementation may not violate this rule.",
+    normative: true,
   },
 
   should: {
-    normative: true,
     meaning: "Expected. Deviation requires a documented and reviewable reason.",
-  },
-
-  may: {
-    normative: false,
-    meaning:
-      "Permitted capability. Implementations may use it when applicable.",
+    normative: true,
   },
 } as const;
 
@@ -350,24 +372,23 @@ export type RuleStrength = keyof typeof RULE_STRENGTH;
  * They do not become Afenda authority merely because they are referenced.
  */
 export const SOURCE_DISPOSITIONS = {
+  adapt: {
+    meaning:
+      "Afenda accepts the intent but changes the model, scope, API, or behaviour for the product context.",
+  },
   adopt: {
     meaning:
       "Afenda accepts the source concept without material semantic change.",
   },
 
-  adapt: {
+  defer: {
     meaning:
-      "Afenda accepts the intent but changes the model, scope, API, or behaviour for the product context.",
+      "The concept is relevant but intentionally has no current Afenda contract.",
   },
 
   reject: {
     meaning:
       "Afenda has considered the source concept and deliberately does not adopt it.",
-  },
-
-  defer: {
-    meaning:
-      "The concept is relevant but intentionally has no current Afenda contract.",
   },
 } as const;
 
@@ -381,12 +402,12 @@ export type SourceDisposition = keyof typeof SOURCE_DISPOSITIONS;
  */
 export const LANGUAGE_SOURCES = [
   {
-    id: "m3-foundations-principles",
-    system: "Material 3",
-    kind: "design-system",
-    uri: "https://m3.material.io/foundations/overview/principles",
     disposition: "adapt",
+    id: "m3-foundations-principles",
+    kind: "design-system",
     role: "Primary design-system precedent and evidence source for Afenda's foundation language.",
+    system: "Material 3",
+    uri: "https://m3.material.io/foundations/overview/principles",
   },
 ] as const satisfies readonly {
   id: string;
@@ -427,12 +448,13 @@ export type DecisionPriority = (typeof DECISION_PRECEDENCE)[number];
 
 export const DESIGN_PRINCIPLES = [
   {
+    forbids: [
+      "choosing a component only because it looks appropriate",
+      "using visual similarity as a substitute for semantic equivalence",
+      "creating appearance-only variants without a defined purpose",
+    ],
     id: "AF-PRI-001",
     name: "Semantics before appearance",
-    strength: "must",
-
-    statement:
-      "A visual or behavioural choice must be selected by meaning and purpose before appearance.",
 
     requires: [
       "components are chosen by intended interaction",
@@ -440,20 +462,19 @@ export const DESIGN_PRINCIPLES = [
       "visual differences communicate a defined purpose",
     ],
 
-    forbids: [
-      "choosing a component only because it looks appropriate",
-      "using visual similarity as a substitute for semantic equivalence",
-      "creating appearance-only variants without a defined purpose",
-    ],
+    statement:
+      "A visual or behavioural choice must be selected by meaning and purpose before appearance.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "application code depending on raw design values where a semantic role exists",
+      "using palette identity as product meaning",
+      "using literal geometry as component meaning",
+    ],
     id: "AF-PRI-002",
     name: "Role before value",
-    strength: "must",
-
-    statement:
-      "Product code consumes semantic roles; implementation resolves those roles to values.",
 
     requires: [
       "meaning survives theme changes",
@@ -461,20 +482,19 @@ export const DESIGN_PRINCIPLES = [
       "implementation values remain replaceable without changing product semantics",
     ],
 
-    forbids: [
-      "application code depending on raw design values where a semantic role exists",
-      "using palette identity as product meaning",
-      "using literal geometry as component meaning",
-    ],
+    statement:
+      "Product code consumes semantic roles; implementation resolves those roles to values.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "decoration that competes with primary work",
+      "visual emphasis without semantic reason",
+      "adding colour, shadow, shape, or motion solely to make a screen appear richer",
+    ],
     id: "AF-PRI-003",
     name: "Hierarchy before decoration",
-    strength: "must",
-
-    statement:
-      "Visual distinction exists to communicate hierarchy, grouping, state, interaction, or meaning.",
 
     requires: [
       "prominence corresponds to information or action importance",
@@ -482,20 +502,20 @@ export const DESIGN_PRINCIPLES = [
       "supporting information remains visually subordinate",
     ],
 
-    forbids: [
-      "decoration that competes with primary work",
-      "visual emphasis without semantic reason",
-      "adding colour, shadow, shape, or motion solely to make a screen appear richer",
-    ],
+    statement:
+      "Visual distinction exists to communicate hierarchy, grouping, state, interaction, or meaning.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "using density to remove necessary labels",
+      "using density to hide required state",
+      "reducing interaction geometry below the applicable accessibility contract",
+      "changing semantic colour because density changed",
+    ],
     id: "AF-PRI-004",
     name: "Density without loss of operability",
-    strength: "must",
-
-    statement:
-      "Afenda may increase information density, but compression must not remove operability, comprehension, or accessibility.",
 
     requires: [
       "density changes geometry rather than meaning",
@@ -505,21 +525,19 @@ export const DESIGN_PRINCIPLES = [
       "content remains readable",
     ],
 
-    forbids: [
-      "using density to remove necessary labels",
-      "using density to hide required state",
-      "reducing interaction geometry below the applicable accessibility contract",
-      "changing semantic colour because density changed",
-    ],
+    statement:
+      "Afenda may increase information density, but compression must not remove operability, comprehension, or accessibility.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "removing essential capability solely because space decreased",
+      "reordering content in a way that changes meaning",
+      "using viewport width as the only possible adaptation signal",
+    ],
     id: "AF-PRI-005",
     name: "Adaptation preserves task and context",
-    strength: "must",
-
-    statement:
-      "An adaptive interface may change composition, but it must preserve the user's task, information meaning, and navigational context.",
 
     requires: [
       "responsive behaviour is defined as adaptation rather than arbitrary resizing",
@@ -527,20 +545,19 @@ export const DESIGN_PRINCIPLES = [
       "the primary task remains reachable across supported conditions",
     ],
 
-    forbids: [
-      "removing essential capability solely because space decreased",
-      "reordering content in a way that changes meaning",
-      "using viewport width as the only possible adaptation signal",
-    ],
+    statement:
+      "An adaptive interface may change composition, but it must preserve the user's task, information meaning, and navigational context.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "inventing unnamed component states in implementation",
+      "treating hover, focus, selection, and current navigation as equivalent",
+      "communicating consequential state by colour alone",
+    ],
     id: "AF-PRI-006",
     name: "State is explicit and composable",
-    strength: "must",
-
-    statement:
-      "Interactive, selection, validation, disclosure, and workflow states are explicit semantic concepts rather than incidental styling.",
 
     requires: [
       "state has a defined meaning",
@@ -548,20 +565,19 @@ export const DESIGN_PRINCIPLES = [
       "state remains perceivable through the applicable accessibility contract",
     ],
 
-    forbids: [
-      "inventing unnamed component states in implementation",
-      "treating hover, focus, selection, and current navigation as equivalent",
-      "communicating consequential state by colour alone",
-    ],
+    statement:
+      "Interactive, selection, validation, disclosure, and workflow states are explicit semantic concepts rather than incidental styling.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "shipping a component whose accessibility contract is undefined",
+      "treating automated accessibility testing as the accessibility specification",
+      "using visual appearance as the only representation of meaning",
+    ],
     id: "AF-PRI-007",
     name: "Accessibility is intrinsic",
-    strength: "must",
-
-    statement:
-      "Accessibility is part of the definition of a component and interaction, not a later validation pass.",
 
     requires: [
       "component contracts declare their accessibility requirements",
@@ -571,20 +587,19 @@ export const DESIGN_PRINCIPLES = [
       "required state and value are exposed programmatically",
     ],
 
-    forbids: [
-      "shipping a component whose accessibility contract is undefined",
-      "treating automated accessibility testing as the accessibility specification",
-      "using visual appearance as the only representation of meaning",
-    ],
+    statement:
+      "Accessibility is part of the definition of a component and interaction, not a later validation pass.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "inventing arbitrary durations at component call sites",
+      "using motion solely to attract attention",
+      "requiring non-essential motion to understand an interaction",
+    ],
     id: "AF-PRI-008",
     name: "Motion explains change",
-    strength: "must",
-
-    statement:
-      "Motion communicates cause, relationship, continuity, hierarchy, or state change and is not an independent decorative layer.",
 
     requires: [
       "motion has a named semantic intent",
@@ -592,20 +607,19 @@ export const DESIGN_PRINCIPLES = [
       "reduced-motion behaviour is defined where motion is non-essential",
     ],
 
-    forbids: [
-      "inventing arbitrary durations at component call sites",
-      "using motion solely to attract attention",
-      "requiring non-essential motion to understand an interaction",
-    ],
+    statement:
+      "Motion communicates cause, relationship, continuity, hierarchy, or state change and is not an independent decorative layer.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "tenant themes redefining success, warning, error, or destructive meaning",
+      "tenant branding changing component semantics",
+      "tenant customisation bypassing required contrast or state behaviour",
+    ],
     id: "AF-PRI-009",
     name: "Tenant expression cannot redefine product semantics",
-    strength: "must",
-
-    statement:
-      "Tenant customisation may express identity but may not alter the semantic meaning, interaction model, or accessibility of Afenda.",
 
     requires: [
       "tenant customisation passes through governed semantic roles",
@@ -614,20 +628,19 @@ export const DESIGN_PRINCIPLES = [
       "accessibility requirements remain invariant",
     ],
 
-    forbids: [
-      "tenant themes redefining success, warning, error, or destructive meaning",
-      "tenant branding changing component semantics",
-      "tenant customisation bypassing required contrast or state behaviour",
-    ],
+    statement:
+      "Tenant customisation may express identity but may not alter the semantic meaning, interaction model, or accessibility of Afenda.",
+    strength: "must",
   },
 
   {
+    forbids: [
+      "application code inventing ungoverned component variants",
+      "implementation exposing public capability absent from Level 1",
+      "Level 1 declaring public capability that Level 2 silently does not implement",
+    ],
     id: "AF-PRI-010",
     name: "Public UI APIs are finite",
-    strength: "must",
-
-    statement:
-      "A governed component or design capability exposes only the public API admitted by the Afenda design language.",
 
     requires: [
       "every public variant has defined semantics",
@@ -637,11 +650,9 @@ export const DESIGN_PRINCIPLES = [
       "implementation API remains in parity with its Level-1 contract",
     ],
 
-    forbids: [
-      "application code inventing ungoverned component variants",
-      "implementation exposing public capability absent from Level 1",
-      "Level 1 declaring public capability that Level 2 silently does not implement",
-    ],
+    statement:
+      "A governed component or design capability exposes only the public API admitted by the Afenda design language.",
+    strength: "must",
   },
 ] as const satisfies readonly {
   id: string;
@@ -657,19 +668,18 @@ export const DESIGN_PRINCIPLES = [
 // -----------------------------------------------------------------------------
 
 export const LEVEL_DEPENDENCIES = {
-  language: {
-    mayDependOn: ["language"],
-    mustNotDependOn: ["implementation", "governance"],
+  governance: {
+    mayDependOn: ["language", "implementation", "governance"],
+    mustNotDependOn: [],
   },
 
   implementation: {
     mayDependOn: ["language", "implementation"],
     mustNotDependOn: ["governance"],
   },
-
-  governance: {
-    mayDependOn: ["language", "implementation", "governance"],
-    mustNotDependOn: [],
+  language: {
+    mayDependOn: ["language"],
+    mustNotDependOn: ["implementation", "governance"],
   },
 } as const;
 
@@ -687,62 +697,62 @@ export const GOVERNANCE_IS_RUNTIME_DEPENDENCY = false;
 export const LANGUAGE_AUTHORSHIP_RULES = [
   {
     id: "AF-PRI-011",
-    strength: "must",
     rule: "A Level-1 statement defines an Afenda decision, not a transcription of an external design system.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-012",
-    strength: "must",
     rule: "External design-system guidance is recorded as source provenance with an explicit disposition.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-013",
-    strength: "must",
     rule: "A design decision is stated once in its owning Level-1 domain and referenced elsewhere by identity.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-014",
-    strength: "must",
     rule: "Implementation details do not appear in Level-1 normative contracts.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-015",
-    strength: "must",
     rule: "Generated output never becomes an independent source of design authority.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-016",
-    strength: "must",
     rule: "A public component capability must have a semantic reason to exist.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-017",
-    strength: "must",
     rule: "A component may compose existing language concepts but may not redefine their meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-018",
-    strength: "must",
     rule: "A Level-1 rule that cannot currently be implemented must be explicitly deferred rather than silently ignored.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-019",
-    strength: "must",
     rule: "A deliberate divergence from an external source must be represented as adapt or reject rather than undocumented drift.",
+    strength: "must",
   },
 
   {
     id: "AF-PRI-020",
-    strength: "must",
     rule: "Level 3 must be able to identify the Level-1 authority governing every generated or validated design-system artifact.",
+    strength: "must",
   },
 ] as const satisfies readonly {
   id: string;
@@ -764,11 +774,10 @@ export const LANGUAGE_AUTHORSHIP_RULES = [
  * Level 3 proof mechanisms are defined by governance, not here.
  */
 export const CONFORMANCE = {
-  language: "admitted",
-  implementation: "implemented",
-  governance: "proven",
-
   completeWhen: ["admitted", "implemented", "proven"],
+  governance: "proven",
+  implementation: "implemented",
+  language: "admitted",
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -776,6 +785,8 @@ export const CONFORMANCE = {
 // -----------------------------------------------------------------------------
 
 export type DesignLevel = keyof typeof DESIGN_LEVELS;
+
+export type LanguageDomainDefinition = (typeof LANGUAGE_DOMAINS)[number];
 
 export type PrincipleId = (typeof DESIGN_PRINCIPLES)[number]["id"];
 

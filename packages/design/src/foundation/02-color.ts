@@ -58,17 +58,17 @@ import type { SystemTokenDefinition, TokenContextId } from "./01-tokens";
 // -----------------------------------------------------------------------------
 
 export const COLOR_LANGUAGE = {
-  id: "color",
   code: "COL",
+  id: "color",
   level: 1,
   order: 2,
-  version: "1.0.0",
-
-  purpose:
-    "Define stable semantic colour roles for enterprise work, interaction, status, surfaces, branding, and analytical information.",
 
   philosophy:
     "Afenda uses colour primarily to communicate structure, meaning, state, and hierarchy; not to decorate the interface.",
+
+  purpose:
+    "Define stable semantic colour roles for enterprise work, interaction, status, surfaces, branding, and analytical information.",
+  version: "1.0.0",
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -78,66 +78,66 @@ export const COLOR_LANGUAGE = {
 export const COLOR_PRINCIPLES = [
   {
     id: "AF-COL-001",
-    strength: "must",
 
     statement:
       "Colour is consumed by semantic role rather than by hue, tone, palette position, or literal value.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-002",
-    strength: "must",
 
     statement:
       "A container role and its intended content role form a semantic pair.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-003",
-    strength: "must",
 
     statement:
       "Surfaces establish the primary visual hierarchy of the Afenda workspace; accent colour is used selectively.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-004",
-    strength: "must",
 
     statement:
       "Colour must not be the sole carrier of consequential information.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-005",
-    strength: "must",
 
     statement:
       "A semantic colour role retains the same meaning across light, dark, contrast, and tenant contexts.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-006",
-    strength: "must",
 
     statement:
       "Business status, validation state, interaction state, and analytical meaning are separate semantic concepts even when they currently resolve to similar colours.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-007",
-    strength: "must",
 
     statement:
       "Tenant expression may influence permitted accent roles but cannot redefine status, validation, accessibility, or analytical meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-008",
-    strength: "must",
 
     statement:
       "The number of available colour roles does not justify using more colours in a screen.",
+    strength: "must",
   },
 ] as const satisfies readonly {
   id: string;
@@ -154,19 +154,14 @@ export const COLOR_DOMAINS = {
     purpose: "Product emphasis, actions, selection, and controlled expression.",
   },
 
-  surface: {
-    purpose:
-      "Workspace backgrounds, containers, layers, and containment hierarchy.",
-  },
-
   content: {
     purpose:
       "Text, icons, and other foreground information placed on surfaces.",
   },
 
-  structure: {
+  data: {
     purpose:
-      "Boundaries, separators, focus-supporting geometry, and obscuring layers.",
+      "Analytical distinction in charts, metrics, forecasts, comparisons, and visualisations.",
   },
 
   status: {
@@ -174,9 +169,14 @@ export const COLOR_DOMAINS = {
       "Stable enterprise meaning such as positive, negative, warning, and informative state.",
   },
 
-  data: {
+  structure: {
     purpose:
-      "Analytical distinction in charts, metrics, forecasts, comparisons, and visualisations.",
+      "Boundaries, separators, focus-supporting geometry, and obscuring layers.",
+  },
+
+  surface: {
+    purpose:
+      "Workspace backgrounds, containers, layers, and containment hierarchy.",
   },
 } as const;
 
@@ -201,28 +201,25 @@ export type ColorDomain = keyof typeof COLOR_DOMAINS;
  */
 export const ACCENT_FAMILIES = {
   primary: {
+    frequency: "selective",
     purpose:
       "Highest product accent emphasis for important actions, active emphasis, and strong identity.",
-
-    frequency: "selective",
 
     tenantCustomisable: true,
   },
 
   secondary: {
+    frequency: "limited",
     purpose:
       "Supporting accent used where distinction is needed without competing with primary emphasis.",
-
-    frequency: "limited",
 
     tenantCustomisable: true,
   },
 
   tertiary: {
+    frequency: "rare",
     purpose:
       "Contrasting accent for deliberate differentiation or heightened attention where primary and secondary are insufficient.",
-
-    frequency: "rare",
 
     tenantCustomisable: true,
   },
@@ -260,54 +257,49 @@ export type AccentRoleKind = (typeof ACCENT_ROLE_PATTERN)[number];
 // -----------------------------------------------------------------------------
 
 export const PRIMARY_ROLES = {
-  primary: {
-    token: "af.sys.color.primary",
-
-    domain: "accent",
-
-    purpose:
-      "Highest-emphasis accent used for important interactive and active elements.",
-
-    foreground: "on-primary",
-
-    tenantCustomisable: true,
-  },
-
   "on-primary": {
-    token: "af.sys.color.on-primary",
+    background: "primary",
 
     domain: "content",
 
     purpose: "Content displayed directly on primary.",
 
-    background: "primary",
-
     tenantCustomisable: true,
-  },
-
-  "primary-container": {
-    token: "af.sys.color.primary-container",
-
-    domain: "accent",
-
-    purpose:
-      "Tonal primary container used when primary meaning is required with lower visual intensity.",
-
-    foreground: "on-primary-container",
-
-    tenantCustomisable: true,
+    token: "af.sys.color.on-primary",
   },
 
   "on-primary-container": {
-    token: "af.sys.color.on-primary-container",
+    background: "primary-container",
 
     domain: "content",
 
     purpose: "Content displayed directly on primary-container.",
 
-    background: "primary-container",
+    tenantCustomisable: true,
+    token: "af.sys.color.on-primary-container",
+  },
+  primary: {
+    domain: "accent",
+
+    foreground: "on-primary",
+
+    purpose:
+      "Highest-emphasis accent used for important interactive and active elements.",
 
     tenantCustomisable: true,
+    token: "af.sys.color.primary",
+  },
+
+  "primary-container": {
+    domain: "accent",
+
+    foreground: "on-primary-container",
+
+    purpose:
+      "Tonal primary container used when primary meaning is required with lower visual intensity.",
+
+    tenantCustomisable: true,
+    token: "af.sys.color.primary-container",
   },
 } as const;
 
@@ -316,53 +308,48 @@ export const PRIMARY_ROLES = {
 // -----------------------------------------------------------------------------
 
 export const SECONDARY_ROLES = {
-  secondary: {
-    token: "af.sys.color.secondary",
-
-    domain: "accent",
-
-    purpose:
-      "Supporting accent for differentiation with less prominence than primary.",
-
-    foreground: "on-secondary",
-
-    tenantCustomisable: true,
-  },
-
   "on-secondary": {
-    token: "af.sys.color.on-secondary",
+    background: "secondary",
 
     domain: "content",
 
     purpose: "Content displayed directly on secondary.",
 
-    background: "secondary",
-
     tenantCustomisable: true,
-  },
-
-  "secondary-container": {
-    token: "af.sys.color.secondary-container",
-
-    domain: "accent",
-
-    purpose: "Lower-intensity secondary container.",
-
-    foreground: "on-secondary-container",
-
-    tenantCustomisable: true,
+    token: "af.sys.color.on-secondary",
   },
 
   "on-secondary-container": {
-    token: "af.sys.color.on-secondary-container",
+    background: "secondary-container",
 
     domain: "content",
 
     purpose: "Content displayed directly on secondary-container.",
 
-    background: "secondary-container",
+    tenantCustomisable: true,
+    token: "af.sys.color.on-secondary-container",
+  },
+  secondary: {
+    domain: "accent",
+
+    foreground: "on-secondary",
+
+    purpose:
+      "Supporting accent for differentiation with less prominence than primary.",
 
     tenantCustomisable: true,
+    token: "af.sys.color.secondary",
+  },
+
+  "secondary-container": {
+    domain: "accent",
+
+    foreground: "on-secondary-container",
+
+    purpose: "Lower-intensity secondary container.",
+
+    tenantCustomisable: true,
+    token: "af.sys.color.secondary-container",
   },
 } as const;
 
@@ -371,53 +358,48 @@ export const SECONDARY_ROLES = {
 // -----------------------------------------------------------------------------
 
 export const TERTIARY_ROLES = {
-  tertiary: {
-    token: "af.sys.color.tertiary",
-
-    domain: "accent",
-
-    purpose:
-      "Contrasting accent for deliberate differentiation and rare heightened attention.",
-
-    foreground: "on-tertiary",
-
-    tenantCustomisable: true,
-  },
-
   "on-tertiary": {
-    token: "af.sys.color.on-tertiary",
+    background: "tertiary",
 
     domain: "content",
 
     purpose: "Content displayed directly on tertiary.",
 
-    background: "tertiary",
-
     tenantCustomisable: true,
-  },
-
-  "tertiary-container": {
-    token: "af.sys.color.tertiary-container",
-
-    domain: "accent",
-
-    purpose: "Lower-intensity tertiary container.",
-
-    foreground: "on-tertiary-container",
-
-    tenantCustomisable: true,
+    token: "af.sys.color.on-tertiary",
   },
 
   "on-tertiary-container": {
-    token: "af.sys.color.on-tertiary-container",
+    background: "tertiary-container",
 
     domain: "content",
 
     purpose: "Content displayed directly on tertiary-container.",
 
-    background: "tertiary-container",
+    tenantCustomisable: true,
+    token: "af.sys.color.on-tertiary-container",
+  },
+  tertiary: {
+    domain: "accent",
+
+    foreground: "on-tertiary",
+
+    purpose:
+      "Contrasting accent for deliberate differentiation and rare heightened attention.",
 
     tenantCustomisable: true,
+    token: "af.sys.color.tertiary",
+  },
+
+  "tertiary-container": {
+    domain: "accent",
+
+    foreground: "on-tertiary-container",
+
+    purpose: "Lower-intensity tertiary container.",
+
+    tenantCustomisable: true,
+    token: "af.sys.color.tertiary-container",
   },
 } as const;
 
@@ -447,53 +429,49 @@ export const TERTIARY_ROLES = {
  */
 export const ERROR_ROLES = {
   error: {
-    token: "af.sys.color.error",
-
     domain: "status",
+
+    foreground: "on-error",
 
     purpose:
       "Validation failure, destructive action, failed operation, or error requiring corrective attention.",
 
-    foreground: "on-error",
+    tenantCustomisable: false,
+    token: "af.sys.color.error",
+  },
+
+  "error-container": {
+    domain: "status",
+
+    foreground: "on-error-container",
+
+    purpose:
+      "Lower-intensity container communicating error or destructive meaning.",
 
     tenantCustomisable: false,
+    token: "af.sys.color.error-container",
   },
 
   "on-error": {
-    token: "af.sys.color.on-error",
+    background: "error",
 
     domain: "content",
 
     purpose: "Content displayed directly on error.",
 
-    background: "error",
-
     tenantCustomisable: false,
-  },
-
-  "error-container": {
-    token: "af.sys.color.error-container",
-
-    domain: "status",
-
-    purpose:
-      "Lower-intensity container communicating error or destructive meaning.",
-
-    foreground: "on-error-container",
-
-    tenantCustomisable: false,
+    token: "af.sys.color.on-error",
   },
 
   "on-error-container": {
-    token: "af.sys.color.on-error-container",
+    background: "error-container",
 
     domain: "content",
 
     purpose: "Content displayed directly on error-container.",
 
-    background: "error-container",
-
     tenantCustomisable: false,
+    token: "af.sys.color.on-error-container",
   },
 } as const;
 
@@ -519,56 +497,48 @@ export const ERROR_ROLES = {
  */
 export const SURFACE_ROLES = {
   surface: {
-    token: "af.sys.color.surface",
+    foreground: "on-surface",
 
     purpose: "Default workspace surface and canonical neutral background.",
-
-    foreground: "on-surface",
-  },
-
-  "surface-dim": {
-    token: "af.sys.color.surface-dim",
-
-    purpose:
-      "Deliberately dimmer surface used where stable tonal differentiation is required.",
+    token: "af.sys.color.surface",
   },
 
   "surface-bright": {
-    token: "af.sys.color.surface-bright",
-
     purpose:
       "Deliberately brighter surface used where stable tonal differentiation is required.",
-  },
-
-  "surface-container-lowest": {
-    token: "af.sys.color.surface-container-lowest",
-
-    purpose: "Lowest-emphasis contained surface.",
-  },
-
-  "surface-container-low": {
-    token: "af.sys.color.surface-container-low",
-
-    purpose: "Low-emphasis contained surface.",
+    token: "af.sys.color.surface-bright",
   },
 
   "surface-container": {
-    token: "af.sys.color.surface-container",
-
     purpose:
       "Default contained surface for panels, cards, grouped regions, and workspace structures.",
+    token: "af.sys.color.surface-container",
   },
 
   "surface-container-high": {
-    token: "af.sys.color.surface-container-high",
-
     purpose: "Higher-emphasis contained surface.",
+    token: "af.sys.color.surface-container-high",
   },
 
   "surface-container-highest": {
-    token: "af.sys.color.surface-container-highest",
-
     purpose: "Highest-emphasis neutral contained surface.",
+    token: "af.sys.color.surface-container-highest",
+  },
+
+  "surface-container-low": {
+    purpose: "Low-emphasis contained surface.",
+    token: "af.sys.color.surface-container-low",
+  },
+
+  "surface-container-lowest": {
+    purpose: "Lowest-emphasis contained surface.",
+    token: "af.sys.color.surface-container-lowest",
+  },
+
+  "surface-dim": {
+    purpose:
+      "Deliberately dimmer surface used where stable tonal differentiation is required.",
+    token: "af.sys.color.surface-dim",
   },
 } as const;
 
@@ -580,21 +550,19 @@ export type SurfaceRole = keyof typeof SURFACE_ROLES;
 
 export const SURFACE_CONTENT_ROLES = {
   "on-surface": {
-    token: "af.sys.color.on-surface",
+    emphasis: "primary",
 
     purpose:
       "Primary text, icons, and information on surfaces and surface containers.",
-
-    emphasis: "primary",
+    token: "af.sys.color.on-surface",
   },
 
   "on-surface-variant": {
-    token: "af.sys.color.on-surface-variant",
+    emphasis: "secondary",
 
     purpose:
       "Lower-emphasis supporting text, icons, metadata, and secondary information on surfaces.",
-
-    emphasis: "secondary",
+    token: "af.sys.color.on-surface-variant",
   },
 } as const;
 
@@ -613,44 +581,44 @@ export const SURFACE_CONTAINER_ORDER = [
 export const SURFACE_RULES = [
   {
     id: "AF-COL-009",
-    strength: "must",
 
     rule: "Surface-container roles communicate containment emphasis rather than elevation height.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-010",
-    strength: "must",
 
     rule: "Surface hierarchy is preferred over excessive accent colour for structuring dense enterprise screens.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-011",
-    strength: "must",
 
     rule: "A component must not assume that a numerically or visually stronger surface implies a higher stacking layer.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-012",
-    strength: "should",
 
     rule: "Most Afenda workspace area should remain within the surface family rather than accent families.",
+    strength: "should",
   },
 
   {
     id: "AF-COL-013",
-    strength: "should",
 
     rule: "Adjacent surface levels should be used only where containment distinction improves comprehension.",
+    strength: "should",
   },
 
   {
     id: "AF-COL-014",
-    strength: "must",
 
     rule: "Surface containers use on-surface or on-surface-variant content unless a component contract declares another valid pair.",
+    strength: "must",
   },
 ] as const;
 
@@ -659,43 +627,39 @@ export const SURFACE_RULES = [
 // -----------------------------------------------------------------------------
 
 export const INVERSE_ROLES = {
-  "inverse-surface": {
-    token: "af.sys.color.inverse-surface",
-
-    purpose:
-      "Contrasting surface used for temporary or deliberately inverted presentation.",
-
-    foreground: "inverse-on-surface",
-  },
-
   "inverse-on-surface": {
-    token: "af.sys.color.inverse-on-surface",
+    background: "inverse-surface",
 
     purpose: "Content displayed directly on inverse-surface.",
-
-    background: "inverse-surface",
+    token: "af.sys.color.inverse-on-surface",
   },
 
   "inverse-primary": {
-    token: "af.sys.color.inverse-primary",
-
     purpose: "Primary action/accent used within inverse presentation.",
+    token: "af.sys.color.inverse-primary",
+  },
+  "inverse-surface": {
+    foreground: "inverse-on-surface",
+
+    purpose:
+      "Contrasting surface used for temporary or deliberately inverted presentation.",
+    token: "af.sys.color.inverse-surface",
   },
 } as const;
 
 export const INVERSE_RULES = [
   {
     id: "AF-COL-015",
-    strength: "must",
 
     rule: "Inverse roles represent intentional local inversion and are not aliases for dark theme.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-016",
-    strength: "should",
 
     rule: "Inverse roles are reserved for temporary, floating, notification, or strongly contrasting presentation.",
+    strength: "should",
   },
 ] as const;
 
@@ -705,29 +669,26 @@ export const INVERSE_RULES = [
 
 export const STRUCTURAL_ROLES = {
   outline: {
-    token: "af.sys.color.outline",
-
     purpose:
       "Meaningful boundaries whose visibility contributes to interaction or structure.",
 
     tenantCustomisable: false,
+    token: "af.sys.color.outline",
   },
 
   "outline-variant": {
-    token: "af.sys.color.outline-variant",
-
     purpose: "Lower-emphasis decorative boundaries and separators.",
 
     tenantCustomisable: false,
+    token: "af.sys.color.outline-variant",
   },
 
   scrim: {
-    token: "af.sys.color.scrim",
-
     purpose:
       "Obscuring layer used to reduce background prominence behind modal or transient content.",
 
     tenantCustomisable: false,
+    token: "af.sys.color.scrim",
   },
 } as const;
 
@@ -780,23 +741,23 @@ export const FIXED_ROLE_SEMANTICS = {
 export const FIXED_ROLE_RULES = [
   {
     id: "AF-COL-017",
-    strength: "must",
 
     rule: "Fixed accent roles are used only when preserving tonal presentation across themes is itself required.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-018",
-    strength: "must",
 
     rule: "Fixed roles must not replace normal accent/container roles merely to avoid implementing theme-aware resolution.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-019",
-    strength: "should",
 
     rule: "Most standard Afenda components should not require fixed roles.",
+    strength: "should",
   },
 ] as const;
 
@@ -812,28 +773,24 @@ export const FIXED_ROLE_RULES = [
  */
 export const M3_COMPATIBILITY_ROLES = {
   background: {
-    disposition: "adapt",
-
     afenda: "Use surface as the canonical workspace background semantic.",
+    disposition: "adapt",
   },
 
   "on-background": {
-    disposition: "adapt",
-
     afenda: "Use on-surface as the canonical workspace-content semantic.",
-  },
-
-  "surface-variant": {
     disposition: "adapt",
-
-    afenda: "Prefer the explicit surface-container ladder.",
   },
 
   "surface-tint": {
-    disposition: "reject",
-
     afenda:
       "Afenda does not use surface tint as a public colour semantic; tonal surface hierarchy is explicit.",
+    disposition: "reject",
+  },
+
+  "surface-variant": {
+    afenda: "Prefer the explicit surface-container ladder.",
+    disposition: "adapt",
   },
 } as const satisfies Readonly<
   Record<
@@ -858,32 +815,27 @@ export const M3_COMPATIBILITY_ROLES = {
  * They are independent of accent families.
  */
 export const STATUS_FAMILIES = {
-  positive: {
-    purpose:
-      "Successful, healthy, favourable, completed, gained, or confirmed state.",
-
+  informative: {
     emotionalIntensity: "low",
+    purpose:
+      "Contextual or notable information that does not imply success, failure, or warning.",
   },
 
   negative: {
+    emotionalIntensity: "low",
     purpose:
       "Unfavourable, declined, decreased, lost, overdue, or adverse business state that is not inherently a system error.",
-
+  },
+  positive: {
     emotionalIntensity: "low",
+    purpose:
+      "Successful, healthy, favourable, completed, gained, or confirmed state.",
   },
 
   warning: {
+    emotionalIntensity: "medium",
     purpose:
       "Condition requiring attention or caution before it becomes a failure or adverse result.",
-
-    emotionalIntensity: "medium",
-  },
-
-  informative: {
-    purpose:
-      "Contextual or notable information that does not imply success, failure, or warning.",
-
-    emotionalIntensity: "low",
   },
 } as const;
 
@@ -905,32 +857,31 @@ export const STATUS_ROLE_PATTERN = [
 // -----------------------------------------------------------------------------
 
 export const STATUS_ROLES = {
-  positive: {
-    base: "positive",
-    onBase: "on-positive",
-    container: "positive-container",
-    onContainer: "on-positive-container",
+  informative: {
+    base: "informative",
+    container: "informative-container",
+    onBase: "on-informative",
+    onContainer: "on-informative-container",
   },
 
   negative: {
     base: "negative",
-    onBase: "on-negative",
     container: "negative-container",
+    onBase: "on-negative",
     onContainer: "on-negative-container",
+  },
+  positive: {
+    base: "positive",
+    container: "positive-container",
+    onBase: "on-positive",
+    onContainer: "on-positive-container",
   },
 
   warning: {
     base: "warning",
-    onBase: "on-warning",
     container: "warning-container",
+    onBase: "on-warning",
     onContainer: "on-warning-container",
-  },
-
-  informative: {
-    base: "informative",
-    onBase: "on-informative",
-    container: "informative-container",
-    onContainer: "on-informative-container",
   },
 } as const;
 
@@ -960,44 +911,44 @@ export const ERROR_STATUS_DISTINCTION = {
 export const STATUS_RULES = [
   {
     id: "AF-COL-020",
-    strength: "must",
 
     rule: "Primary, secondary, and tertiary accent colours must not encode enterprise status meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-021",
-    strength: "must",
 
     rule: "Error and negative are separate semantics even when Level 2 chooses related colour families.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-022",
-    strength: "must",
 
     rule: "Status meaning must remain stable across tenants and themes.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-023",
-    strength: "must",
 
     rule: "Status colour must be accompanied by sufficient non-colour information when the status is consequential.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-024",
-    strength: "must",
 
     rule: "Tenant customisation must not change status-family meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-025",
-    strength: "should",
 
     rule: "Status colour is used sparingly in dense tables and dashboards so exceptional information remains distinguishable.",
+    strength: "should",
   },
 ] as const;
 
@@ -1016,17 +967,17 @@ export const DATA_COLOR_FAMILIES = {
     purpose: "Distinguish unordered peer series or categories.",
   },
 
-  sequential: {
-    purpose: "Represent increasing magnitude of one measure.",
+  comparison: {
+    purpose:
+      "Distinguish actual, forecast, target, benchmark, or reference information.",
   },
 
   diverging: {
     purpose: "Represent movement or magnitude around a meaningful midpoint.",
   },
 
-  comparison: {
-    purpose:
-      "Distinguish actual, forecast, target, benchmark, or reference information.",
+  sequential: {
+    purpose: "Represent increasing magnitude of one measure.",
   },
 } as const;
 
@@ -1070,51 +1021,51 @@ export const DATA_COMPARISON_ROLES = [
 export const DATA_COLOR_RULES = [
   {
     id: "AF-COL-026",
-    strength: "must",
 
     rule: "Data-visualisation colour is governed independently from application accent colour.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-027",
-    strength: "must",
 
     rule: "Categorical colour communicates distinction but not ordinal magnitude.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-028",
-    strength: "must",
 
     rule: "Sequential colour communicates ordered magnitude.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-029",
-    strength: "must",
 
     rule: "Diverging colour requires a meaningful midpoint.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-030",
-    strength: "must",
 
     rule: "Status colours must not be reused as arbitrary categorical series colours.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-031",
-    strength: "must",
 
     rule: "Charts containing consequential distinctions must provide a non-colour means of identifying those distinctions.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-032",
-    strength: "should",
 
     rule: "Data visualisations use the minimum number of distinct colour series required to communicate the information clearly.",
+    strength: "should",
   },
 ] as const;
 
@@ -1173,23 +1124,23 @@ export const COLOR_PAIRS = [
 export const COLOR_PAIR_RULES = [
   {
     id: "AF-COL-033",
-    strength: "must",
 
     rule: "An on-* role is used only on backgrounds for which the colour language declares it compatible.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-034",
-    strength: "must",
 
     rule: "A foreground role does not inherit compatibility merely because its current resolved value passes a contrast test.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-035",
-    strength: "must",
 
     rule: "A container and its content pair must be validated together in every supported applicable colour context.",
+    strength: "must",
   },
 ] as const;
 
@@ -1203,36 +1154,35 @@ export const COLOR_PAIR_RULES = [
  * Colour should not become a five-level text-opacity system.
  */
 export const CONTENT_COLOR_ROLES = {
-  primary: "on-surface",
-
-  secondary: "on-surface-variant",
-
   disabled:
     "owned by interaction/component contracts rather than a global semantic text colour",
 
   inverse: "inverse-on-surface",
+  primary: "on-surface",
+
+  secondary: "on-surface-variant",
 } as const;
 
 export const CONTENT_COLOR_RULES = [
   {
     id: "AF-COL-036",
-    strength: "must",
 
     rule: "Typography hierarchy should be established primarily through typography and composition rather than a proliferation of text colours.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-037",
-    strength: "should",
 
     rule: "Use on-surface for primary information and on-surface-variant for supporting information.",
+    strength: "should",
   },
 
   {
     id: "AF-COL-038",
-    strength: "must",
 
     rule: "Disabled appearance is owned by interaction/component semantics and must not create a universal disabled-content role that ignores component context.",
+    strength: "must",
   },
 ] as const;
 
@@ -1243,11 +1193,11 @@ export const CONTENT_COLOR_RULES = [
 export const COLOR_THEME_CONTEXT = {
   context: "theme" satisfies TokenContextId,
 
-  supported: ["light", "dark"],
-
   default: "light",
 
   semanticsInvariant: true,
+
+  supported: ["light", "dark"],
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1262,13 +1212,13 @@ export const COLOR_THEME_CONTEXT = {
 export const COLOR_CONTRAST_CONTEXT = {
   context: "contrast" satisfies TokenContextId,
 
-  supported: ["standard", "medium", "high"],
-
   default: "standard",
+
+  reducedContrast: "deferred",
 
   semanticsInvariant: true,
 
-  reducedContrast: "deferred",
+  supported: ["standard", "medium", "high"],
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1278,9 +1228,9 @@ export const COLOR_CONTRAST_CONTEXT = {
 export const COLOR_TENANT_CONTEXT = {
   context: "tenant" satisfies TokenContextId,
 
-  policy: "deny-by-default",
-
   customisableFamilies: ["primary", "secondary", "tertiary"],
+
+  policy: "deny-by-default",
 
   protectedFamilies: [
     "surface",
@@ -1311,37 +1261,37 @@ export const COLOR_CONTEXT_INVARIANTS = {
 export const COLOR_CONTEXT_RULES = [
   {
     id: "AF-COL-039",
-    strength: "must",
 
     rule: "Light and dark themes may resolve different values but preserve identical semantic colour-role identities.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-040",
-    strength: "must",
 
     rule: "Contrast preference changes resolution where required without changing semantic hierarchy or status meaning.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-041",
-    strength: "must",
 
     rule: "Density must not change semantic colour.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-042",
-    strength: "must",
 
     rule: "Writing direction must not change semantic colour.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-043",
-    strength: "must",
 
     rule: "Tenant theme changes may affect only roles explicitly declared tenant-customisable.",
+    strength: "must",
   },
 ] as const;
 
@@ -1352,37 +1302,37 @@ export const COLOR_CONTEXT_RULES = [
 export const COLOR_TENANT_RULES = [
   {
     id: "AF-COL-044",
-    strength: "must",
 
     rule: "Tenant accent customisation changes expression but not action hierarchy.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-045",
-    strength: "must",
 
     rule: "Tenant colours must satisfy the same pairing and accessibility contracts as Afenda defaults.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-046",
-    strength: "must",
 
     rule: "Tenant customisation cannot redefine error, positive, negative, warning, or informative semantics.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-047",
-    strength: "must",
 
     rule: "Tenant customisation cannot directly override individual component-private colour tokens.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-048",
-    strength: "should",
 
     rule: "Tenant branding should be concentrated in accent roles rather than recolouring the entire enterprise workspace.",
+    strength: "should",
   },
 ] as const;
 
@@ -1407,30 +1357,30 @@ export const COLOR_ACCESSIBILITY_REQUIREMENTS = [
 export const COLOR_ACCESSIBILITY_RULES = [
   {
     id: "AF-COL-049",
-    strength: "must",
 
     rule: "Every foreground/background pair must satisfy the applicable accessibility contract.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-050",
-    strength: "must",
 
     rule: "A semantic distinction that affects task completion cannot rely on colour alone.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-051",
-    strength: "must",
 
     rule: "Tenant and theme resolution must not weaken the applicable accessibility requirement.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-052",
-    strength: "must",
 
     rule: "Data visualisation must remain interpretable when colour perception is reduced or absent.",
+    strength: "must",
   },
 ] as const;
 
@@ -1454,9 +1404,8 @@ export const COLOR_ACCESSIBILITY_RULES = [
  * Component contracts decide how those states select or transform colour roles.
  */
 export const COLOR_STATE_RELATIONSHIP = {
-  owner: "interaction",
-
   colorContext: false,
+  owner: "interaction",
 
   principle:
     "Interaction state may change the colour role or presentation used by a component, but does not redefine the global colour system.",
@@ -1465,23 +1414,23 @@ export const COLOR_STATE_RELATIONSHIP = {
 export const COLOR_STATE_RULES = [
   {
     id: "AF-COL-053",
-    strength: "must",
 
     rule: "Hover, focus, pressed, selected, disabled, loading, and invalid are not global colour contexts.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-054",
-    strength: "must",
 
     rule: "A component state may select a different permitted semantic role only when its Level-1 component contract defines that behaviour.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-055",
-    strength: "must",
 
     rule: "Focus indication must not be derived solely from hover or selection colour.",
+    strength: "must",
   },
 ] as const;
 
@@ -1494,44 +1443,44 @@ export const COLOR_STATE_RULES = [
  */
 export const COLOR_USAGE_HIERARCHY = [
   {
-    rank: 1,
     family: "surface",
+    rank: 1,
     usage: "dominant",
   },
 
   {
-    rank: 2,
     family: "content",
+    rank: 2,
     usage: "dominant",
   },
 
   {
-    rank: 3,
     family: "structure",
+    rank: 3,
     usage: "supporting",
   },
 
   {
-    rank: 4,
     family: "primary",
+    rank: 4,
     usage: "selective",
   },
 
   {
-    rank: 5,
     family: "secondary",
+    rank: 5,
     usage: "limited",
   },
 
   {
-    rank: 6,
     family: "tertiary",
+    rank: 6,
     usage: "rare",
   },
 
   {
-    rank: 7,
     family: "status",
+    rank: 7,
     usage: "semantic-only",
   },
 ] as const;
@@ -1543,30 +1492,30 @@ export const COLOR_USAGE_HIERARCHY = [
 export const COLOR_RESTRAINT_RULES = [
   {
     id: "AF-COL-056",
-    strength: "must",
 
     rule: "Colour prominence must correspond to semantic importance.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-057",
-    strength: "should",
 
     rule: "Dense workspaces should obtain hierarchy primarily from surfaces, spacing, typography, and alignment before introducing additional accent colour.",
+    strength: "should",
   },
 
   {
     id: "AF-COL-058",
-    strength: "should",
 
     rule: "Tertiary colour should be uncommon enough that its appearance carries meaningful differentiation.",
+    strength: "should",
   },
 
   {
     id: "AF-COL-059",
-    strength: "must",
 
     rule: "Status colour is not decorative.",
+    strength: "must",
   },
 ] as const;
 
@@ -1598,26 +1547,33 @@ export const COLOR_PUBLIC_API = {
     ],
   },
 
-  surface: [
-    "surface",
-    "surface-dim",
-    "surface-bright",
+  data: {
+    categorical: DATA_CATEGORICAL_ROLES,
+    comparison: DATA_COMPARISON_ROLES,
+    diverging: DATA_DIVERGING_ROLES,
+    sequential: DATA_SEQUENTIAL_ROLES,
+  },
 
-    "surface-container-lowest",
-    "surface-container-low",
-    "surface-container",
-    "surface-container-high",
-    "surface-container-highest",
+  error: ["error", "on-error", "error-container", "on-error-container"],
 
-    "on-surface",
-    "on-surface-variant",
+  fixed: [
+    "primary-fixed",
+    "primary-fixed-dim",
+    "on-primary-fixed",
+    "on-primary-fixed-variant",
+
+    "secondary-fixed",
+    "secondary-fixed-dim",
+    "on-secondary-fixed",
+    "on-secondary-fixed-variant",
+
+    "tertiary-fixed",
+    "tertiary-fixed-dim",
+    "on-tertiary-fixed",
+    "on-tertiary-fixed-variant",
   ],
 
   inverse: ["inverse-surface", "inverse-on-surface", "inverse-primary"],
-
-  structure: ["outline", "outline-variant", "scrim"],
-
-  error: ["error", "on-error", "error-container", "on-error-container"],
 
   status: [
     "positive",
@@ -1641,29 +1597,22 @@ export const COLOR_PUBLIC_API = {
     "on-informative-container",
   ],
 
-  fixed: [
-    "primary-fixed",
-    "primary-fixed-dim",
-    "on-primary-fixed",
-    "on-primary-fixed-variant",
+  structure: ["outline", "outline-variant", "scrim"],
 
-    "secondary-fixed",
-    "secondary-fixed-dim",
-    "on-secondary-fixed",
-    "on-secondary-fixed-variant",
+  surface: [
+    "surface",
+    "surface-dim",
+    "surface-bright",
 
-    "tertiary-fixed",
-    "tertiary-fixed-dim",
-    "on-tertiary-fixed",
-    "on-tertiary-fixed-variant",
+    "surface-container-lowest",
+    "surface-container-low",
+    "surface-container",
+    "surface-container-high",
+    "surface-container-highest",
+
+    "on-surface",
+    "on-surface-variant",
   ],
-
-  data: {
-    categorical: DATA_CATEGORICAL_ROLES,
-    sequential: DATA_SEQUENTIAL_ROLES,
-    diverging: DATA_DIVERGING_ROLES,
-    comparison: DATA_COMPARISON_ROLES,
-  },
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1672,80 +1621,70 @@ export const COLOR_PUBLIC_API = {
 
 export const COLOR_FORBIDS = [
   {
-    id: "AF-COL-060",
-    strength: "must",
-
     behaviour:
       "application code selects colour by literal hue or palette step when a semantic role exists",
+    id: "AF-COL-060",
+    strength: "must",
   },
 
   {
-    id: "AF-COL-061",
-    strength: "must",
-
     behaviour:
       "primary, secondary, or tertiary are used as aliases for business status",
+    id: "AF-COL-061",
+    strength: "must",
   },
 
   {
+    behaviour: "status roles are used decoratively",
     id: "AF-COL-062",
     strength: "must",
-
-    behaviour: "status roles are used decoratively",
   },
 
   {
-    id: "AF-COL-063",
-    strength: "must",
-
     behaviour:
       "data series consume status colours merely because their hues are visually distinct",
+    id: "AF-COL-063",
+    strength: "must",
   },
 
   {
-    id: "AF-COL-064",
-    strength: "must",
-
     behaviour:
       "tenant configuration directly supplies arbitrary component colours",
+    id: "AF-COL-064",
+    strength: "must",
   },
 
   {
-    id: "AF-COL-065",
-    strength: "must",
-
     behaviour:
       "an on-* role is placed on an undeclared background solely because the current values appear readable",
+    id: "AF-COL-065",
+    strength: "must",
   },
 
   {
-    id: "AF-COL-066",
-    strength: "must",
-
     behaviour:
       "dark theme is implemented by treating inverse roles as a dark-theme palette",
+    id: "AF-COL-066",
+    strength: "must",
   },
 
   {
+    behaviour: "surface-container levels are interpreted as z-index values",
     id: "AF-COL-067",
     strength: "must",
-
-    behaviour: "surface-container levels are interpreted as z-index values",
   },
 
   {
+    behaviour: "colour is the sole representation of a consequential state",
     id: "AF-COL-068",
     strength: "must",
-
-    behaviour: "colour is the sole representation of a consequential state",
   },
 
   {
-    id: "AF-COL-069",
-    strength: "must",
-
     behaviour:
       "components introduce public semantic colours absent from this language or their component contract",
+    id: "AF-COL-069",
+    strength: "must",
   },
 ] as const;
 
@@ -1759,16 +1698,16 @@ export const COLOR_FORBIDS = [
  * The actual value belongs to Level 2.
  */
 export interface ColorTokenDefinition extends SystemTokenDefinition {
-  readonly tier: "system";
   readonly category: "color";
+
+  readonly compatibleBackgrounds?: readonly string[];
+
+  readonly compatibleForegrounds?: readonly string[];
 
   readonly domain: ColorDomain;
 
   readonly tenantCustomisable: boolean;
-
-  readonly compatibleForegrounds?: readonly string[];
-
-  readonly compatibleBackgrounds?: readonly string[];
+  readonly tier: "system";
 }
 
 // -----------------------------------------------------------------------------
@@ -1777,13 +1716,8 @@ export interface ColorTokenDefinition extends SystemTokenDefinition {
 
 export const COLOR_SOURCES = [
   {
-    id: "m3-color-system",
-
-    system: "Material 3",
-
-    kind: "design-system",
-
-    disposition: "adapt",
+    adaptation:
+      "Afenda preserves M3's semantic role architecture while adding enterprise status and analytical colour semantics, constraining tenant customisation, and rejecting consumer dynamic-colour behaviour as a product requirement.",
 
     contribution: [
       "semantic colour roles",
@@ -1798,18 +1732,17 @@ export const COLOR_SOURCES = [
       "contrast-aware colour resolution",
     ],
 
-    adaptation:
-      "Afenda preserves M3's semantic role architecture while adding enterprise status and analytical colour semantics, constraining tenant customisation, and rejecting consumer dynamic-colour behaviour as a product requirement.",
+    disposition: "adapt",
+    id: "m3-color-system",
+
+    kind: "design-system",
+
+    system: "Material 3",
   },
 
   {
-    id: "m3-material-color-utilities",
-
-    system: "Material Color Utilities",
-
-    kind: "colour-engine",
-
-    disposition: "adapt",
+    adaptation:
+      "Palette-generation mathematics may be used by Level 3, but algorithm choice and concrete colour values are not Level-1 design semantics.",
 
     contribution: [
       "scheme-based role resolution",
@@ -1817,8 +1750,12 @@ export const COLOR_SOURCES = [
       "source-colour derived palette capability",
     ],
 
-    adaptation:
-      "Palette-generation mathematics may be used by Level 3, but algorithm choice and concrete colour values are not Level-1 design semantics.",
+    disposition: "adapt",
+    id: "m3-material-color-utilities",
+
+    kind: "colour-engine",
+
+    system: "Material Color Utilities",
   },
 ] as const satisfies readonly {
   id: string;
@@ -1834,41 +1771,40 @@ export const COLOR_SOURCES = [
 // -----------------------------------------------------------------------------
 
 export const M3_COLOR_DISPOSITION = {
-  "semantic-role-model": "adopt",
-
-  "primary-family": "adopt",
-  "secondary-family": "adopt",
-  "tertiary-family": "adopt",
-
-  "error-family": "adopt",
-
-  "surface-family": "adopt",
-
-  "surface-container-ladder": "adopt",
-
-  "inverse-family": "adopt",
-
-  "outline-family": "adopt",
-
-  "fixed-accent-family": "adopt",
-
-  "light-dark-context": "adopt",
-
-  "contrast-context": "adapt",
+  "analytical-colour-system": "adapt",
 
   "background-role": "adapt",
 
-  "surface-variant-role": "adapt",
-
-  "surface-tint-role": "reject",
-
-  "wallpaper-dynamic-colour": "reject",
-
   "content-derived-dynamic-colour": "defer",
+
+  "contrast-context": "adapt",
 
   "enterprise-status-system": "adapt",
 
-  "analytical-colour-system": "adapt",
+  "error-family": "adopt",
+
+  "fixed-accent-family": "adopt",
+
+  "inverse-family": "adopt",
+
+  "light-dark-context": "adopt",
+
+  "outline-family": "adopt",
+
+  "primary-family": "adopt",
+  "secondary-family": "adopt",
+  "semantic-role-model": "adopt",
+
+  "surface-container-ladder": "adopt",
+
+  "surface-family": "adopt",
+
+  "surface-tint-role": "reject",
+
+  "surface-variant-role": "adapt",
+  "tertiary-family": "adopt",
+
+  "wallpaper-dynamic-colour": "reject",
 } as const satisfies Readonly<Record<string, SourceDisposition>>;
 
 // -----------------------------------------------------------------------------
@@ -1887,19 +1823,18 @@ export const M3_COLOR_DISPOSITION = {
  * That does not make dynamic colour a Level-1 product capability.
  */
 export const COLOR_SCHEME_STRATEGY = {
-  productScheme: "static-custom",
-
-  themeModes: ["light", "dark"],
+  contentDerived: false,
 
   contrastModes: ["standard", "medium", "high"],
 
+  generatorMayDeriveReferencePalette: true,
+  productScheme: "static-custom",
+
   tenantExpression: "governed",
 
+  themeModes: ["light", "dark"],
+
   wallpaperDerived: false,
-
-  contentDerived: false,
-
-  generatorMayDeriveReferencePalette: true,
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -1909,49 +1844,49 @@ export const COLOR_SCHEME_STRATEGY = {
 export const COLOR_IMPLEMENTATION_OBLIGATIONS = [
   {
     id: "AF-COL-070",
-    strength: "must",
 
     obligation:
       "Every active public colour role has a deterministic Level-2 resolution for every supported applicable colour context.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-071",
-    strength: "must",
 
     obligation:
       "Level 2 preserves declared foreground/background pair relationships.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-072",
-    strength: "must",
 
     obligation:
       "Level 2 implements the complete supported surface-container hierarchy.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-073",
-    strength: "must",
 
     obligation:
       "Light and dark schemes preserve identical semantic role identities.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-074",
-    strength: "must",
 
     obligation: "Tenant resolution cannot mutate protected semantic families.",
+    strength: "must",
   },
 
   {
     id: "AF-COL-075",
-    strength: "must",
 
     obligation:
       "Analytical colour is implemented independently from application accent and status colour.",
+    strength: "must",
   },
 ] as const;
 
@@ -2025,20 +1960,7 @@ export const COLOR_GOVERNANCE_REQUIREMENTS = [
 // -----------------------------------------------------------------------------
 
 export const COLOR_CONFORMANCE = {
-  language: [
-    "semantic-role-defined",
-    "role-domain-defined",
-    "pair-defined",
-    "context-policy-defined",
-    "tenant-policy-defined",
-  ],
-
-  implementation: [
-    "role-resolved",
-    "theme-resolved",
-    "contrast-resolved",
-    "tenant-safe",
-  ],
+  completeWhen: ["language-defined", "implemented", "proven"],
 
   governance: [
     "pair-validated",
@@ -2047,7 +1969,19 @@ export const COLOR_CONFORMANCE = {
     "semantic-boundary-validated",
   ],
 
-  completeWhen: ["language-defined", "implemented", "proven"],
+  implementation: [
+    "role-resolved",
+    "theme-resolved",
+    "contrast-resolved",
+    "tenant-safe",
+  ],
+  language: [
+    "semantic-role-defined",
+    "role-domain-defined",
+    "pair-defined",
+    "context-policy-defined",
+    "tenant-policy-defined",
+  ],
 } as const;
 
 // -----------------------------------------------------------------------------
