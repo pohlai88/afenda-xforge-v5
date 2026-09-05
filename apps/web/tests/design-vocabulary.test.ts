@@ -8,9 +8,11 @@ import { describe, expect, it } from "vitest";
  * or a declared exemption with a reason; an exemption outliving its reason
  * is itself a finding. R5 — the app's compatibility bridge holds no
  * self-referencing or cyclic alias. R10 — a prefers-reduced-motion block
- * collapses every animation and transition. (docs/architecture.md §6.2.
- * The bridge under test is app/globals.css: the transitional shadcn layer
- * over the canonical @xforge/design/styles/index.css, which R11–R14 hold.)
+ * collapses every animation and transition. R16 — a block contract's
+ * statically shaped must-rules hold at every call site.
+ * (docs/architecture.md §6.2. The bridge under test is app/globals.css:
+ * the transitional shadcn layer over the canonical
+ * @xforge/design/styles/index.css, which R11–R14 hold.)
  *
  * Every checker takes text so the fixtures below prove them on planted
  * violations; a green over the tree means the scan ran over a real
@@ -334,5 +336,115 @@ describe("R10 — motion is a preference", () => {
     expect(reducedMotionFindings(planted)).toEqual([
       'missing "transition-duration: 0.01ms !important"',
     ]);
+  });
+});
+
+// ---------------------------------------------------------------- R16 ----
+
+// The common-button rules with a static shape (AF-CMP-COMMON-BUTTON-002 and
+// -004). Axe's button-name rule only sees the screen states the e2e visits;
+// this sees every source line. The rules without a static shape — one
+// default-variant per region (001), destructive acts use the destructive
+// variant (003) — stay review-enforced prose per the register's grammar.
+
+const BUTTON_OPEN = /<Button(?=[\s/>])/g;
+const ICON_SIZE = /\bsize="icon(?:-sm)?"/;
+const ACCESSIBLE_NAME = /\baria-label(?:ledby)?=/;
+const LINK_RENDER = /\brender=\{<(?:Link|a)(?=[\s/>])/;
+
+interface Tag {
+  tag: string;
+  where: string;
+}
+
+/**
+ * Each opening <Button …> tag, from `<Button` to its own `>`. Braced props
+ * are skipped whole, so a nested JSX element inside `render={…}` cannot end
+ * the read early — Ultracite keeps arrow functions out of JSX props, so
+ * braces inside a tag stay balanced.
+ */
+const buttonTags = (source: string, where: string): Tag[] => {
+  const out: Tag[] = [];
+  for (const open of source.matchAll(BUTTON_OPEN)) {
+    const start = open.index ?? 0;
+    let depth = 0;
+    let end = start;
+    for (let at = start; at < source.length; at += 1) {
+      const glyph = source[at];
+      if (glyph === "{") {
+        depth += 1;
+      } else if (glyph === "}") {
+        depth -= 1;
+      } else if (glyph === ">" && depth === 0) {
+        end = at;
+        break;
+      }
+    }
+    out.push({
+      tag: source.slice(start, end + 1),
+      where: `${where}:${source.slice(0, start).split("\n").length}`,
+    });
+  }
+  return out;
+};
+
+const contractFindings = (source: string, where: string): string[] => {
+  const out: string[] = [];
+  for (const { tag, where: at } of buttonTags(source, where)) {
+    if (LINK_RENDER.test(tag)) {
+      out.push(`${at} link-wrap (AF-CMP-COMMON-BUTTON-004)`);
+    }
+    if (ICON_SIZE.test(tag) && !ACCESSIBLE_NAME.test(tag)) {
+      out.push(`${at} unnamed-icon (AF-CMP-COMMON-BUTTON-002)`);
+    }
+  }
+  return out;
+};
+
+describe("R16 — a contract's statically shaped rules hold at every call site", () => {
+  const files = SCREEN_DIRS.flatMap(walk);
+
+  it("reads a real population of Button call sites", () => {
+    const tags = files.flatMap((file) =>
+      buttonTags(readFileSync(file, "utf8"), relative(ROOT, file))
+    );
+    expect(tags.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it("finds every icon-only button named, and no button wrapping a link", () => {
+    const findings = files.flatMap((file) =>
+      contractFindings(readFileSync(file, "utf8"), relative(ROOT, file))
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("proves itself on an icon button with no accessible name", () => {
+    const planted =
+      '<Button size="icon" variant="ghost">\n  <Sun />\n</Button>';
+    expect(contractFindings(planted, "fixture")).toEqual([
+      "fixture:1 unnamed-icon (AF-CMP-COMMON-BUTTON-002)",
+    ]);
+  });
+
+  it("proves itself on a button wrapping a link or an anchor", () => {
+    const planted = [
+      '<Button render={<Link href="/acme" />} size="sm" />',
+      '<Button render={<a href="/acme">Open</a>}>Open</Button>',
+    ].join("\n");
+    expect(contractFindings(planted, "fixture")).toEqual([
+      "fixture:1 link-wrap (AF-CMP-COMMON-BUTTON-004)",
+      "fixture:2 link-wrap (AF-CMP-COMMON-BUTTON-004)",
+    ]);
+  });
+
+  it("leaves the governed forms alone", () => {
+    const allowed = [
+      '<Button aria-label="Toggle theme" size="icon-sm" variant="ghost">',
+      '<Button aria-labelledby={labelId} disabled={pending} size="icon" />',
+      "<DialogTrigger render={<Button />}>Invite member</DialogTrigger>",
+      "<Button nativeButton={false} render={<span />}>Badge-like</Button>",
+      '<ButtonPrimitive size="icon" />',
+    ].join("\n");
+    expect(contractFindings(allowed, "fixture")).toEqual([]);
   });
 });

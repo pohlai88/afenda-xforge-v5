@@ -14,6 +14,10 @@ import { describe, expect, it } from "vitest";
  *
  * Every checker takes CSS text, so the same code proves itself on the
  * planted defects below; a green over the real files means the check ran.
+ *
+ * The ratios are WCAG 2.2, not APCA (which Base UI's accessibility page
+ * suggests): AA conformance is the normative bar the language commits to,
+ * and APCA is the WCAG 3 draft model. Revisit when WCAG 3 is a standard.
  */
 
 // Vitest runs with the package as cwd; import.meta.url is rewritten by Vite.

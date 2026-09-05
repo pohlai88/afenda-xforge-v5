@@ -1,5 +1,5 @@
 import type { MemberFilter } from "@xforge/contracts/member/types";
-import { Button } from "@xforge/design/blocks/common-button";
+import { Button, buttonVariants } from "@xforge/design/blocks/common-button";
 import Link from "next/link";
 import { memberListQueryString } from "../filter";
 
@@ -24,26 +24,24 @@ export const MembersPagination = ({
       </p>
       <div className="flex gap-2">
         {filter.page > 1 ? (
-          <Button
-            render={<Link href={href(filter.page - 1)} />}
-            size="sm"
-            variant="outline"
+          <Link
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            href={href(filter.page - 1)}
           >
             Previous
-          </Button>
+          </Link>
         ) : (
           <Button disabled size="sm" variant="outline">
             Previous
           </Button>
         )}
         {filter.page < pages ? (
-          <Button
-            render={<Link href={href(filter.page + 1)} />}
-            size="sm"
-            variant="outline"
+          <Link
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            href={href(filter.page + 1)}
           >
             Next
-          </Button>
+          </Link>
         ) : (
           <Button disabled size="sm" variant="outline">
             Next
