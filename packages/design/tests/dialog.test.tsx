@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Button } from "@xforge/design/components/button";
+// The behaviour contract pins the block — what the app actually composes.
+import { Button } from "@xforge/design/blocks/common-button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "@xforge/design/components/dialog";
+} from "@xforge/design/blocks/dialog";
 import { describe, expect, it, vi } from "vitest";
 
 const Example = () => (

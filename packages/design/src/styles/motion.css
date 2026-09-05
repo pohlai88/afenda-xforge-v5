@@ -354,6 +354,29 @@
     scale(var(--af-motion-scale-from));
 }
 
+/*
+ * The scrim companion to .af-motion-popup: a full-bleed backdrop only
+ * fades — a scale would pull its edges off the viewport mid-transition.
+ * Same Base UI [data-starting-style]/[data-ending-style] contract,
+ * opacity alone; both reduced-motion strategies compose unchanged.
+ */
+.af-motion-veil {
+  opacity: 1;
+  transition-timing-function: var(--af-motion-easing-enter);
+  transition-duration: var(--af-motion-duration);
+
+  transition-property: opacity;
+}
+
+.af-motion-veil[data-ending-style] {
+  transition-timing-function: var(--af-motion-easing-exit);
+}
+
+.af-motion-veil[data-starting-style],
+.af-motion-veil[data-ending-style] {
+  opacity: 0;
+}
+
 /* ==========================================================================
    PROGRESS MOTION
    ========================================================================== */

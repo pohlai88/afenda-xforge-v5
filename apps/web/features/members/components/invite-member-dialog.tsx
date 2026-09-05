@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@xforge/design/components/dialog";
+} from "@xforge/design/blocks/dialog";
 import { Field, FieldError, FieldLabel } from "@xforge/design/components/field";
 import { Input } from "@xforge/design/components/input";
 import {

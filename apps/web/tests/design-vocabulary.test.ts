@@ -354,6 +354,7 @@ describe("R10 — motion is a preference", () => {
 /** Vendored modules a block has superseded, and the block that replaces each. */
 const SUPERSEDED: Readonly<Record<string, string>> = {
   "@xforge/design/components/button": "@xforge/design/blocks/common-button",
+  "@xforge/design/components/dialog": "@xforge/design/blocks/dialog",
 };
 
 const supersededFindings = (source: string, where: string): string[] => {
@@ -487,7 +488,7 @@ describe("R16 — a contract's statically shaped rules hold at every call site",
   it("leaves the block and the unsuperseded components alone", () => {
     const allowed = [
       'import { Button } from "@xforge/design/blocks/common-button";',
-      'import { Dialog } from "@xforge/design/components/dialog";',
+      'import { Select } from "@xforge/design/components/select";',
     ].join("\n");
     expect(supersededFindings(allowed, "fixture")).toEqual([]);
   });
