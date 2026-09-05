@@ -90,7 +90,11 @@
       "linter": {
         "rules": {
           // Upstream style in generated files; kept pristine so  stays useful.
-          "a11y": { "useSemanticElements": "off" },
+          // Base UI has no Label primitive; shadcn's label.tsx is a bare <label>.
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useSemanticElements": "off"
+          },
           "performance": { "noNamespaceImport": "off" },
           "suspicious": {
             "noArrayIndexKey": "off",
