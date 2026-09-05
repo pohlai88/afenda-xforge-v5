@@ -97,6 +97,12 @@
       "skillPath": "skills/hide-unsafe-assertions/SKILL.md",
       "computedHash": "0e914355ce1f40da352dc784105bc4b120000f1686f4734a8f6ad92175661607"
     },
+    "impeccable-design-polish": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/impeccable-design-polish/SKILL.md",
+      "computedHash": "4e503449a58d0609daba362aea73aebf920b532a9793446158cc8a907e821b78"
+    },
     "liberal-accept-strict-return": {
       "source": "marius-townhouse/effective-typescript-skills",
       "sourceType": "github",
