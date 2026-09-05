@@ -15,6 +15,7 @@
   "dependencies": {
     "@xforge/contracts": "workspace:*",
     "@xforge/design": "workspace:*",
+    "cn": "0.2.5",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",

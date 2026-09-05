@@ -1,13 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import Page from "@/app/page";
+import Page from "@/app/(marketing)/page";
 
 describe("home page", () => {
-  it("renders the ready heading", () => {
+  it("names the product and links to the demo workspace", () => {
     render(<Page />);
-
     expect(
-      screen.getByRole("heading", { name: "Project ready!" })
+      screen.getByRole("heading", { name: "Afenda xForge" })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Open demo workspace" })
+    ).toHaveAttribute("href", "/acme");
   });
 });

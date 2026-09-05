@@ -10,6 +10,12 @@
     // Vendored agent skills / reference docs — not our source; reformatting
     // them breaks skills-lock.json hashes. Ultracite's own ignores use `!!`
     // and survive this list.
+    // Deprecated key, kept on purpose: it is the only setting that stops the
+    // scanner indexing dependency typings. With zod in the graph, Biome's type
+    // inference took ~20 s per check (72 ms with this). The suggested
+    // "!!**/node_modules" in includes does not have the same effect (measured).
+    // tsc owns cross-package types; Biome stays syntactic for node_modules.
+    "experimentalScannerIgnores": ["node_modules"],
     "includes": ["!.agents", "!.claude", "!skills-lock.json"]
   },
   "overrides": [
