@@ -116,8 +116,12 @@
   --af-sys-color-surface-container-lowest: var(--af-ref-color-neutral-100);
   --af-sys-color-surface-container-low: var(--af-ref-color-slate-99);
   --af-sys-color-surface-container: var(--af-ref-color-slate-97);
-  --af-sys-color-surface-container-high: var(--af-ref-color-slate-96);
-  --af-sys-color-surface-container-highest: var(--af-ref-color-slate-93);
+  /* slate-93/slate-90, not slate-96/slate-93: container->high measured
+     0.0117 in Oklab against the 0.015 adjacency floor. Repaired gaps are
+     0.0431 and 0.0315; on-surface-variant still holds 5.30:1 on the
+     darkest step. */
+  --af-sys-color-surface-container-high: var(--af-ref-color-slate-93);
+  --af-sys-color-surface-container-highest: var(--af-ref-color-slate-90);
 
   --af-sys-color-on-surface: var(--af-ref-color-slate-31);
   /* slate-46, not slate-55: measured floor across all eight light surfaces is
@@ -152,7 +156,10 @@
   --af-sys-color-primary-fixed: var(--af-ref-color-blue-91);
   --af-sys-color-primary-fixed-dim: var(--af-ref-color-blue-81);
   --af-sys-color-on-primary-fixed: var(--af-ref-color-blue-35);
-  --af-sys-color-on-primary-fixed-variant: var(--af-ref-color-blue-46);
+  /* blue-40, not blue-46: the variant ink serves both fixed tones (M3),
+     and blue-46 measured 3.85:1 on primary-fixed-dim. blue-40 measures
+     5.17:1 on the dim tone and 7.10:1 on fixed. */
+  --af-sys-color-on-primary-fixed-variant: var(--af-ref-color-blue-40);
 
   /* Fixed tones follow the M3 tone-90/80 shape so one on-colour serves both
      fixed and fixed-dim. teal-69/teal-54 put on-secondary-fixed at 3.80:1 on
@@ -206,7 +213,9 @@
   --af-sys-color-categorical-5: var(--af-ref-color-slate-64);
   --af-sys-color-categorical-6: var(--af-ref-color-blue-45);
   --af-sys-color-categorical-7: var(--af-ref-color-navy-31);
-  --af-sys-color-categorical-8: var(--af-ref-color-teal-69);
+  /* plum-46, not teal-69: 2.58:1 on the ground, and no teal tone clears
+     3:1 while staying tellable from categorical-1. Plum measures 7.14:1. */
+  --af-sys-color-categorical-8: var(--af-ref-color-plum-46);
 
   /* ------------------------------------------------------------------------
      ANALYTICAL — SEQUENTIAL
@@ -358,7 +367,9 @@
   --af-sys-color-categorical-5: var(--af-ref-color-slate-81);
   --af-sys-color-categorical-6: var(--af-ref-color-blue-78);
   --af-sys-color-categorical-7: var(--af-ref-color-navy-97);
-  --af-sys-color-categorical-8: var(--af-ref-color-teal-54);
+  /* plum-72: the categorical-8 identity stays in the plum family across
+     themes (6.58:1 on the dark ground). */
+  --af-sys-color-categorical-8: var(--af-ref-color-plum-72);
 
   /* Analytical — sequential */
   --af-sys-color-sequential-lowest: var(--af-ref-color-blue-28);

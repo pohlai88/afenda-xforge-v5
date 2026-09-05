@@ -1,0 +1,182 @@
+/*
+ * Afenda web — the application stylesheet.
+ *
+ * The canonical design system is @xforge/design/styles/index.css — the ADL
+ * (foundation as data, styles as its Level-2 realisation, held equal by
+ * R11–R14). This file owns only what the app alone can know: font
+ * provisioning (next/font), source globs for the design package, and a
+ * TRANSITIONAL shadcn compatibility bridge that maps the legacy component
+ * vocabulary onto ADL system roles until 10-components/* rewrites each
+ * component in ADL vocabulary. Delete bridge lines as components migrate;
+ * R4 (design-vocabulary.test.ts) holds every bridge token to a consumer,
+ * R5 refuses cycles in it, and R10 pins the reduced-motion collapse below.
+ */
+
+@import "@xforge/design/styles/index.css";
+
+/* Upstream sheets the pre-ADL components still animate and key off. */
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* The design package's sources sit outside this app's auto-detection. */
+@source "../../../packages/design/src/**/*.{ts,tsx}";
+
+/*
+ * next/font provisions the real families (layout.tsx); the ADL reference
+ * tier consumes them here rather than assuming an installed "Geist".
+ */
+:root {
+  --af-ref-type-font-ui:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --af-ref-type-font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/*
+ * TRANSITIONAL shadcn bridge. Every colour alias resolves an ADL system
+ * role, so every pair drawn through it is already measured by R13:
+ * foregrounds are on-surface(-variant) or on-<role>, and fills are the
+ * surfaces and roles the sweep covers. The non-colour namespaces restore
+ * the Tailwind defaults the pre-ADL components still write (spacing, text,
+ * breakpoints, containers) or resolve ADL geometry (radius, shadows).
+ */
+@theme inline {
+  --color-background: var(--af-sys-color-surface);
+  --color-foreground: var(--af-sys-color-on-surface);
+  --color-card: var(--af-sys-color-surface-container-low);
+  --color-card-foreground: var(--af-sys-color-on-surface);
+  --color-popover: var(--af-sys-color-surface-container);
+  --color-popover-foreground: var(--af-sys-color-on-surface);
+  --color-primary: var(--af-sys-color-primary);
+  --color-primary-foreground: var(--af-sys-color-on-primary);
+  /* shadcn's secondary is the quiet tonal control, not the teal accent. */
+  --color-secondary: var(--af-sys-color-surface-container-high);
+  --color-secondary-foreground: var(--af-sys-color-on-surface);
+  /* muted keeps its legacy physics: the one fill below the ground. */
+  --color-muted: var(--af-sys-color-surface-dim);
+  --color-muted-foreground: var(--af-sys-color-on-surface-variant);
+  /* accent is the hover/selected surface, never the tertiary accent. */
+  --color-accent: var(--af-sys-color-surface-container-highest);
+  --color-accent-foreground: var(--af-sys-color-on-surface);
+  --color-destructive: var(--af-sys-color-error);
+  --color-border: var(--af-sys-color-outline-variant);
+  --color-input: var(--af-sys-color-outline);
+  --color-ring: var(--af-sys-color-primary);
+  /* Lighter than the ground in light, a bezel below it in dark — the
+     ladder's lowest step has exactly the legacy sidebar's physics. */
+  --color-sidebar: var(--af-sys-color-surface-container-lowest);
+  /* black: the dialog overlay (bg-black/50). white returns with a consumer. */
+  --color-black: #000;
+  --font-sans: var(--af-sys-typeface-ui);
+  --font-mono: var(--af-sys-typeface-mono);
+  --font-heading: var(--font-sans);
+  --radius-sm: var(--af-sys-shape-control);
+  --radius-md: var(--af-sys-shape-container);
+  --radius-lg: var(--af-sys-shape-overlay);
+  --radius-xl: var(--af-sys-shape-prominent);
+  --radius-2xl: var(--af-sys-shape-prominent);
+  --radius-3xl: var(--af-sys-shape-prominent);
+  --radius-4xl: var(--af-sys-shape-prominent);
+  --spacing: 0.25rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+  --container-3xs: 16rem;
+  --container-2xs: 18rem;
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+  --shadow-2xs: var(--af-sys-elevation-raised);
+  --shadow-xs: var(--af-sys-elevation-raised);
+  --shadow-sm: var(--af-sys-elevation-raised);
+  --shadow-md: var(--af-sys-elevation-floating);
+  --shadow-lg: var(--af-sys-elevation-modal);
+  --shadow-xl: var(--af-sys-elevation-modal);
+  --blur-xs: 4px;
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default spin/pulse for loaders and skeletons (keyframes emit when the
+   token is referenced, so they live outside the bridge block above). */
+@theme inline {
+  --animate-spin: spin 1s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* R10 — motion is a preference. Base UI and tw-animate-css animate by
+     class; under reduced motion every animation and transition collapses to
+     a frame, so each state change still happens, instantly. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

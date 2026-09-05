@@ -134,6 +134,12 @@
      ground; this is 7.56:1). */
   --af-ref-color-indigo-75: oklch(75% 0.09 278);
   --af-ref-color-olive-52: oklch(52.01% 0.09 115.37);
+  /* plum-46/plum-72: categorical-8. Teal tones could not both clear 3:1 on
+     the ground and stay tellable from categorical-1's teal; plum is an
+     unused hue region. 7.14:1 light / 6.58:1 dark; nearest series member
+     ~0.10 away in Oklab in both themes. */
+  --af-ref-color-plum-46: oklch(46% 0.1 340);
+  --af-ref-color-plum-72: oklch(72% 0.1 340);
 
   /* Absolute / alpha primitives */
   --af-ref-color-black: oklch(0% 0 0);

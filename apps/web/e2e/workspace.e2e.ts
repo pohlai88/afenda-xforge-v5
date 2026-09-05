@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { expectNoSeriousViolations } from "./axe";
 
-const dark = /dark/;
 const acmeMembers = /\/acme\/members$/;
 
 test("a known workspace renders its overview and navigation", async ({
@@ -40,9 +39,9 @@ test("the theme toggle and the d hotkey switch the colour scheme", async ({
   await page.goto("/acme");
   const html = page.locator("html");
   await page.getByRole("button", { name: "Toggle theme" }).click();
-  await expect(html).toHaveClass(dark);
+  await expect(html).toHaveAttribute("data-theme", "dark");
   await page.keyboard.press("d");
-  await expect(html).not.toHaveClass(dark);
+  await expect(html).toHaveAttribute("data-theme", "light");
 });
 
 test.describe("on a phone", () => {

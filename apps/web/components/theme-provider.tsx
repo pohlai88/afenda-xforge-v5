@@ -56,7 +56,7 @@ const ThemeProvider = ({
   ...properties
 }: Readonly<ComponentProps<typeof NextThemesProvider>>) => (
   <NextThemesProvider
-    attribute="class"
+    attribute="data-theme"
     defaultTheme="system"
     disableTransitionOnChange
     enableSystem
