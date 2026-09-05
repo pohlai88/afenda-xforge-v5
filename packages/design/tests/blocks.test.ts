@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { BlockManifest } from "../src/blocks/manifest";
 import { COMPONENT_RULE_ID_PATTERN } from "../src/foundation/00-principles";
 import { COLOR_PUBLIC_API } from "../src/foundation/02-color";
+import { STATE_SIGNALS } from "../src/foundation/07-interaction";
 import type { ComponentContract } from "../src/foundation/10-components/contract";
 
 /**
@@ -20,6 +21,14 @@ import type { ComponentContract } from "../src/foundation/10-components/contract
  * identity, never the render). Contracts, manifests and block folders are
  * paired all ways.
  *
+ * States are held the same way, across all three levels: a contract may only
+ * admit a state STATE_SIGNALS defines (L1), every selector that registry names
+ * must exist in the Level-2 interaction styles, and a block admitting any
+ * state must compose the mechanism they arrive through. The convention check
+ * closes the loop — a boolean state is matched by PRESENCE, because Base UI
+ * serialises one as the empty string and `[data-disabled="true"]` therefore
+ * matches nothing it renders (AF-INT-157).
+ *
  * Every checker takes data and text, so the planted defects below prove
  * each one; a green over the tree means the checks ran.
  */
@@ -27,6 +36,18 @@ import type { ComponentContract } from "../src/foundation/10-components/contract
 const ROOT = process.cwd();
 const BLOCKS_DIR = join(ROOT, "src/blocks");
 const FOUNDATION = join(ROOT, "src/foundation");
+const STYLES = join(ROOT, "src/styles");
+
+/** The mechanism a block composes to receive any state presentation at all. */
+const STATE_MECHANISM = "af-interactive";
+
+/**
+ * A boolean state matched by its value rather than its presence. `:not(…)`
+ * guards are stripped first: `[data-disabled]:not([data-disabled="false"])`
+ * is the correct form and must not read as a violation of itself.
+ */
+const NOT_CLAUSE = /:not\([^)]*\)/g;
+const BOOLEAN_BY_VALUE = /\[data-[a-z-]+="(?:true|false)"\]/g;
 
 const SLOT_STRING_LITERAL = /data-slot="/;
 const COLOR_CLASS =
@@ -260,6 +281,57 @@ const exemplarFindings = (contract: ComponentContract): string[] => {
   return [];
 };
 
+/** Level-1 state name -> the DOM signals it answers to, across all axes. */
+const SIGNALS = new Map<string, readonly string[]>(
+  Object.values(STATE_SIGNALS).flatMap((axis) => Object.entries(axis))
+);
+
+const interactionText = ["interaction.css", "accessibility.css"]
+  .map((f) => readFileSync(join(STYLES, f), "utf8"))
+  .join("\n");
+
+const stateFindings = (
+  contract: ComponentContract,
+  styles: string
+): string[] => {
+  const out: string[] = [];
+  for (const state of contract.api.states) {
+    const signals = SIGNALS.get(state);
+    if (!signals) {
+      out.push(
+        `${contract.id}: admits state ${state}, which the interaction language does not define`
+      );
+      continue;
+    }
+    for (const selector of signals) {
+      if (!styles.includes(selector)) {
+        out.push(
+          `${contract.id}: state ${state} is signalled by ${selector}, which the interaction styles never match`
+        );
+      }
+    }
+  }
+  return out;
+};
+
+const mechanismFindings = (
+  contract: ComponentContract,
+  manifest: BlockManifest
+): string[] =>
+  contract.api.states.length > 0 && !manifest.base.includes(STATE_MECHANISM)
+    ? [
+        `${contract.id}: admits states but its base omits ${STATE_MECHANISM}, which delivers them`,
+      ]
+    : [];
+
+const conventionFindings = (styles: string): string[] =>
+  [
+    ...new Set(styles.replace(NOT_CLAUSE, "").match(BOOLEAN_BY_VALUE) ?? []),
+  ].map(
+    (selector) =>
+      `${selector} matches a boolean state by value; Base UI serialises one as the empty string, so a boolean state is matched by presence (AF-INT-157)`
+  );
+
 const paired = (): [ComponentContract, BlockManifest][] =>
   [...contracts.entries()].flatMap(([id, contract]) => {
     const manifest = manifests.get(id);
@@ -294,6 +366,20 @@ describe("R15 — a block is held equal to its contract", () => {
 
   it("draws exactly the admitted colour roles", () => {
     expect(paired().flatMap(([c, m]) => roleFindings(c, m))).toEqual([]);
+  });
+
+  it("admits states the language defines, and that Level 2 actually matches", () => {
+    expect(
+      [...contracts.values()].flatMap((c) => stateFindings(c, interactionText))
+    ).toEqual([]);
+  });
+
+  it("composes the mechanism its states arrive through", () => {
+    expect(paired().flatMap(([c, m]) => mechanismFindings(c, m))).toEqual([]);
+  });
+
+  it("matches every boolean state by presence, never by value", () => {
+    expect(conventionFindings(interactionText)).toEqual([]);
   });
 
   it("names behaviour rules that exist, and keeps its own inside the grammar", () => {
@@ -413,6 +499,65 @@ describe("R15 — a block is held equal to its contract", () => {
     expect(behaviourFindings(planted, foundationText)).toEqual([
       `${contract.id}: behaviour rule AF-INT-999 is defined nowhere`,
     ]);
+  });
+
+  it("proves itself on a state the language never defined", () => {
+    const [contract] = contracts.values();
+    if (!contract) {
+      throw new Error("no contract");
+    }
+    const planted = {
+      ...contract,
+      api: { ...contract.api, states: ["glimmer"] },
+    };
+    expect(stateFindings(planted, interactionText)).toEqual([
+      `${contract.id}: admits state glimmer, which the interaction language does not define`,
+    ]);
+  });
+
+  it("proves itself on a signal Level 2 stopped matching", () => {
+    const [contract] = contracts.values();
+    if (!contract) {
+      throw new Error("no contract");
+    }
+    // The exact regression this check exists for: the presence-matched
+    // attribute rewritten to the value form Base UI never renders.
+    const planted = interactionText
+      .split("[data-pressed]")
+      .join('[data-pressed="true"]');
+    expect(stateFindings(contract, planted)).toEqual([
+      `${contract.id}: state pressed is signalled by [data-pressed], which the interaction styles never match`,
+    ]);
+  });
+
+  it("proves itself on a block that drops the state mechanism", () => {
+    const [pair] = paired();
+    if (!pair) {
+      throw new Error("no paired block");
+    }
+    const [contract, manifest] = pair;
+    const planted = {
+      ...manifest,
+      base: manifest.base.filter((c) => c !== STATE_MECHANISM),
+    };
+    expect(mechanismFindings(contract, planted)).toEqual([
+      `${contract.id}: admits states but its base omits ${STATE_MECHANISM}, which delivers them`,
+    ]);
+  });
+
+  it("proves itself on a boolean state matched by value, and clears the guard", () => {
+    expect(
+      conventionFindings(
+        '.af-interactive[data-disabled="true"] { color: red; }'
+      )
+    ).toEqual([
+      '[data-disabled="true"] matches a boolean state by value; Base UI serialises one as the empty string, so a boolean state is matched by presence (AF-INT-157)',
+    ]);
+    expect(
+      conventionFindings(
+        '.af-interactive[data-disabled]:not([data-disabled="false"]) { color: red; }'
+      )
+    ).toEqual([]);
   });
 
   it("proves itself on a block without a contract", () => {

@@ -1,4 +1,4 @@
-import { Button } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/common-button";
 import {
   Card,
   CardContent,
@@ -25,9 +25,12 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button className="w-full" render={<Link href="/acme" />}>
+          <Link
+            className={buttonVariants({ className: "w-full" })}
+            href="/acme"
+          >
             Continue to the demo workspace
-          </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>

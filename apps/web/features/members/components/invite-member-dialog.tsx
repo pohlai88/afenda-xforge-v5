@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@xforge/design/components/select";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { inviteMember } from "../actions";
 
@@ -34,6 +34,7 @@ export const InviteMemberDialog = ({
 }: Readonly<{ orgSlug: string }>) => {
   const [open, setOpen] = useState(false);
   const [result, formAction, pending] = useActionState(inviteMember, null);
+  const submitLabelId = useId();
 
   useEffect(() => {
     if (result?.ok) {
@@ -109,8 +110,18 @@ export const InviteMemberDialog = ({
             </p>
           ) : null}
           <DialogFooter>
-            <Button disabled={pending} type="submit">
-              {pending ? "Inviting…" : "Send invite"}
+            {/* The handbook's loading pattern: focus survives the pending
+                submit, and the changing text is the explicit accessible
+                name (descendant-text changes are not reliably announced). */}
+            <Button
+              aria-labelledby={submitLabelId}
+              disabled={pending}
+              focusableWhenDisabled
+              type="submit"
+            >
+              <span id={submitLabelId}>
+                {pending ? "Inviting…" : "Send invite"}
+              </span>
             </Button>
           </DialogFooter>
         </form>

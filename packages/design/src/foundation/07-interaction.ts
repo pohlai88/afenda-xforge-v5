@@ -1682,7 +1682,6 @@ export const STATE_SIGNALS = {
   Record<InteractionAxis, Readonly<Record<string, readonly string[]>>>
 >;
 
-
 // =============================================================================
 // STATE PRIORITY
 // =============================================================================

@@ -1,4 +1,4 @@
-import { Button } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/common-button";
 import Link from "next/link";
 
 // Catches notFound() from the [orgSlug] layout (a segment's own not-found
@@ -13,9 +13,9 @@ export default function NotFound() {
       <p className="max-w-md text-muted-foreground">
         The workspace you asked for does not exist or is not available to you.
       </p>
-      <Button render={<Link href="/" />} variant="outline">
+      <Link className={buttonVariants({ variant: "outline" })} href="/">
         Back to the start
-      </Button>
+      </Link>
     </div>
   );
 }

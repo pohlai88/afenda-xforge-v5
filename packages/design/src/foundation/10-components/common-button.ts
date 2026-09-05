@@ -49,14 +49,17 @@ export const COMMON_BUTTON_CONTRACT = {
 
   do: [
     "one default-variant button per view region; the rest step down",
-    "navigation styled as a button goes through render={<Link />}",
+    "a link that must look like a button wears buttonVariants on the real anchor",
     "icon-only sizes carry an accessible name",
+    "a pending submit keeps focus: disabled plus focusableWhenDisabled",
   ],
 
   dont: [
     "no raw <button> in a screen — this block is the way",
+    "no render={<Link />}: the Button enforces button semantics and never wraps a link",
     "no recoloured default for destructive acts; use the destructive variant",
     "no palette or arbitrary colour on any part",
+    'no bare form button — Base UI injects type="button", so a submit says so',
   ],
 
   exemplar: "apps/web/features/members/components/members-pagination.tsx",
@@ -94,7 +97,7 @@ export const COMMON_BUTTON_CONTRACT = {
     },
     {
       id: "AF-CMP-COMMON-BUTTON-004",
-      rule: "A navigation act presented as a button polymorphs through render to a real link; onClick-plus-router is not navigation.",
+      rule: "The Button never wraps a link: it enforces button semantics (Base UI). A navigation act that must look like a button wears buttonVariants on the real anchor; onClick-plus-router is not navigation.",
       strength: "must",
     },
     {
@@ -112,9 +115,9 @@ export const COMMON_BUTTON_CONTRACT = {
       system: "Material 3",
     },
     {
-      disposition: "adopt",
+      disposition: "adapt",
       id: "base-ui-button",
-      note: "Behaviour, focusability and the render polymorphism come from @base-ui/react/button unchanged.",
+      note: "Behaviour, focus handling, focusableWhenDisabled and the disabled state come from @base-ui/react/button unchanged. The render polymorphism does not extend to links: Base UI enforces button semantics and warns when a true nativeButton renders a non-button, so a link wears buttonVariants on the real anchor instead (AF-CMP-COMMON-BUTTON-004). Its className-as-a-function styling hook is refused — every class this block draws lives in the manifest, where Tailwind's scanner and R15 both read it.",
       system: "Base UI",
     },
     {

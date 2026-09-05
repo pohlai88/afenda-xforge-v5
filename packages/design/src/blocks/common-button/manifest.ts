@@ -16,6 +16,7 @@ export const COMMON_BUTTON_MANIFEST = {
     "justify-center",
     "gap-inline",
     "whitespace-nowrap",
+    "no-underline",
     "rounded-control",
     "type-action",
     "target-compact",

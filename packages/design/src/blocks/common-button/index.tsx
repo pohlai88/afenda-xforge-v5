@@ -22,12 +22,24 @@ const buttonVariants = cva(COMMON_BUTTON_MANIFEST.base.join(" "), {
   },
 });
 
+interface ButtonProps
+  extends Omit<ButtonPrimitive.Props, "className">,
+    VariantProps<typeof buttonVariants> {
+  /**
+   * Base UI also accepts a function of component state here; the block does
+   * not. Every class it draws comes from the manifest, where Tailwind's
+   * scanner and R15 both read it — and clsx drops a function silently, so
+   * the wider type would promise what nothing delivers.
+   */
+  className?: string;
+}
+
 function Button({
   className,
-  variant = "default",
   size = "default",
+  variant = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <ButtonPrimitive
       className={cn(buttonVariants({ className, size, variant }))}
@@ -37,4 +49,5 @@ function Button({
   );
 }
 
+export type { ButtonProps };
 export { Button, buttonVariants };

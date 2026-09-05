@@ -1,4 +1,4 @@
-import { Button } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/common-button";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -8,9 +8,9 @@ export default function NotFound() {
       <p className="max-w-md text-muted-foreground">
         There is nothing at this address.
       </p>
-      <Button render={<Link href="/" />} variant="outline">
+      <Link className={buttonVariants({ variant: "outline" })} href="/">
         Back to the start
-      </Button>
+      </Link>
     </div>
   );
 }

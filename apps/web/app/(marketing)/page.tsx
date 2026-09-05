@@ -1,4 +1,4 @@
-import { Button } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/common-button";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -18,12 +18,15 @@ export default function Page() {
           running on fixtures.
         </p>
         <div className="flex gap-3">
-          <Button render={<Link href="/acme" />} size="lg">
+          <Link className={buttonVariants({ size: "lg" })} href="/acme">
             Open demo workspace
-          </Button>
-          <Button render={<Link href="/sign-in" />} size="lg" variant="outline">
+          </Link>
+          <Link
+            className={buttonVariants({ size: "lg", variant: "outline" })}
+            href="/sign-in"
+          >
             Sign in
-          </Button>
+          </Link>
         </div>
         <p className="font-mono text-muted-foreground text-xs">
           (Press <kbd>d</kbd> to toggle dark mode)
