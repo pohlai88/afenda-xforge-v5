@@ -1,5 +1,5 @@
 import type { MemberFilter } from "@xforge/contracts/member/types";
-import { Button, buttonVariants } from "@xforge/design/blocks/common-button";
+import { Button, buttonVariants } from "@xforge/design/blocks/button";
 import Link from "next/link";
 import { memberListQueryString } from "../filter";
 

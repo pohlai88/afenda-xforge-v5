@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@xforge/design/blocks/common-button";
+import { Button } from "@xforge/design/blocks/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 

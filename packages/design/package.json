@@ -6,7 +6,7 @@
   "exports": {
     "./styles/index.css": "./src/styles/index.css",
     "./lib/*": "./src/lib/*.ts",
-    "./blocks/common-button": "./src/blocks/common-button/common-button.tsx",
+    "./blocks/button": "./src/blocks/button/button.tsx",
     "./blocks/dialog": "./src/blocks/dialog/dialog.tsx",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",

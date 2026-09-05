@@ -3,8 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@xforge/design/blocks/common-button": [
-        "../../packages/design/src/blocks/common-button/common-button.tsx"
+      "@xforge/design/blocks/button": [
+        "../../packages/design/src/blocks/button/button.tsx"
       ],
       "@xforge/design/blocks/dialog": [
         "../../packages/design/src/blocks/dialog/dialog.tsx"

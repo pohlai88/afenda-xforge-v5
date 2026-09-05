@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 // The behaviour contract pins the block — what the app actually composes.
-import { Button } from "@xforge/design/blocks/common-button";
+import { Button } from "@xforge/design/blocks/button";
 import {
   Dialog,
   DialogContent,

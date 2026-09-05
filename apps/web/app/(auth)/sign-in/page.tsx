@@ -1,4 +1,4 @@
-import { buttonVariants } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/button";
 import {
   Card,
   CardContent,

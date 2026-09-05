@@ -1,4 +1,4 @@
-import { buttonVariants } from "@xforge/design/blocks/common-button";
+import { buttonVariants } from "@xforge/design/blocks/button";
 import Link from "next/link";
 
 // Catches notFound() from the [orgSlug] layout (a segment's own not-found

@@ -2,8 +2,8 @@ import type { BlockManifest } from "../manifest";
 
 /**
  * The Button definition — what AF-CMP-COMMON-BUTTON looks like, as data. The
- * render in common-button.tsx derives its classes from this; R15 holds it
- * equal to ./common-button-contract.ts. One part: the key is the data-slot
+ * render in button.tsx derives its classes from this; R15 holds it
+ * equal to ./button-contract.ts. One part: the key is the data-slot
  * the render stamps.
  */
 export const COMMON_BUTTON_MANIFEST = {
@@ -44,6 +44,16 @@ export const COMMON_BUTTON_MANIFEST = {
           "state-layer-on-error-container",
         ],
         ghost: ["text-on-surface", "state-layer-on-surface"],
+        informative: [
+          "bg-informative-container",
+          "text-on-informative-container",
+          "state-layer-on-informative-container",
+        ],
+        inverse: [
+          "bg-inverse-surface",
+          "text-inverse-on-surface",
+          "state-layer-inverse-on-surface",
+        ],
         link: ["text-primary", "hover:underline"],
         outline: [
           "border-boundary",
@@ -51,10 +61,20 @@ export const COMMON_BUTTON_MANIFEST = {
           "text-on-surface",
           "state-layer-on-surface",
         ],
+        positive: [
+          "bg-positive-container",
+          "text-on-positive-container",
+          "state-layer-on-positive-container",
+        ],
         secondary: [
           "bg-secondary-container",
           "text-on-secondary-container",
           "state-layer-on-secondary-container",
+        ],
+        tertiary: [
+          "bg-tertiary-container",
+          "text-on-tertiary-container",
+          "state-layer-on-tertiary-container",
         ],
       },
     },

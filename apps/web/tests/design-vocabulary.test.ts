@@ -353,7 +353,7 @@ describe("R10 — motion is a preference", () => {
 
 /** Vendored modules a block has superseded, and the block that replaces each. */
 const SUPERSEDED: Readonly<Record<string, string>> = {
-  "@xforge/design/components/button": "@xforge/design/blocks/common-button",
+  "@xforge/design/components/button": "@xforge/design/blocks/button",
   "@xforge/design/components/dialog": "@xforge/design/blocks/dialog",
 };
 
@@ -481,13 +481,13 @@ describe("R16 — a contract's statically shaped rules hold at every call site",
     const planted =
       'import { Button } from "@xforge/design/components/button";';
     expect(supersededFindings(planted, "fixture")).toEqual([
-      "fixture:1 superseded-import: use @xforge/design/blocks/common-button",
+      "fixture:1 superseded-import: use @xforge/design/blocks/button",
     ]);
   });
 
   it("leaves the block and the unsuperseded components alone", () => {
     const allowed = [
-      'import { Button } from "@xforge/design/blocks/common-button";',
+      'import { Button } from "@xforge/design/blocks/button";',
       'import { Select } from "@xforge/design/components/select";',
     ].join("\n");
     expect(supersededFindings(allowed, "fixture")).toEqual([]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@xforge/design/blocks/common-button";
+import { Button } from "@xforge/design/blocks/button";
 
 // Unexpected failures only: expected outcomes never throw (they are
 // ActionResults or notFound()). Whatever reaches here is operational.

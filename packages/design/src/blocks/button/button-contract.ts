@@ -35,11 +35,19 @@ export const COMMON_BUTTON_CONTRACT = {
         "A destructive act, quiet until confirmed: the error-container pair, never the full error fill at rest.",
       ghost:
         "A low-emphasis action in chrome; ink only, the state layer is its whole fill grammar.",
+      informative:
+        "An informational act — open details, start a walkthrough: the informative-container pair, status colour marking an act whose subject is information.",
+      inverse:
+        "An action living on an inverse surface (a toast, a snackbar): the inverse-surface pair keeps it legible where the theme flips locally.",
       link: "A navigation act presented inline with text; underline on hover is the affordance.",
       outline:
         "A secondary action beside a primary: outline boundary, surface ink.",
+      positive:
+        "An affirmative act — approve, publish, complete: the positive-container pair, quiet like destructive because the outcome is the status.",
       secondary:
         "The tonal middle emphasis (M3 filled-tonal): the secondary-container pair.",
+      tertiary:
+        "The complementary accent emphasis: the tertiary-container pair, beside a primary without competing with it.",
     },
   },
 
@@ -64,7 +72,7 @@ export const COMMON_BUTTON_CONTRACT = {
 
   exemplar: "apps/web/features/members/components/members-pagination.tsx",
 
-  id: "common-button",
+  id: "button",
 
   intents: [
     "action",
@@ -111,7 +119,7 @@ export const COMMON_BUTTON_CONTRACT = {
     {
       disposition: "adapt",
       id: "m3-common-buttons",
-      note: "Emphasis tiers (filled, tonal, outlined, text) and the state-layer hover grammar are taken; M3's five named button kinds collapse into the variant axis, and elevation stays flat per the geometry language.",
+      note: "Emphasis tiers (filled, tonal, outlined, text) and the state-layer hover grammar are taken; M3's five named button kinds collapse into the variant axis, and elevation stays flat per the geometry language. The axis extends past M3's kinds with the ADL's own pairs — tertiary, positive, informative, inverse — every one a measured container pair from the colour language, hover still the state layer (2026-09-05, the ten-variant extension).",
       system: "Material 3",
     },
     {
@@ -135,6 +143,14 @@ export const COMMON_BUTTON_CONTRACT = {
     "on-error-container",
     "secondary-container",
     "on-secondary-container",
+    "tertiary-container",
+    "on-tertiary-container",
+    "positive-container",
+    "on-positive-container",
+    "informative-container",
+    "on-informative-container",
+    "inverse-surface",
+    "inverse-on-surface",
     "on-surface",
     "outline",
   ],
