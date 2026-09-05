@@ -12,9 +12,7 @@ import { describe, expect, it, vi } from "vitest";
 
 const Example = () => (
   <Dialog>
-    <DialogTrigger asChild>
-      <Button>Open</Button>
-    </DialogTrigger>
+    <DialogTrigger render={<Button />}>Open</DialogTrigger>
     <DialogContent>
       <DialogTitle>Example dialog</DialogTitle>
       <DialogDescription>A body with one field.</DialogDescription>

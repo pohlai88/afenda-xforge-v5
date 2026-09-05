@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { inviteMember } from "../actions";
 
 const roles = ["member", "admin", "owner"] as const;
+const roleItems = { admin: "admin", member: "member", owner: "owner" };
 
 const errorsFor = (fields: Record<string, string[]> | undefined, key: string) =>
   fields?.[key]?.map((message) => ({ message }));
@@ -48,9 +49,7 @@ export const InviteMemberDialog = ({
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button>Invite member</Button>
-      </DialogTrigger>
+      <DialogTrigger render={<Button />}>Invite member</DialogTrigger>
       <DialogContent>
         <form action={formAction} className="flex flex-col gap-5">
           <input name="orgSlug" type="hidden" value={orgSlug} />
@@ -91,7 +90,7 @@ export const InviteMemberDialog = ({
           </Field>
           <Field>
             <FieldLabel htmlFor="invite-role">Role</FieldLabel>
-            <Select defaultValue="member" name="role">
+            <Select defaultValue="member" items={roleItems} name="role">
               <SelectTrigger id="invite-role">
                 <SelectValue />
               </SelectTrigger>

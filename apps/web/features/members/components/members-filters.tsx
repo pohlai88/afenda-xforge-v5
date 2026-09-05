@@ -22,6 +22,17 @@ const ANY = "any";
 const DEBOUNCE_MS = 300;
 const roles: readonly MemberRole[] = ["owner", "admin", "member"];
 const statuses: readonly MemberStatus[] = ["active", "invited"];
+const roleItems = {
+  [ANY]: "Any role",
+  admin: "admin",
+  member: "member",
+  owner: "owner",
+};
+const statusItems = {
+  [ANY]: "Any status",
+  active: "active",
+  invited: "invited",
+};
 
 /** Writes the filter into the URL — the URL is the state store for shareable views. */
 export const MembersFilters = ({
@@ -50,11 +61,15 @@ export const MembersFilters = ({
     );
   };
 
-  const onRoleChange = (value: string) =>
-    navigate({ role: value === ANY ? undefined : (value as MemberRole) });
+  const onRoleChange = (value: string | null) =>
+    navigate({
+      role: !value || value === ANY ? undefined : (value as MemberRole),
+    });
 
-  const onStatusChange = (value: string) =>
-    navigate({ status: value === ANY ? undefined : (value as MemberStatus) });
+  const onStatusChange = (value: string | null) =>
+    navigate({
+      status: !value || value === ANY ? undefined : (value as MemberStatus),
+    });
 
   return (
     <div className="mb-4 flex flex-wrap items-end gap-3">
@@ -71,7 +86,11 @@ export const MembersFilters = ({
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="members-role">Role</Label>
-        <Select onValueChange={onRoleChange} value={filter.role ?? ANY}>
+        <Select
+          items={roleItems}
+          onValueChange={onRoleChange}
+          value={filter.role ?? ANY}
+        >
           <SelectTrigger className="w-40" id="members-role">
             <SelectValue />
           </SelectTrigger>
@@ -87,7 +106,11 @@ export const MembersFilters = ({
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="members-status">Status</Label>
-        <Select onValueChange={onStatusChange} value={filter.status ?? ANY}>
+        <Select
+          items={statusItems}
+          onValueChange={onStatusChange}
+          value={filter.status ?? ANY}
+        >
           <SelectTrigger className="w-40" id="members-status">
             <SelectValue />
           </SelectTrigger>
