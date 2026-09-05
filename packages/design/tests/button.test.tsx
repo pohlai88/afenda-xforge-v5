@@ -9,12 +9,8 @@ describe("Button", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("renders its child element when asChild is set", () => {
-    render(
-      <Button asChild>
-        <a href="/docs">Docs</a>
-      </Button>
-    );
+  it("renders the element given to render", () => {
+    render(<Button render={<a href="/docs" />}>Docs</Button>);
 
     expect(screen.getByRole("link", { name: "Docs" })).toHaveAttribute(
       "data-slot",

@@ -18,11 +18,11 @@ export default function Page() {
           running on fixtures.
         </p>
         <div className="flex gap-3">
-          <Button asChild size="lg">
-            <Link href="/acme">Open demo workspace</Link>
+          <Button render={<Link href="/acme" />} size="lg">
+            Open demo workspace
           </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/sign-in">Sign in</Link>
+          <Button render={<Link href="/sign-in" />} size="lg" variant="outline">
+            Sign in
           </Button>
         </div>
         <p className="font-mono text-muted-foreground text-xs">

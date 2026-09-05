@@ -25,8 +25,8 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild className="w-full">
-            <Link href="/acme">Continue to the demo workspace</Link>
+          <Button className="w-full" render={<Link href="/acme" />}>
+            Continue to the demo workspace
           </Button>
         </CardContent>
       </Card>

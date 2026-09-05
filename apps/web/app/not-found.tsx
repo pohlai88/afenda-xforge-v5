@@ -8,8 +8,8 @@ export default function NotFound() {
       <p className="max-w-md text-muted-foreground">
         There is nothing at this address.
       </p>
-      <Button asChild variant="outline">
-        <Link href="/">Back to the start</Link>
+      <Button render={<Link href="/" />} variant="outline">
+        Back to the start
       </Button>
     </div>
   );

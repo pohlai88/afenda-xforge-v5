@@ -24,8 +24,12 @@ export const MembersPagination = ({
       </p>
       <div className="flex gap-2">
         {filter.page > 1 ? (
-          <Button asChild size="sm" variant="outline">
-            <Link href={href(filter.page - 1)}>Previous</Link>
+          <Button
+            render={<Link href={href(filter.page - 1)} />}
+            size="sm"
+            variant="outline"
+          >
+            Previous
           </Button>
         ) : (
           <Button disabled size="sm" variant="outline">
@@ -33,8 +37,12 @@ export const MembersPagination = ({
           </Button>
         )}
         {filter.page < pages ? (
-          <Button asChild size="sm" variant="outline">
-            <Link href={href(filter.page + 1)}>Next</Link>
+          <Button
+            render={<Link href={href(filter.page + 1)} />}
+            size="sm"
+            variant="outline"
+          >
+            Next
           </Button>
         ) : (
           <Button disabled size="sm" variant="outline">

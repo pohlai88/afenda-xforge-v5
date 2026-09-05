@@ -13,8 +13,8 @@ export default function NotFound() {
       <p className="max-w-md text-muted-foreground">
         The workspace you asked for does not exist or is not available to you.
       </p>
-      <Button asChild variant="outline">
-        <Link href="/">Back to the start</Link>
+      <Button render={<Link href="/" />} variant="outline">
+        Back to the start
       </Button>
     </div>
   );
