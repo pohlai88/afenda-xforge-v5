@@ -87,7 +87,7 @@ Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. I
 ## Planned direction (not yet in code)
 
 - **Backend:** Better Auth (organisations) + Drizzle + Neon behind the same contract — `docs/architecture.md` §5.5 is the playbook. `DATA_SOURCE=db` already exists as a switch that throws "not implemented".
-- **Client server-state:** TanStack Query when the first live/optimistic screen appears; not before.
+- **Client server-state:** TanStack Query when the first live/optimistic screen appears; not before. Pre-submit (live) validation rides the same trigger and parses the contract's zod schema in the client — one definition, two enforcement points, never a second validator vocabulary.
 - **Design-system generator / manifest:** rejected for the current scale, not permanently (ADR-010) — reconsider only on measured, recurring drift that R1–R4 cannot catch economically. **DTCG export:** deferred until a machine-readable consumer outside the CSS build exists.
 - **Strict CSP:** deferred to the auth/hardening phase (ADR-017). Base UI injects an inline `<style>` when a select opens (`alignItemWithTrigger`), so the CSP header and its answer — `CSPProvider` with a per-request nonce, or `disableStyleElements` plus the scrollbar rule in the ADL graph — land in one commit.
 - **RTL behaviour:** deferred to the first RTL locale (ADR-018). The CSS half of the `direction` axis is live (logical properties, motion flip, icon mirroring); Base UI reads direction from context and defaults `ltr`, so `dir` on `<html>`, `<DirectionProvider>` beside ThemeProvider, and `data-script` land in one commit — portaled parts read `useDirection`, not the attribute.
