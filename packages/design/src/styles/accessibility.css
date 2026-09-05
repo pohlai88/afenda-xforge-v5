@@ -1,0 +1,545 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Accessibility Presentation Infrastructure
+ *
+ * File: packages/design/src/styles/accessibility.css
+ *
+ * Depends on:
+ *   ./color.css
+ *   ./typography.css
+ *   ./geometry.css
+ *   ./layout.css
+ *   ./motion.css
+ *   ./interaction.css
+ *
+ * Purpose
+ * -------
+ * Implement reusable CSS-side accessibility mechanisms required by
+ * foundation/08-accessibility.ts.
+ *
+ * Baseline:
+ *   WCAG 2.2 Level AA
+ *
+ * Afenda enhanced presentation requirements include:
+ *   - strong focus appearance
+ *   - focus-not-obscured resilience
+ *   - forced-colours resilience
+ *   - reduced-motion resilience
+ *   - density-safe target geometry
+ *   - text resize / reflow / text-spacing resilience
+ *
+ * CSS cannot by itself implement:
+ *   - accessible names/descriptions
+ *   - roles/states/properties
+ *   - keyboard interaction models
+ *   - focus restoration algorithms
+ *   - status announcements / live regions
+ *   - error association
+ *   - transaction confirmation
+ *   - dialog focus containment
+ *   - DataGrid accessibility semantics
+ *
+ * Those remain component/accessibility-contract responsibilities.
+ */
+
+/* ==========================================================================
+   ACCESSIBILITY CONSTANTS
+   Normative values come from Level 1; implementation reuses system geometry.
+   ========================================================================== */
+
+:root {
+  --af-a11y-focus-width: var(--af-sys-size-stroke-focus); /* 2px */
+  --af-a11y-focus-offset: var(--af-ref-size-2); /* 2px */
+
+  --af-a11y-target-min: var(--af-sys-size-target-compact); /* 24px */
+  --af-a11y-target-preferred: var(--af-sys-size-target-default); /* 44px */
+
+  --af-a11y-focus-scroll-margin: var(--af-sys-space-page);
+
+  --af-a11y-text-spacing-line-height: 1.5;
+  --af-a11y-text-spacing-letter: 0.12em;
+  --af-a11y-text-spacing-word: 0.16em;
+  --af-a11y-text-spacing-paragraph: 2em;
+}
+
+/* ==========================================================================
+   VISUALLY HIDDEN
+   Content remains available to assistive technology while removed from the
+   visual flow. Do not use for content that should be absent from all users.
+   ========================================================================== */
+
+.af-visually-hidden,
+.af-sr-only {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+/* Hidden until keyboard focus, suitable for skip/navigation affordances. */
+.af-visually-hidden-focusable:not(:focus):not(:focus-within),
+.af-sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+/* ==========================================================================
+   SKIP LINK
+   ========================================================================== */
+
+.af-skip-link {
+  position: fixed;
+  inset-block-start: max(
+    var(--af-sys-space-inline),
+    var(--af-layout-safe-top, 0px)
+  );
+  inset-inline-start: max(
+    var(--af-sys-space-inline),
+    var(--af-layout-safe-left, 0px)
+  );
+
+  z-index: var(--af-sys-layer-tooltip);
+
+  padding-block: var(--af-sys-space-control);
+  padding-inline: var(--af-sys-space-item);
+
+  font-family: var(--af-sys-type-action-font-family);
+  font-size: var(--af-sys-type-action-font-size);
+  font-weight: var(--af-sys-type-action-font-weight);
+  line-height: var(--af-sys-type-action-line-height);
+  color: var(--af-sys-color-inverse-on-surface);
+  letter-spacing: var(--af-sys-type-action-letter-spacing);
+
+  background: var(--af-sys-color-inverse-surface);
+  border-radius: var(--af-sys-shape-control);
+
+  transform: translateY(calc(-100% - var(--af-sys-space-page)));
+}
+
+.af-skip-link:focus-visible {
+  outline: var(--af-a11y-focus-width) solid var(--af-sys-color-inverse-primary);
+  outline-offset: var(--af-a11y-focus-offset);
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   STRONG FOCUS APPEARANCE
+ *
+ * Level 1 requires:
+ *   - visible keyboard focus
+ *   - area >= equivalent 2 CSS px perimeter
+ *   - >= 3:1 focused/unfocused visual change
+ *
+ * color.css / Level 3 validate the actual contrast pairing.
+   ========================================================================== */
+
+.af-focus-ring:focus-visible,
+[data-af-focus-visible="true"] {
+  outline: var(--af-a11y-focus-width) solid var(--af-sys-color-primary);
+  outline-offset: var(--af-a11y-focus-offset);
+}
+
+/*
+ * Keep focused content clear of sticky/floating infrastructure where normal
+ * scrolling can honour scroll-margin.
+ */
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  [contenteditable="true"]
+) {
+  scroll-margin-block: var(--af-a11y-focus-scroll-margin);
+}
+
+/* ==========================================================================
+   POINTER TARGET HELPERS
+ *
+ * 24px is the WCAG 2.2 AA floor, not Afenda's preferred visual control size.
+   ========================================================================== */
+
+.af-target-min {
+  min-inline-size: var(--af-a11y-target-min);
+  min-block-size: var(--af-a11y-target-min);
+}
+
+.af-target-preferred {
+  min-inline-size: var(--af-a11y-target-preferred);
+  min-block-size: var(--af-a11y-target-preferred);
+}
+
+/*
+ * Effective target helper for compact visible controls.
+ * Apply to the interactive element itself; component anatomy must ensure the
+ * expanded hit region does not create overlapping/conflicting targets.
+ */
+.af-target-effective {
+  position: relative;
+}
+
+.af-target-effective::before {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--af-a11y-target-min));
+  block-size: max(100%, var(--af-a11y-target-min));
+  pointer-events: auto;
+  content: "";
+  translate: -50% -50%;
+}
+
+/*
+ * Do not apply .af-target-effective::before where a pseudo-element is already
+ * semantically/visually owned by the component. In those cases the component
+ * implements equivalent target geometry directly.
+ */
+
+/* ==========================================================================
+   TEXT RESIZE / CONTENT RESILIENCE
+ *
+ * Helpers avoid fixed-size assumptions that commonly fail at 200% text resize.
+   ========================================================================== */
+
+.af-text-resilient {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.af-text-resilient :where(p, li, dd, dt, figcaption) {
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Use for controls whose text may wrap when enlargement requires it.
+ * Components requiring single-line editing are exempt from forced wrapping,
+ * but must preserve access to the full essential value/label.
+ */
+.af-control-text-resilient {
+  block-size: auto;
+  min-block-size: var(--af-sys-size-target-compact);
+  white-space: normal;
+}
+
+/* ==========================================================================
+   REFLOW
+ *
+ * Generic content should reflow without page-level two-dimensional scrolling.
+ * Genuine 2D content gets a local, explicit scrolling exception.
+   ========================================================================== */
+
+.af-reflow {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.af-reflow > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.af-two-dimensional {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * Images/media should not cause accidental page-level horizontal overflow.
+ * Complex canvases/maps/diagrams that require intrinsic 2D dimensions should
+ * use .af-two-dimensional instead of this helper.
+ */
+.af-reflow-media {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* ==========================================================================
+   TEXT-SPACING TEST SUPPORT
+ *
+ * This class exists for Level-3/manual verification and opt-in debugging.
+ * Production users may override spacing through user styles/extensions; Afenda
+ * must tolerate equivalent values without losing content/functionality.
+   ========================================================================== */
+
+.af-a11y-text-spacing-test {
+  line-height: var(--af-a11y-text-spacing-line-height) !important;
+  word-spacing: var(--af-a11y-text-spacing-word) !important;
+  letter-spacing: var(--af-a11y-text-spacing-letter) !important;
+}
+
+.af-a11y-text-spacing-test :where(p) {
+  margin-block-end: var(--af-a11y-text-spacing-paragraph) !important;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+ *
+ * motion.css owns semantic remove/simplify/retain strategies.
+ * Accessibility adds non-component transport resilience such as scroll.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .af-skip-link {
+    transition: none !important;
+  }
+
+  .af-a11y-smooth-scroll {
+    scroll-behavior: auto !important;
+  }
+
+  /*
+   * Native CSS view transitions are opt-in in Afenda. A governed integration
+   * may add a more specific reduced-motion implementation; this prevents an
+   * ungoverned document transition from becoming mandatory motion.
+   */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: var(--af-ref-motion-duration-none) !important;
+  }
+}
+
+/* ==========================================================================
+   FORCED COLOURS
+ *
+ * Forced colours is a user-agent accessibility mode, NOT an Afenda theme.
+ * Author adjustment remains enabled by default.
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  :root {
+    forced-color-adjust: auto;
+  }
+
+  /*
+   * Focus must survive colour remapping, shadows, background removal, and
+   * simultaneous interaction state.
+   */
+  .af-interactive:focus-visible,
+  .af-focus-ring:focus-visible,
+  [data-af-focus-visible="true"],
+  .af-skip-link:focus-visible {
+    outline: var(--af-a11y-focus-width) solid Highlight;
+    outline-offset: var(--af-a11y-focus-offset);
+  }
+
+  /*
+   * State layers are transient decoration. Let UA-forced structural state
+   * indicators carry consequential meaning instead.
+   */
+  .af-state-layer::after {
+    display: none;
+  }
+
+  /* Availability */
+  .af-interactive:disabled,
+  .af-interactive[aria-disabled="true"],
+  .af-interactive[data-disabled="true"] {
+    color: GrayText;
+    opacity: 1;
+  }
+
+  /* Readonly stays legible and distinct from disabled. */
+  .af-interactive[readonly],
+  .af-interactive[aria-readonly="true"],
+  .af-interactive[data-readonly="true"] {
+    color: CanvasText;
+    border-color: CanvasText;
+  }
+
+  /* Persistent selection/navigation get explicit structural indicators. */
+  .af-interactive[aria-selected="true"],
+  .af-interactive[data-selected="true"],
+  .af-interactive[aria-current]:not([aria-current="false"]),
+  .af-interactive[data-current="true"] {
+    border-color: Highlight;
+    border-style: solid;
+    border-width: var(--af-sys-size-stroke-emphasis);
+  }
+
+  /* Checked/mixed state keeps a visible component indicator. */
+  .af-interactive[aria-checked="true"],
+  .af-interactive[aria-checked="mixed"],
+  .af-interactive[data-checked="true"],
+  .af-interactive[data-check="indeterminate"] {
+    --af-int-indicator-color: Highlight;
+    --af-int-indicator-opacity: 1;
+  }
+
+  /* Validation cannot depend on red/background/shadow. */
+  .af-interactive[aria-invalid="true"],
+  .af-interactive[data-invalid="true"] {
+    border-color: Mark;
+    border-style: solid;
+    border-width: var(--af-sys-size-stroke-emphasis);
+  }
+
+  /* Busy/loading remains structurally visible even without animation. */
+  .af-interactive[aria-busy="true"],
+  .af-interactive[data-loading="true"] {
+    --af-int-indicator-color: Highlight;
+    --af-int-indicator-opacity: 1;
+  }
+
+  /* Drag destination must remain visible if box shadow is suppressed. */
+  .af-interactive[data-drag-state="drop-target"] {
+    border-color: Highlight;
+    border-style: dashed;
+    border-width: var(--af-sys-size-stroke-emphasis);
+  }
+
+  /*
+   * Governed indicator channels use system colours. No forced-color-adjust:
+   * none is applied; the user agent remains authoritative.
+   */
+  .af-state-indicator::before,
+  .af-operation-indicator {
+    background: Highlight;
+  }
+
+  .af-skip-link {
+    color: CanvasText;
+    background: Canvas;
+    border: var(--af-sys-size-stroke-boundary) solid CanvasText;
+  }
+}
+
+/* ==========================================================================
+   INCREASED CONTRAST PREFERENCE
+ *
+ * color.css owns Afenda's standard/medium/high semantic schemes.
+ * This media query only strengthens CSS-side essential boundaries when a user
+ * agent exposes a higher-contrast preference.
+   ========================================================================== */
+
+@media (prefers-contrast: more) {
+  .af-interactive:focus-visible,
+  .af-focus-ring:focus-visible,
+  [data-af-focus-visible="true"] {
+    outline-width: var(--af-sys-size-stroke-emphasis);
+  }
+
+  .af-interactive[aria-invalid="true"],
+  .af-interactive[data-invalid="true"],
+  .af-interactive[data-drag-state="drop-target"] {
+    border-width: var(--af-sys-size-stroke-emphasis);
+  }
+}
+
+/* ==========================================================================
+   NON-COLOUR CONSEQUENCE HELPERS
+   ========================================================================== */
+
+/*
+ * Consequential status must pair colour with text, icon, shape, pattern, or
+ * another non-colour mechanism. This helper supplies a visible edge mark for
+ * anatomies that admit one.
+ */
+.af-a11y-state-mark {
+  position: relative;
+}
+
+.af-a11y-state-mark::before {
+  position: absolute;
+  inset-block: var(--af-sys-space-inline-tight);
+  inset-inline-start: 0;
+  inline-size: var(--af-sys-size-stroke-emphasis);
+  content: "";
+  background: currentColor;
+  border-radius: var(--af-sys-shape-full);
+}
+
+/* ==========================================================================
+   ERROR / STATUS CONTENT
+ *
+ * CSS provides presentation helpers only. Correct association, aria-invalid,
+ * aria-describedby, role=status/alert, live regions, and announcement timing
+ * remain component/accessibility responsibilities.
+   ========================================================================== */
+
+.af-error-message {
+  font-family: var(--af-sys-type-helper-font-family);
+  font-size: var(--af-sys-type-helper-font-size);
+  font-weight: var(--af-sys-type-helper-font-weight);
+  line-height: var(--af-sys-type-helper-line-height);
+  color: var(--af-sys-color-error);
+  letter-spacing: var(--af-sys-type-helper-letter-spacing);
+}
+
+.af-status-message {
+  font-family: var(--af-sys-type-helper-font-family);
+  font-size: var(--af-sys-type-helper-font-size);
+  font-weight: var(--af-sys-type-helper-font-weight);
+  line-height: var(--af-sys-type-helper-line-height);
+  color: var(--af-sys-color-on-surface);
+  letter-spacing: var(--af-sys-type-helper-letter-spacing);
+}
+
+/* ==========================================================================
+   PRINT / NON-INTERACTIVE FALLBACK
+   ========================================================================== */
+
+@media print {
+  .af-skip-link {
+    display: none !important;
+  }
+
+  .af-visually-hidden,
+  .af-sr-only {
+    /* Preserve AT semantics in screen media; no visual print artifact needed. */
+  }
+}
+
+/* ==========================================================================
+   IMPLEMENTATION BOUNDARIES
+   ========================================================================== */
+
+/*
+ * FOCUS RESTORATION / ORDER
+ * -------------------------
+ * CSS cannot restore focus, implement roving focus, or validate semantic order.
+ *
+ * TARGET SIZE
+ * -----------
+ * .af-target-min is a physical helper, not proof that closely adjacent targets
+ * satisfy every WCAG spacing exception.
+ *
+ * TEXT RESIZE / REFLOW
+ * --------------------
+ * These helpers remove common implementation hazards; Level 3 still proves
+ * 200% resize and 320 CSS px reflow in rendered product states.
+ *
+ * FORCED COLOURS
+ * --------------
+ * No global forced-color-adjust:none escape hatch exists.
+ *
+ * STATUS / ERRORS
+ * ---------------
+ * Visible presentation is not announcement semantics.
+ *
+ * TENANT
+ * ------
+ * Tenant expression cannot weaken accessibility. No tenant accessibility
+ * override surface exists.
+ */

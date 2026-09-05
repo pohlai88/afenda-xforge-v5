@@ -1,0 +1,53 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Canonical Shared Stylesheet Entry
+ *
+ * File: packages/design/src/styles/index.css
+ *
+ * Purpose
+ * -------
+ * Define the one authoritative import order for Afenda's shared Level-2 CSS.
+ *
+ * Import law:
+ *
+ *   Tailwind engine / Preflight
+ *        ↓
+ *   Afenda reference values
+ *        ↓
+ *   Afenda semantic domains
+ *        ↓
+ *   Afenda document baseline
+ *        ↓
+ *   Afenda Tailwind projection
+ *
+ * Applications should import this file rather than assembling the shared
+ * design-language styles independently.
+ */
+
+/* Tailwind v4 engine, Preflight, and utility generation. */
+@import "tailwindcss";
+
+/* Level-2 value + semantic resolution. */
+@import "./tokens.css";
+@import "./color.css";
+@import "./typography.css";
+@import "./geometry.css";
+
+/* Structural and behavioural implementation. */
+@import "./layout.css";
+@import "./motion.css";
+@import "./interaction.css";
+@import "./accessibility.css";
+@import "./content.css";
+
+/*
+ * Browser/document normalization belongs in Tailwind's base cascade layer so
+ * generated utilities can override raw-element defaults when explicitly used.
+ */
+@import "./base.css" layer(base);
+
+/*
+ * Final projection from Afenda semantics into Tailwind v4 theme namespaces,
+ * custom semantic utilities, and governed variants.
+ */
+@import "./tailwind.css";

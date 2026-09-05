@@ -1,0 +1,421 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * System Motion Resolution
+ *
+ * File: packages/design/src/styles/motion.css
+ *
+ * Depends on:
+ *   ./tokens.css
+ *   ./geometry.css
+ *
+ * Purpose
+ * -------
+ * Resolve the six Level-1 motion specs and implement the semantic motion
+ * relationships used by Afenda components and layout patterns.
+ *
+ * Public product code requests semantic motion roles and transition
+ * relationships. It does not choose arbitrary timing, easing, springs,
+ * or decorative keyframes.
+ */
+
+/* ==========================================================================
+   STANDARD SCHEME — DEFAULT
+   ========================================================================== */
+
+:root {
+  --af-sys-motion-fast-effects-duration: var(--af-ref-motion-duration-fast);
+  --af-sys-motion-fast-effects-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-fast-effects: var(--af-sys-motion-fast-effects-duration)
+    var(--af-sys-motion-fast-effects-easing);
+
+  --af-sys-motion-fast-spatial-duration: var(--af-ref-motion-duration-fast);
+  --af-sys-motion-fast-spatial-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-fast-spatial: var(--af-sys-motion-fast-spatial-duration)
+    var(--af-sys-motion-fast-spatial-easing);
+
+  --af-sys-motion-default-effects-duration: var(
+    --af-ref-motion-duration-standard
+  );
+  --af-sys-motion-default-effects-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-default-effects: var(--af-sys-motion-default-effects-duration)
+    var(--af-sys-motion-default-effects-easing);
+
+  --af-sys-motion-default-spatial-duration: var(
+    --af-ref-motion-duration-standard
+  );
+  --af-sys-motion-default-spatial-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-default-spatial: var(--af-sys-motion-default-spatial-duration)
+    var(--af-sys-motion-default-spatial-easing);
+
+  --af-sys-motion-slow-effects-duration: var(
+    --af-ref-motion-duration-deliberate
+  );
+  --af-sys-motion-slow-effects-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-slow-effects: var(--af-sys-motion-slow-effects-duration)
+    var(--af-sys-motion-slow-effects-easing);
+
+  --af-sys-motion-slow-spatial-duration: var(
+    --af-ref-motion-duration-deliberate
+  );
+  --af-sys-motion-slow-spatial-easing: var(--af-ref-motion-easing-standard);
+  --af-sys-motion-slow-spatial: var(--af-sys-motion-slow-spatial-duration)
+    var(--af-sys-motion-slow-spatial-easing);
+
+  --af-motion-easing-enter: var(--af-ref-motion-easing-enter);
+  --af-motion-easing-exit: var(--af-ref-motion-easing-exit);
+  --af-motion-easing-standard: var(--af-ref-motion-easing-standard);
+  --af-motion-easing-progress: linear;
+
+  --af-motion-distance-within: var(--af-ref-space-1);
+  --af-motion-distance-lateral: var(--af-ref-space-2);
+  --af-motion-distance-hierarchy: var(--af-ref-space-3);
+  --af-motion-distance-beyond: var(--af-ref-space-4);
+
+  --af-motion-duration: var(--af-sys-motion-default-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-default-spatial-easing);
+}
+
+/* ==========================================================================
+   EXPRESSIVE SCHEME — EXPLICIT OPT-IN
+   ========================================================================== */
+
+:root[data-motion-scheme="expressive"] {
+  --af-sys-motion-fast-effects-duration: var(--af-ref-motion-duration-standard);
+  --af-sys-motion-fast-spatial-duration: var(--af-ref-motion-duration-standard);
+
+  --af-sys-motion-default-effects-duration: var(
+    --af-ref-motion-duration-deliberate
+  );
+  --af-sys-motion-default-spatial-duration: var(
+    --af-ref-motion-duration-deliberate
+  );
+
+  --af-sys-motion-slow-effects-duration: calc(
+    var(--af-ref-motion-duration-deliberate) +
+    var(--af-ref-motion-duration-fast)
+  );
+
+  --af-sys-motion-slow-spatial-duration: calc(
+    var(--af-ref-motion-duration-deliberate) +
+    var(--af-ref-motion-duration-fast)
+  );
+}
+
+/* ==========================================================================
+   ROLE -> SPEC RESOLUTION
+   ========================================================================== */
+
+[data-motion-role="feedback"] {
+  --af-motion-duration: var(--af-sys-motion-fast-effects-duration);
+  --af-motion-easing: var(--af-sys-motion-fast-effects-easing);
+}
+
+[data-motion-role="state"] {
+  --af-motion-duration: var(--af-sys-motion-fast-effects-duration);
+  --af-motion-easing: var(--af-sys-motion-fast-effects-easing);
+}
+
+[data-motion-role="component"] {
+  --af-motion-duration: var(--af-sys-motion-fast-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-fast-spatial-easing);
+}
+
+[data-motion-role="overlay"] {
+  --af-motion-duration: var(--af-sys-motion-default-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-default-spatial-easing);
+}
+
+[data-motion-role="navigation"] {
+  --af-motion-duration: var(--af-sys-motion-default-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-default-spatial-easing);
+}
+
+[data-motion-role="continuity"] {
+  --af-motion-duration: var(--af-sys-motion-default-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-default-spatial-easing);
+}
+
+[data-motion-role="progress"] {
+  --af-motion-duration: var(--af-sys-motion-default-effects-duration);
+  --af-motion-easing: var(--af-sys-motion-default-effects-easing);
+}
+
+[data-motion-role="emphasis"] {
+  --af-motion-duration: var(--af-sys-motion-default-spatial-duration);
+  --af-motion-easing: var(--af-sys-motion-default-spatial-easing);
+}
+
+/* ==========================================================================
+   TRANSITION HELPERS
+   Components still choose the exact property list required by their contract.
+   ========================================================================== */
+
+.af-motion-effects,
+.af-motion-spatial {
+  transition-timing-function: var(--af-motion-easing);
+  transition-duration: var(--af-motion-duration);
+}
+
+/* ==========================================================================
+   TRANSITION RELATIONSHIPS
+   ========================================================================== */
+
+[data-motion-relationship="enter-exit-within"] {
+  --af-motion-offset-inline: 0;
+  --af-motion-offset-block: var(--af-motion-distance-within);
+}
+
+[data-motion-relationship="enter-exit-beyond"] {
+  --af-motion-offset-inline: var(--af-motion-distance-beyond);
+  --af-motion-offset-block: 0;
+}
+
+[data-motion-relationship="hierarchy"] {
+  --af-motion-offset-inline: var(--af-motion-distance-hierarchy);
+  --af-motion-offset-block: 0;
+}
+
+[data-motion-relationship="lateral"] {
+  --af-motion-offset-inline: var(--af-motion-distance-lateral);
+  --af-motion-offset-block: 0;
+}
+
+[data-motion-relationship="top-level"],
+[data-motion-relationship="container"] {
+  --af-motion-offset-inline: 0;
+  --af-motion-offset-block: 0;
+}
+
+[data-motion-direction="forward"] {
+  --af-motion-direction: 1;
+}
+
+[data-motion-direction="backward"] {
+  --af-motion-direction: -1;
+}
+
+:root,
+[dir="ltr"] {
+  --af-motion-inline-direction: 1;
+}
+
+[dir="rtl"] {
+  --af-motion-inline-direction: -1;
+}
+
+/* ==========================================================================
+   GOVERNED KEYFRAMES
+   ========================================================================== */
+
+@keyframes af-motion-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes af-motion-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes af-motion-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(
+      calc(
+        var(--af-motion-offset-inline, 0px) *
+        var(--af-motion-direction, 1) *
+        var(--af-motion-inline-direction, 1)
+      ),
+      var(--af-motion-offset-block, 0px),
+      0
+    );
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes af-motion-exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(
+      calc(
+        var(--af-motion-offset-inline, 0px) *
+        var(--af-motion-direction, 1) *
+        var(--af-motion-inline-direction, 1)
+      ),
+      var(--af-motion-offset-block, 0px),
+      0
+    );
+  }
+}
+
+@keyframes af-motion-top-level-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes af-motion-top-level-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+}
+
+.af-motion-enter {
+  animation-name: af-motion-enter;
+  animation-duration: var(--af-motion-duration);
+  animation-timing-function: var(--af-motion-easing-enter);
+  animation-fill-mode: both;
+}
+
+.af-motion-exit {
+  animation-name: af-motion-exit;
+  animation-duration: var(--af-motion-duration);
+  animation-timing-function: var(--af-motion-easing-exit);
+  animation-fill-mode: both;
+}
+
+[data-motion-relationship="top-level"].af-motion-enter {
+  animation-name: af-motion-top-level-enter;
+}
+
+[data-motion-relationship="top-level"].af-motion-exit {
+  animation-name: af-motion-top-level-exit;
+}
+
+/* ==========================================================================
+   PROGRESS MOTION
+   ========================================================================== */
+
+@keyframes af-motion-indeterminate-progress {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.af-motion-progress-indeterminate {
+  animation-name: af-motion-indeterminate-progress;
+  animation-duration: var(--af-ref-motion-duration-pulse);
+  animation-timing-function: var(--af-motion-easing-progress);
+  animation-iteration-count: infinite;
+}
+
+/* ==========================================================================
+   OPTIONAL SKELETON MOTION
+   Static skeleton remains a valid loading presentation.
+   ========================================================================== */
+
+@keyframes af-motion-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.af-motion-skeleton[data-motion-animated="true"] {
+  animation-name: af-motion-skeleton-pulse;
+  animation-duration: var(--af-ref-motion-duration-pulse);
+  animation-timing-function: var(--af-motion-easing-standard);
+  animation-iteration-count: infinite;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Each moving component declares remove | simplify | retain.
+   This is intentionally semantic, not a blanket global timing override.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reduced-motion="remove"] {
+    transition-duration: var(--af-ref-motion-duration-none) !important;
+    animation: none !important;
+  }
+
+  [data-reduced-motion="simplify"] {
+    --af-motion-offset-inline: 0px;
+    --af-motion-offset-block: 0px;
+    --af-motion-duration: var(--af-ref-motion-duration-instant);
+  }
+
+  [data-reduced-motion="simplify"].af-motion-enter {
+    animation-name: af-motion-fade-in;
+    animation-duration: var(--af-ref-motion-duration-instant);
+  }
+
+  [data-reduced-motion="simplify"].af-motion-exit {
+    animation-name: af-motion-fade-out;
+    animation-duration: var(--af-ref-motion-duration-instant);
+  }
+
+  .af-motion-progress-indeterminate,
+  .af-motion-skeleton[data-motion-animated="true"] {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   IMPLEMENTATION BOUNDARIES
+   ========================================================================== */
+
+/*
+ * INTERRUPTION
+ * ------------
+ * Interactive motion must converge toward the newest valid state rather than
+ * queue obsolete presentation. Component logic owns semantic reversal when
+ * keyframed motion cannot safely reverse by CSS alone.
+ *
+ * ADAPTIVE LAYOUT
+ * ---------------
+ * Pane reflow and levitation may use navigation/continuity motion, but pane
+ * identity and focus semantics remain unchanged. User-controlled resizing must
+ * follow input continuously rather than lag behind decorative animation.
+ *
+ * CONTAINER TRANSFORM
+ * -------------------
+ * The generic container relationship provides timing only. The owning
+ * component must have a credible persistent conceptual object before supplying
+ * shared geometry.
+ *
+ * TENANT
+ * ------
+ * Tenant configuration cannot redefine product motion scheme, timing, easing,
+ * relationship, or reduced-motion behaviour.
+ */

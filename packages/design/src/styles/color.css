@@ -1,0 +1,463 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * System Colour Resolution
+ *
+ * File: packages/design/src/styles/color.css
+ *
+ * Depends on:
+ *   ./tokens.css
+ *
+ * Purpose
+ * -------
+ * Resolve every public Level-1 colour role (af.sys.color.*) to Level-2
+ * reference tokens.
+ *
+ * This file owns colour RESOLUTION only.
+ * It does not define:
+ *   - new semantic colour roles
+ *   - component-private colours
+ *   - interaction-state recipes
+ *   - Tailwind @theme aliases
+ *   - shadcn compatibility aliases
+ *
+ * CSS representation:
+ *   af.sys.color.<role> -> --af-sys-color-<role>
+ *
+ * Contexts implemented here:
+ *   theme:    light | dark
+ *   contrast: standard | medium | high
+ *   tenant:   optional accent-family inputs only
+ *
+ * Density and writing direction deliberately do not alter colour.
+ */
+
+/* ==========================================================================
+   LIGHT + STANDARD — DEFAULT
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     ACCENT
+     Tenant input variables are deliberately limited to these admitted roles.
+     If absent, the governed Afenda defaults resolve from reference tokens.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-primary: var(
+    --af-tenant-color-primary,
+    var(--af-ref-color-blue-45)
+  );
+  --af-sys-color-on-primary: var(
+    --af-tenant-color-on-primary,
+    var(--af-ref-color-neutral-100)
+  );
+  --af-sys-color-primary-container: var(
+    --af-tenant-color-primary-container,
+    var(--af-ref-color-blue-97)
+  );
+  --af-sys-color-on-primary-container: var(
+    --af-tenant-color-on-primary-container,
+    var(--af-ref-color-blue-39)
+  );
+
+  --af-sys-color-secondary: var(
+    --af-tenant-color-secondary,
+    var(--af-ref-color-teal-54)
+  );
+  --af-sys-color-on-secondary: var(
+    --af-tenant-color-on-secondary,
+    var(--af-ref-color-neutral-100)
+  );
+  --af-sys-color-secondary-container: var(
+    --af-tenant-color-secondary-container,
+    var(--af-ref-color-teal-69)
+  );
+  --af-sys-color-on-secondary-container: var(
+    --af-tenant-color-on-secondary-container,
+    var(--af-ref-color-slate-19)
+  );
+
+  --af-sys-color-tertiary: var(
+    --af-tenant-color-tertiary,
+    var(--af-ref-color-navy-31)
+  );
+  --af-sys-color-on-tertiary: var(
+    --af-tenant-color-on-tertiary,
+    var(--af-ref-color-neutral-100)
+  );
+  --af-sys-color-tertiary-container: var(
+    --af-tenant-color-tertiary-container,
+    var(--af-ref-color-navy-97)
+  );
+  --af-sys-color-on-tertiary-container: var(
+    --af-tenant-color-on-tertiary-container,
+    var(--af-ref-color-navy-31)
+  );
+
+  /* ------------------------------------------------------------------------
+     ERROR / VALIDATION
+     Error is corrective/system failure semantics, not adverse business state.
+     Protected from tenant customisation.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-error: var(--af-ref-color-red-51);
+  --af-sys-color-on-error: var(--af-ref-color-neutral-100);
+  --af-sys-color-error-container: var(--af-ref-color-red-95);
+  --af-sys-color-on-error-container: var(--af-ref-color-red-45);
+
+  /* ------------------------------------------------------------------------
+     SURFACE
+     Containment hierarchy, not elevation or z-index.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-surface: var(--af-ref-color-slate-98);
+  --af-sys-color-surface-dim: var(--af-ref-color-slate-94);
+  --af-sys-color-surface-bright: var(--af-ref-color-neutral-100);
+
+  --af-sys-color-surface-container-lowest: var(--af-ref-color-neutral-100);
+  --af-sys-color-surface-container-low: var(--af-ref-color-slate-99);
+  --af-sys-color-surface-container: var(--af-ref-color-slate-97);
+  --af-sys-color-surface-container-high: var(--af-ref-color-slate-96);
+  --af-sys-color-surface-container-highest: var(--af-ref-color-slate-93);
+
+  --af-sys-color-on-surface: var(--af-ref-color-slate-31);
+  /* slate-46, not slate-55: measured floor across all eight light surfaces is
+     5.84:1 (slate-55 fell to 3.94:1 on surface-container-highest). */
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-46);
+
+  /* ------------------------------------------------------------------------
+     STRUCTURE
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-outline: var(--af-ref-color-slate-55);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-93);
+  --af-sys-color-scrim: oklch(
+    from var(--af-ref-color-black) l c h /
+    var(--af-ref-opacity-38)
+  );
+
+  /* ------------------------------------------------------------------------
+     INVERSE
+     Local inversion only. These are not dark-theme aliases.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-inverse-surface: var(--af-ref-color-slate-31);
+  --af-sys-color-inverse-on-surface: var(--af-ref-color-slate-97);
+  --af-sys-color-inverse-primary: var(--af-ref-color-blue-87);
+
+  /* ------------------------------------------------------------------------
+     FIXED ACCENTS
+     Theme-invariant by definition.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-primary-fixed: var(--af-ref-color-blue-91);
+  --af-sys-color-primary-fixed-dim: var(--af-ref-color-blue-81);
+  --af-sys-color-on-primary-fixed: var(--af-ref-color-blue-35);
+  --af-sys-color-on-primary-fixed-variant: var(--af-ref-color-blue-46);
+
+  /* Fixed tones follow the M3 tone-90/80 shape so one on-colour serves both
+     fixed and fixed-dim. teal-69/teal-54 put on-secondary-fixed at 3.80:1 on
+     the dim tone; teal-88/teal-78 measure 13.12:1 / 9.48:1. */
+  --af-sys-color-secondary-fixed: var(--af-ref-color-teal-88);
+  --af-sys-color-secondary-fixed-dim: var(--af-ref-color-teal-78);
+  --af-sys-color-on-secondary-fixed: var(--af-ref-color-slate-19);
+  --af-sys-color-on-secondary-fixed-variant: var(--af-ref-color-navy-31);
+
+  --af-sys-color-tertiary-fixed: var(--af-ref-color-navy-97);
+  /* navy-86, not navy-35: on-tertiary-fixed measured 1.17:1 on navy-35;
+     on navy-86 it is 8.71:1 (variant 5.19:1). */
+  --af-sys-color-tertiary-fixed-dim: var(--af-ref-color-navy-86);
+  --af-sys-color-on-tertiary-fixed: var(--af-ref-color-navy-31);
+  --af-sys-color-on-tertiary-fixed-variant: var(--af-ref-color-slate-43);
+
+  /* ------------------------------------------------------------------------
+     ENTERPRISE STATUS
+     Status is deliberately quieter than validation error.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-positive: var(--af-ref-color-green-44);
+  --af-sys-color-on-positive: var(--af-ref-color-neutral-100);
+  --af-sys-color-positive-container: var(--af-ref-color-green-96);
+  --af-sys-color-on-positive-container: var(--af-ref-color-green-44);
+
+  --af-sys-color-negative: var(--af-ref-color-red-45);
+  --af-sys-color-on-negative: var(--af-ref-color-neutral-100);
+  --af-sys-color-negative-container: var(--af-ref-color-red-91);
+  --af-sys-color-on-negative-container: var(--af-ref-color-red-45);
+
+  --af-sys-color-warning: var(--af-ref-color-amber-47);
+  --af-sys-color-on-warning: var(--af-ref-color-neutral-100);
+  --af-sys-color-warning-container: var(--af-ref-color-amber-98);
+  --af-sys-color-on-warning-container: var(--af-ref-color-amber-47);
+
+  --af-sys-color-informative: var(--af-ref-color-blue-39);
+  --af-sys-color-on-informative: var(--af-ref-color-neutral-100);
+  --af-sys-color-informative-container: var(--af-ref-color-blue-97);
+  --af-sys-color-on-informative-container: var(--af-ref-color-blue-39);
+
+  /* ------------------------------------------------------------------------
+     ANALYTICAL — CATEGORICAL
+     System identities are independent from application accent/status roles.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-categorical-1: var(--af-ref-color-teal-50);
+  --af-sys-color-categorical-2: var(--af-ref-color-orange-60);
+  --af-sys-color-categorical-3: var(--af-ref-color-indigo-38);
+  --af-sys-color-categorical-4: var(--af-ref-color-olive-52);
+  --af-sys-color-categorical-5: var(--af-ref-color-slate-64);
+  --af-sys-color-categorical-6: var(--af-ref-color-blue-45);
+  --af-sys-color-categorical-7: var(--af-ref-color-navy-31);
+  --af-sys-color-categorical-8: var(--af-ref-color-teal-69);
+
+  /* ------------------------------------------------------------------------
+     ANALYTICAL — SEQUENTIAL
+     Ordered by increasing visual magnitude.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-sequential-lowest: var(--af-ref-color-blue-97);
+  --af-sys-color-sequential-low: var(--af-ref-color-blue-91);
+  --af-sys-color-sequential-medium: var(--af-ref-color-blue-81);
+  --af-sys-color-sequential-high: var(--af-ref-color-blue-67);
+  --af-sys-color-sequential-highest: var(--af-ref-color-blue-45);
+
+  /* ------------------------------------------------------------------------
+     ANALYTICAL — DIVERGING
+     These are DATA semantics even where the resolved hue resembles status.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-diverging-negative: var(--af-ref-color-red-51);
+  --af-sys-color-diverging-neutral: var(--af-ref-color-slate-64);
+  --af-sys-color-diverging-positive: var(--af-ref-color-green-52);
+
+  /* ------------------------------------------------------------------------
+     ANALYTICAL — COMPARISON
+     Line/dash/marker semantics belong to chart implementation, not this file.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-color-actual: var(--af-ref-color-navy-31);
+  --af-sys-color-forecast: var(--af-ref-color-blue-45);
+  --af-sys-color-target: var(--af-ref-color-teal-54);
+  --af-sys-color-benchmark: var(--af-ref-color-slate-64);
+  --af-sys-color-reference: var(--af-ref-color-slate-55);
+}
+
+/* ==========================================================================
+   DARK + STANDARD
+   Same semantic identities; different resolution.
+   Fixed accents intentionally do not change.
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+  /* Accent */
+  --af-sys-color-primary: var(
+    --af-tenant-color-primary,
+    var(--af-ref-color-blue-67)
+  );
+  --af-sys-color-on-primary: var(
+    --af-tenant-color-on-primary,
+    var(--af-ref-color-slate-20)
+  );
+  --af-sys-color-primary-container: var(
+    --af-tenant-color-primary-container,
+    var(--af-ref-color-blue-28)
+  );
+  --af-sys-color-on-primary-container: var(
+    --af-tenant-color-on-primary-container,
+    var(--af-ref-color-blue-87)
+  );
+
+  --af-sys-color-secondary: var(
+    --af-tenant-color-secondary,
+    var(--af-ref-color-teal-69)
+  );
+  --af-sys-color-on-secondary: var(
+    --af-tenant-color-on-secondary,
+    var(--af-ref-color-slate-19)
+  );
+  --af-sys-color-secondary-container: var(
+    --af-tenant-color-secondary-container,
+    var(--af-ref-color-teal-50)
+  );
+  --af-sys-color-on-secondary-container: var(
+    --af-tenant-color-on-secondary-container,
+    var(--af-ref-color-slate-97)
+  );
+
+  --af-sys-color-tertiary: var(
+    --af-tenant-color-tertiary,
+    var(--af-ref-color-navy-97)
+  );
+  --af-sys-color-on-tertiary: var(
+    --af-tenant-color-on-tertiary,
+    var(--af-ref-color-slate-19)
+  );
+  --af-sys-color-tertiary-container: var(
+    --af-tenant-color-tertiary-container,
+    var(--af-ref-color-navy-35)
+  );
+  --af-sys-color-on-tertiary-container: var(
+    --af-tenant-color-on-tertiary-container,
+    var(--af-ref-color-navy-97)
+  );
+
+  /* Error */
+  --af-sys-color-error: var(--af-ref-color-red-73);
+  --af-sys-color-on-error: var(--af-ref-color-slate-19);
+  --af-sys-color-error-container: var(--af-ref-color-red-27);
+  --af-sys-color-on-error-container: var(--af-ref-color-red-83);
+
+  /* Surface */
+  --af-sys-color-surface: var(--af-ref-color-slate-22);
+  --af-sys-color-surface-dim: var(--af-ref-color-slate-19);
+  --af-sys-color-surface-bright: var(--af-ref-color-slate-29);
+
+  --af-sys-color-surface-container-lowest: var(--af-ref-color-black);
+  --af-sys-color-surface-container-low: var(--af-ref-color-slate-22);
+  --af-sys-color-surface-container: var(--af-ref-color-slate-24);
+  --af-sys-color-surface-container-high: var(--af-ref-color-slate-26);
+  --af-sys-color-surface-container-highest: var(--af-ref-color-slate-28);
+
+  --af-sys-color-on-surface: var(--af-ref-color-slate-97);
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-81);
+
+  /* Structure */
+  --af-sys-color-outline: var(--af-ref-color-slate-63);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-32);
+
+  /* Inverse */
+  --af-sys-color-inverse-surface: var(--af-ref-color-slate-97);
+  --af-sys-color-inverse-on-surface: var(--af-ref-color-slate-31);
+  --af-sys-color-inverse-primary: var(--af-ref-color-blue-45);
+
+  /* Status */
+  --af-sys-color-positive: var(--af-ref-color-green-86);
+  --af-sys-color-on-positive: var(--af-ref-color-slate-19);
+  --af-sys-color-positive-container: var(--af-ref-color-green-27);
+  --af-sys-color-on-positive-container: var(--af-ref-color-green-86);
+
+  --af-sys-color-negative: var(--af-ref-color-red-83);
+  --af-sys-color-on-negative: var(--af-ref-color-slate-19);
+  --af-sys-color-negative-container: var(--af-ref-color-red-27);
+  --af-sys-color-on-negative-container: var(--af-ref-color-red-83);
+
+  --af-sys-color-warning: var(--af-ref-color-amber-89);
+  --af-sys-color-on-warning: var(--af-ref-color-slate-19);
+  --af-sys-color-warning-container: var(--af-ref-color-amber-29);
+  --af-sys-color-on-warning-container: var(--af-ref-color-amber-89);
+
+  --af-sys-color-informative: var(--af-ref-color-blue-87);
+  --af-sys-color-on-informative: var(--af-ref-color-slate-19);
+  --af-sys-color-informative-container: var(--af-ref-color-blue-28);
+  --af-sys-color-on-informative-container: var(--af-ref-color-blue-87);
+
+  /* Analytical — categorical */
+  --af-sys-color-categorical-1: var(--af-ref-color-teal-69);
+  --af-sys-color-categorical-2: var(--af-ref-color-orange-60);
+  /* indigo-75, not indigo-38: 1.65:1 on the dark ground vs 7.56:1. */
+  --af-sys-color-categorical-3: var(--af-ref-color-indigo-75);
+  --af-sys-color-categorical-4: var(--af-ref-color-olive-52);
+  --af-sys-color-categorical-5: var(--af-ref-color-slate-81);
+  --af-sys-color-categorical-6: var(--af-ref-color-blue-78);
+  --af-sys-color-categorical-7: var(--af-ref-color-navy-97);
+  --af-sys-color-categorical-8: var(--af-ref-color-teal-54);
+
+  /* Analytical — sequential */
+  --af-sys-color-sequential-lowest: var(--af-ref-color-blue-28);
+  --af-sys-color-sequential-low: var(--af-ref-color-blue-32);
+  --af-sys-color-sequential-medium: var(--af-ref-color-blue-46);
+  --af-sys-color-sequential-high: var(--af-ref-color-blue-67);
+  --af-sys-color-sequential-highest: var(--af-ref-color-blue-87);
+
+  /* Analytical — diverging */
+  --af-sys-color-diverging-negative: var(--af-ref-color-red-73);
+  --af-sys-color-diverging-neutral: var(--af-ref-color-slate-73);
+  --af-sys-color-diverging-positive: var(--af-ref-color-green-73);
+
+  /* Analytical — comparison */
+  --af-sys-color-actual: var(--af-ref-color-navy-97);
+  --af-sys-color-forecast: var(--af-ref-color-blue-78);
+  --af-sys-color-target: var(--af-ref-color-teal-69);
+  --af-sys-color-benchmark: var(--af-ref-color-slate-81);
+  --af-sys-color-reference: var(--af-ref-color-slate-63);
+}
+
+/* ==========================================================================
+   MEDIUM CONTRAST
+   Accessibility takes precedence over tenant expression. Increased-contrast
+   modes therefore use governed Afenda resolutions for the affected roles.
+   Unchanged roles inherit their deterministic theme resolution above.
+   ========================================================================== */
+
+:root:not([data-theme="dark"])[data-contrast="medium"] {
+  /* One step beyond the standard slate-46 (floor 6.40:1 on every surface). */
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-43);
+  --af-sys-color-outline: var(--af-ref-color-slate-46);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-84);
+
+  --af-sys-color-primary: var(--af-ref-color-blue-40);
+  --af-sys-color-on-primary: var(--af-ref-color-neutral-100);
+  --af-sys-color-secondary: var(--af-ref-color-teal-50);
+  --af-sys-color-on-secondary: var(--af-ref-color-neutral-100);
+}
+
+:root[data-theme="dark"][data-contrast="medium"] {
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-88);
+  --af-sys-color-outline: var(--af-ref-color-slate-73);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-43);
+
+  --af-sys-color-primary: var(--af-ref-color-blue-78);
+  --af-sys-color-on-primary: var(--af-ref-color-slate-19);
+}
+
+/* ==========================================================================
+   HIGH CONTRAST
+   ========================================================================== */
+
+:root:not([data-theme="dark"])[data-contrast="high"] {
+  --af-sys-color-on-surface: var(--af-ref-color-slate-19);
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-31);
+  --af-sys-color-outline: var(--af-ref-color-slate-31);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-66);
+
+  --af-sys-color-primary: var(--af-ref-color-blue-35);
+  --af-sys-color-on-primary: var(--af-ref-color-neutral-100);
+  --af-sys-color-secondary: var(--af-ref-color-teal-50);
+  --af-sys-color-on-secondary: var(--af-ref-color-neutral-100);
+}
+
+:root[data-theme="dark"][data-contrast="high"] {
+  --af-sys-color-on-surface: var(--af-ref-color-neutral-100);
+  --af-sys-color-on-surface-variant: var(--af-ref-color-slate-97);
+  --af-sys-color-outline: var(--af-ref-color-slate-97);
+  --af-sys-color-outline-variant: var(--af-ref-color-slate-63);
+
+  --af-sys-color-primary: var(--af-ref-color-blue-87);
+  --af-sys-color-on-primary: var(--af-ref-color-slate-19);
+}
+
+/*
+ * TENANT CONTRACT
+ * ---------------
+ * A tenant theme may provide ONLY the twelve optional input variables below,
+ * scoped as needed for light/dark:
+ *
+ *   --af-tenant-color-primary
+ *   --af-tenant-color-on-primary
+ *   --af-tenant-color-primary-container
+ *   --af-tenant-color-on-primary-container
+ *
+ *   --af-tenant-color-secondary
+ *   --af-tenant-color-on-secondary
+ *   --af-tenant-color-secondary-container
+ *   --af-tenant-color-on-secondary-container
+ *
+ *   --af-tenant-color-tertiary
+ *   --af-tenant-color-on-tertiary
+ *   --af-tenant-color-tertiary-container
+ *   --af-tenant-color-on-tertiary-container
+ *
+ * Tenant values must be validated before release against the same pairing and
+ * accessibility requirements as Afenda defaults.
+ *
+ * Surface, structure, error, enterprise-status, inverse, and analytical roles
+ * are intentionally not tenant inputs.
+ */

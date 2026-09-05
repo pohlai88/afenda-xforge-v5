@@ -1,0 +1,472 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Content Presentation Infrastructure
+ *
+ * File: packages/design/src/styles/content.css
+ *
+ * Depends on:
+ *   ./typography.css
+ *   ./geometry.css
+ *   ./layout.css
+ *   ./accessibility.css
+ *
+ * Purpose
+ * -------
+ * Implement CSS-side presentation for Level-1 content semantics:
+ * direction, bidirectional isolation, identifiers, structured values,
+ * localisation-safe wrapping, recoverable truncation, audit presentation,
+ * and AI-content disclosure presentation.
+ *
+ * This file deliberately does NOT implement localisation, translation,
+ * plural rules, locale formatters, canonical terminology, or date/number
+ * pattern selection.
+ */
+
+/* ==========================================================================
+   PRIVATE CONTENT IMPLEMENTATION VALUES
+   ========================================================================== */
+
+:root {
+  --af-content-clamp-lines: 2;
+  --af-content-ai-marker-width: var(--af-sys-size-stroke-emphasis);
+  --af-content-audit-label-min: 7rem;
+}
+
+/* ==========================================================================
+   DIRECTION — Level 1: ltr | rtl | auto
+   Prefer semantic HTML dir attributes whenever direction carries meaning.
+   ========================================================================== */
+
+.af-direction-ltr {
+  direction: ltr;
+}
+
+.af-direction-rtl {
+  direction: rtl;
+}
+
+/*
+ * CSS has no automatic direction value equivalent to HTML dir="auto".
+ * Components handling unknown-direction content must set dir="auto".
+ * This helper provides paragraph-level bidi handling only.
+ */
+.af-direction-auto {
+  unicode-bidi: plaintext;
+}
+
+:where(input, textarea)[dir="auto"] {
+  text-align: start;
+}
+
+/* ==========================================================================
+   BIDI — Level 1: natural | isolated | identifier
+   ========================================================================== */
+
+.af-bidi-natural {
+  unicode-bidi: normal;
+}
+
+.af-bidi-isolated,
+bdi {
+  unicode-bidi: isolate;
+}
+
+.af-bidi-identifier,
+.af-identifier {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ==========================================================================
+   EXPLICIT DIRECTION-SENSITIVE ICON MIRRORING
+   Non-directional symbols and brand marks remain untouched.
+   ========================================================================== */
+
+.af-icon-directional {
+  transform-origin: center;
+}
+
+.af-icon-directional:dir(rtl) {
+  scale: -1 1;
+}
+
+/* ==========================================================================
+   LOCALISATION-SAFE TEXT
+   ========================================================================== */
+
+.af-content {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  line-break: auto;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.af-content-prose {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  hyphens: auto;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+.af-content-break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+.af-content-preserve-lines {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   IDENTIFIERS
+   Canonical identifier values are not translated prose.
+   ========================================================================== */
+
+.af-identifier {
+  font-family: var(--af-sys-type-identifier-font-family);
+  font-size: var(--af-sys-type-identifier-font-size);
+  font-weight: var(--af-sys-type-identifier-font-weight);
+
+  font-variant-ligatures: none;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: var(--af-sys-type-identifier-line-height);
+  letter-spacing: var(--af-sys-type-identifier-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Apply .af-identifier only to the identifier value, not its translated label.
+ * Privacy masking is not implemented in CSS because visually hidden canonical
+ * sensitive text would still remain present in the DOM.
+ */
+
+/* ==========================================================================
+   STRUCTURED VALUE PRESENTATION
+ *
+ * The application formatter owns actual locale output.
+ * CSS only supplies stable presentation after formatting.
+   ========================================================================== */
+
+.af-structured-value,
+[data-content-format="number"],
+[data-content-format="currency"],
+[data-content-format="percentage"],
+[data-content-format="date"],
+[data-content-format="time"],
+[data-content-format="datetime"],
+[data-content-format="duration"],
+[data-content-format="unit"] {
+  font-variant-numeric: tabular-nums lining-nums;
+  unicode-bidi: isolate;
+}
+
+[data-content-format="number"],
+[data-content-format="currency"],
+[data-content-format="percentage"] {
+  font-family: var(--af-sys-type-numeric-font-family);
+  font-size: var(--af-sys-type-numeric-font-size);
+  font-weight: var(--af-sys-type-numeric-font-weight);
+  font-variant-numeric: var(--af-sys-type-numeric-font-variant-numeric);
+  line-height: var(--af-sys-type-numeric-line-height);
+  letter-spacing: var(--af-sys-type-numeric-letter-spacing);
+}
+
+[data-content-format="date"],
+[data-content-format="time"],
+[data-content-format="datetime"],
+[data-content-format="duration"],
+[data-content-format="unit"] {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.af-numeric-align-end {
+  text-align: end;
+}
+
+/*
+ * CSS does not manufacture:
+ *   exact vs approximate
+ *   ordinary vs accounting currency
+ *   ratio vs already-scaled percentage
+ *   date vs instant
+ *   unit conversion
+ * Those distinctions must exist in data/content semantics first.
+ */
+
+/* ==========================================================================
+   RECOVERABLE TRUNCATION
+   ========================================================================== */
+
+.af-truncate-recoverable {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.af-clamp-recoverable {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  min-inline-size: 0;
+  overflow: hidden;
+  -webkit-line-clamp: var(--af-content-clamp-lines);
+}
+
+.af-content-full {
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+@media print {
+  .af-truncate-recoverable,
+  .af-clamp-recoverable {
+    display: block;
+    overflow: visible;
+    text-overflow: clip;
+    -webkit-line-clamp: unset;
+    white-space: normal;
+  }
+}
+
+/* ==========================================================================
+   EMPTY-STATE PRESENTATION
+   The five semantic empty-state types remain distinct in wording/behavior.
+   ========================================================================== */
+
+.af-empty-state {
+  display: grid;
+  gap: var(--af-sys-space-item);
+  align-content: start;
+  min-inline-size: 0;
+  max-inline-size: var(--af-layout-measure-reading, 45rem);
+}
+
+.af-empty-state-title {
+  font-family: var(--af-sys-type-component-heading-font-family);
+  font-size: var(--af-sys-type-component-heading-font-size);
+  font-weight: var(--af-sys-type-component-heading-font-weight);
+  line-height: var(--af-sys-type-component-heading-line-height);
+  letter-spacing: var(--af-sys-type-component-heading-letter-spacing);
+}
+
+.af-empty-state-description {
+  font-family: var(--af-sys-type-body-font-family);
+  font-size: var(--af-sys-type-body-font-size);
+  font-weight: var(--af-sys-type-body-font-weight);
+  line-height: var(--af-sys-type-body-line-height);
+  letter-spacing: var(--af-sys-type-body-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * data-empty-state may represent:
+ * initial | filtered | search | permission | unavailable
+ *
+ * CSS deliberately does not give these five states one generic meaning.
+ */
+
+/* ==========================================================================
+   HELP / EXPLANATORY CONTENT
+   ========================================================================== */
+
+.af-helper-content {
+  font-family: var(--af-sys-type-helper-font-family);
+  font-size: var(--af-sys-type-helper-font-size);
+  font-weight: var(--af-sys-type-helper-font-weight);
+  line-height: var(--af-sys-type-helper-line-height);
+  color: var(--af-sys-color-on-surface-variant);
+  letter-spacing: var(--af-sys-type-helper-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+.af-rationale-content {
+  max-inline-size: var(--af-layout-measure-reading, 45rem);
+
+  font-family: var(--af-sys-type-body-font-family);
+  font-size: var(--af-sys-type-body-font-size);
+  font-weight: var(--af-sys-type-body-font-weight);
+  line-height: var(--af-sys-type-body-line-height);
+  letter-spacing: var(--af-sys-type-body-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   AUDIT CONTENT
+   Audit presentation favours precise, scannable evidence.
+   ========================================================================== */
+
+.af-audit-content {
+  display: grid;
+  gap: var(--af-sys-space-item);
+  min-inline-size: 0;
+
+  font-family: var(--af-sys-type-body-compact-font-family);
+  font-size: var(--af-sys-type-body-compact-font-size);
+  font-weight: var(--af-sys-type-body-compact-font-weight);
+  line-height: var(--af-sys-type-body-compact-line-height);
+  letter-spacing: var(--af-sys-type-body-compact-letter-spacing);
+}
+
+.af-audit-field {
+  display: grid;
+  grid-template-columns:
+    minmax(var(--af-content-audit-label-min), auto)
+    minmax(0, 1fr);
+  gap: var(--af-sys-space-inline);
+  align-items: baseline;
+  min-inline-size: 0;
+}
+
+.af-audit-label {
+  font-weight: var(--af-ref-type-weight-medium);
+  color: var(--af-sys-color-on-surface-variant);
+}
+
+.af-audit-value {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Actor/object identifiers should compose with .af-identifier.
+ * Absolute audit timestamps should compose with
+ * data-content-format="datetime" after governed timezone-aware formatting.
+ */
+
+@container af-layout (max-width: 30rem) {
+  .af-audit-field {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--af-sys-space-inline-tight);
+  }
+}
+
+/* ==========================================================================
+   AI CONTENT
+ *
+ * Visual treatment supplements the required textual/programmatic distinction.
+ * The component must render a localised disclosure label when provenance
+ * matters to the user's decision.
+   ========================================================================== */
+
+.af-ai-content {
+  position: relative;
+  min-inline-size: 0;
+
+  padding-inline-start: var(--af-sys-space-item);
+  border-inline-start: var(--af-content-ai-marker-width) solid
+    var(--af-sys-color-outline);
+}
+
+.af-ai-content-label {
+  display: block;
+  margin-block-end: var(--af-sys-space-inline-tight);
+
+  font-family: var(--af-sys-type-label-font-family);
+  font-size: var(--af-sys-type-label-font-size);
+  font-weight: var(--af-sys-type-label-font-weight);
+  line-height: var(--af-sys-type-label-line-height);
+
+  color: var(--af-sys-color-on-surface-variant);
+  letter-spacing: var(--af-sys-type-label-letter-spacing);
+}
+
+.af-ai-content:is(
+  [data-ai-content="suggestion"],
+  [data-ai-content="draft"],
+  [data-ai-content="summary"],
+  [data-ai-content="inference"]
+) {
+  border-inline-start-color: var(--af-sys-color-informative);
+}
+
+.af-ai-content[data-ai-content="authoritative"] {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+/* ==========================================================================
+   STATUS / ERROR CONTENT RESILIENCE
+   ========================================================================== */
+
+.af-error-message,
+.af-status-message {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   FORCED COLOURS
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  .af-ai-content:is(
+    [data-ai-content="suggestion"],
+    [data-ai-content="draft"],
+    [data-ai-content="summary"],
+    [data-ai-content="inference"]
+  ) {
+    border-inline-start-color: Highlight;
+  }
+
+  .af-ai-content-label {
+    color: CanvasText;
+  }
+}
+
+/* ==========================================================================
+   REFLOW DEFENCE
+ *
+ * This 20rem condition exists only as an implementation aid for the normative
+ * 320 CSS px accessibility test. It is not a product layout breakpoint.
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .af-empty-state {
+    max-inline-size: 100%;
+  }
+}
+
+/* ==========================================================================
+   IMPLEMENTATION BOUNDARIES
+   ========================================================================== */
+
+/*
+ * LOCALISATION
+ * ------------
+ * Translation, plural selection, canonical action terminology, number/currency/
+ * percentage/date/time/duration/unit formatting, and timezone selection belong
+ * to governed application infrastructure, not CSS.
+ *
+ * DIRECTION
+ * ---------
+ * Prefer semantic HTML dir metadata. Unknown-direction content uses dir="auto".
+ * CSS never guesses text direction from locale.
+ *
+ * BIDI
+ * ----
+ * Store logical text order. Never reverse strings or use punctuation/spacing to
+ * simulate RTL.
+ *
+ * IDENTIFIERS
+ * -----------
+ * Visual wrapping or truncation never mutates the canonical value.
+ *
+ * TRUNCATION
+ * ----------
+ * Essential truncated content must remain accessible through a full-content
+ * mechanism supplied by the owning component.
+ *
+ * AI CONTENT
+ * ----------
+ * Styling alone is not disclosure. Non-authoritative generated content must
+ * retain the required localised/provenance distinction.
+ *
+ * TENANT
+ * ------
+ * Tenant vocabulary substitution is content configuration, not a CSS API.
+ */

@@ -1,0 +1,265 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * System Geometry Resolution
+ *
+ * File: packages/design/src/styles/geometry.css
+ *
+ * Depends on:
+ *   ./tokens.css
+ *
+ * Purpose
+ * -------
+ * Resolve Level-1 geometry system identities to concrete Level-2 values.
+ *
+ * This file owns:
+ *   - semantic spacing
+ *   - interaction-target size
+ *   - visual icon size
+ *   - stroke thickness
+ *   - semantic shape/radius
+ *   - elevation/shadow
+ *   - stacking layers
+ *   - density resolution of admitted density-sensitive geometry
+ *
+ * It deliberately does NOT create a global:
+ *
+ *   --af-sys-size-compact
+ *   --af-sys-size-default
+ *   --af-sys-size-large
+ *
+ * because Level 1 defines compact/default/large as component SIZE INTENTS,
+ * not canonical system-token identities. Component contracts decide which
+ * sizes they expose and resolve their own concrete dimensions.
+ *
+ * Dependency:
+ *   af.ref -> af.sys
+ *
+ * No component-private geometry, Tailwind mapping, or shadcn aliasing here.
+ */
+
+/* ==========================================================================
+   COMFORTABLE — DEFAULT DENSITY
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     SPACE
+     Semantic relationship order:
+       inline-tight <= inline <= control <= item <= field
+                    <= group <= section <= pane <= page
+     ------------------------------------------------------------------------ */
+
+  --af-sys-space-inline-tight: var(--af-ref-space-1); /* 4px  */
+  --af-sys-space-inline: var(--af-ref-space-2); /* 8px  */
+  --af-sys-space-control: var(--af-ref-space-2); /* 8px  */
+  --af-sys-space-item: var(--af-ref-space-3); /* 12px */
+  --af-sys-space-field: var(--af-ref-space-4); /* 16px */
+
+  /* Structural rhythm is density-invariant. */
+  --af-sys-space-group: var(--af-ref-space-5); /* 24px */
+  --af-sys-space-section: var(--af-ref-space-6); /* 32px */
+  --af-sys-space-pane: var(--af-ref-space-7); /* 40px */
+  --af-sys-space-page: var(--af-ref-space-8); /* 48px */
+
+  /* ------------------------------------------------------------------------
+     INTERACTION TARGETS
+     Effective target geometry is independent from visible control size.
+     Accessibility remains authoritative over minimum permitted use.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-size-target-compact: var(--af-ref-size-target-min); /* 24px */
+  --af-sys-size-target-default: var(
+    --af-ref-size-target-comfortable
+  ); /* 44px */
+  --af-sys-size-target-prominent: var(--af-ref-size-target-large); /* 48px */
+
+  /* ------------------------------------------------------------------------
+     ICON VISUAL SIZE
+     Visual icon geometry is not interaction-target geometry.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-size-icon-compact: var(--af-ref-size-icon-sm); /* 16px */
+  --af-sys-size-icon-default: var(--af-ref-size-icon-md); /* 20px */
+  --af-sys-size-icon-prominent: var(--af-ref-size-icon-lg); /* 24px */
+
+  /*
+   * Display iconography is intentionally non-dense and expressive.
+   * Reuses a governed size reference rather than creating a one-off literal.
+   */
+  --af-sys-size-icon-display: var(--af-ref-size-target-large); /* 48px */
+
+  /* ------------------------------------------------------------------------
+     STROKE
+     Geometry only. Stroke colour is owned by color.css.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-size-stroke-separator: var(--af-ref-size-1); /* 1px */
+  --af-sys-size-stroke-boundary: var(--af-ref-size-1); /* 1px */
+  --af-sys-size-stroke-emphasis: var(--af-ref-size-2); /* 2px */
+  --af-sys-size-stroke-focus: var(--af-ref-size-2); /* 2px */
+
+  /* ------------------------------------------------------------------------
+     SHAPE
+     Restrained productive geometry. Tenant expression is brand-only.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-shape-none: var(--af-ref-shape-none);
+  --af-sys-shape-control: var(--af-ref-shape-sm); /* 4px  */
+  --af-sys-shape-container: var(--af-ref-shape-md); /* 6px  */
+  --af-sys-shape-overlay: var(--af-ref-shape-lg); /* 8px  */
+  --af-sys-shape-prominent: var(--af-ref-shape-xl); /* 12px */
+  --af-sys-shape-full: var(--af-ref-shape-full);
+
+  /*
+   * Only brand shape is tenant-customisable.
+   * Productive control/container/overlay geometry is protected.
+   */
+  --af-sys-shape-brand: var(--af-tenant-shape-brand, var(--af-ref-shape-lg));
+
+  /* ------------------------------------------------------------------------
+     ELEVATION
+     Visual depth only. Elevation never determines stacking order.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-elevation-flat: var(--af-ref-elevation-flat);
+  --af-sys-elevation-raised: var(--af-ref-elevation-raised);
+  --af-sys-elevation-floating: var(--af-ref-elevation-floating);
+
+  /*
+   * Modal and generic overlay depth may currently share the strongest
+   * reference shadow. They remain different semantic responsibilities even
+   * when their concrete rendering is equal.
+   */
+  --af-sys-elevation-modal: var(--af-ref-elevation-overlay);
+
+  /* ------------------------------------------------------------------------
+     LAYERS
+     Ordering contract:
+       base < sticky < dropdown < popover < overlay < modal < toast < tooltip
+
+     Reference layer names are implementation options, not public semantics.
+     Toast/tooltip are composed only from reference values; no raw z-index
+     literal enters the system tier.
+     ------------------------------------------------------------------------ */
+
+  --af-sys-layer-base: var(--af-ref-layer-base); /* 0  */
+  --af-sys-layer-sticky: var(--af-ref-layer-local); /* 10 */
+  --af-sys-layer-dropdown: var(--af-ref-layer-sticky); /* 20 */
+  --af-sys-layer-popover: var(--af-ref-layer-overlay); /* 30 */
+  --af-sys-layer-overlay: var(--af-ref-layer-popover); /* 40 */
+  --af-sys-layer-modal: var(--af-ref-layer-modal); /* 50 */
+
+  --af-sys-layer-toast: calc(
+    var(--af-ref-layer-modal) +
+    var(--af-ref-layer-local)
+  ); /* 60 */
+
+  --af-sys-layer-tooltip: calc(
+    var(--af-ref-layer-modal) +
+    var(--af-ref-layer-local) +
+    var(--af-ref-layer-local)
+  ); /* 70 */
+}
+
+/* ==========================================================================
+   COMPACT DENSITY
+   Only Level-1 density-sensitive spacing is compressed.
+   Structural group/section/pane/page rhythm and target requirements remain.
+   ========================================================================== */
+
+:root[data-density="compact"] {
+  --af-sys-space-inline-tight: var(--af-ref-space-1); /* 4px  */
+  --af-sys-space-inline: var(--af-ref-space-1); /* 4px  */
+  --af-sys-space-control: var(--af-ref-space-1); /* 4px  */
+  --af-sys-space-item: var(--af-ref-space-2); /* 8px  */
+  --af-sys-space-field: var(--af-ref-space-3); /* 12px */
+
+  /*
+   * Density may alter compact visual relationships, but it does not
+   * automatically shrink every icon or any required effective target.
+   */
+}
+
+/* ==========================================================================
+   DENSE DENSITY
+   Specialised high-volume mode. Further compression stops at the governed
+   4px reference rhythm rather than creating arbitrary sub-grid values.
+   ========================================================================== */
+
+:root[data-density="dense"] {
+  --af-sys-space-inline-tight: var(--af-ref-space-1); /* 4px */
+  --af-sys-space-inline: var(--af-ref-space-1); /* 4px */
+  --af-sys-space-control: var(--af-ref-space-1); /* 4px */
+  --af-sys-space-item: var(--af-ref-space-1); /* 4px */
+  --af-sys-space-field: var(--af-ref-space-2); /* 8px */
+}
+
+/* ==========================================================================
+   DIRECTION
+   System spacing is relationship-based and consumed with logical CSS
+   properties. No physical left/right token remapping is required here.
+   ========================================================================== */
+
+/* No value overrides for [dir="rtl"]. */
+
+/* ==========================================================================
+   TENANT CONTRACT
+   ========================================================================== */
+
+/*
+ * A validated tenant may provide only:
+ *
+ *   --af-tenant-shape-brand
+ *
+ * It may not redefine:
+ *   productive spacing
+ *   component size intent
+ *   interaction targets
+ *   control/container/overlay/full shape
+ *   stroke geometry
+ *   icon geometry
+ *   elevation meaning
+ *   layer order
+ *   density semantics
+ *
+ * Brand shape must still satisfy the owning component and accessibility
+ * contracts where it is admitted.
+ */
+
+/* ==========================================================================
+   IMPLEMENTATION NOTES
+   ========================================================================== */
+
+/*
+ * SIZE INTENT
+ * -----------
+ * Level 1 defines:
+ *
+ *   compact | default | large
+ *
+ * as component-facing size intents. They do not have canonical
+ * GEOMETRY_SYSTEM_TOKENS identities. A component such as Button may therefore
+ * map its admitted size intent through its own af.comp.* geometry tokens.
+ *
+ * This prevents "size=large" from becoming a universal 48px assumption across
+ * unrelated components.
+ *
+ * SIZE VS TARGET
+ * --------------
+ * Visible component size and effective interaction target are independent.
+ * A compact visual control may retain af.sys.size.target.default or another
+ * target required by accessibility.
+ *
+ * ELEVATION VS LAYER
+ * ------------------
+ * Elevation = visual depth.
+ * Layer     = overlap priority.
+ *
+ * They must never be mechanically coupled.
+ *
+ * BORDER
+ * ------
+ * Width comes from af.sys.size.stroke.* here.
+ * Colour comes from af.sys.color.outline / outline-variant or a component-
+ * permitted semantic colour role in color.css.
+ */

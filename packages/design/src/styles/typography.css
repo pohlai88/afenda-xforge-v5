@@ -1,0 +1,350 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * System Typography Resolution
+ *
+ * File: packages/design/src/styles/typography.css
+ *
+ * Depends on:
+ *   ./tokens.css
+ *
+ * Purpose
+ * -------
+ * Resolve Level-1 semantic typography roles (af.sys.type.*) to concrete
+ * Level-2 typography fields.
+ *
+ * This file owns TYPOGRAPHY RESOLUTION only.
+ * It does not define:
+ *   - new typography roles
+ *   - component recipes
+ *   - semantic heading markup
+ *   - content formatting
+ *   - Tailwind @theme mappings
+ *   - shadcn aliases
+ *
+ * A Level-1 role remains one semantic identity. CSS exposes implementation
+ * fields for that role:
+ *
+ *   af.sys.type.action
+ *     -> --af-sys-type-action-font-family
+ *     -> --af-sys-type-action-font-size
+ *     -> --af-sys-type-action-font-weight
+ *     -> --af-sys-type-action-line-height
+ *     -> --af-sys-type-action-letter-spacing
+ *
+ * These fields are projections of one role, not additional public semantics.
+ */
+
+/* ==========================================================================
+   TYPEFACE SLOTS
+   Productive UI and mono are protected. Brand is optional and display-only.
+   ========================================================================== */
+
+:root {
+  --af-sys-typeface-ui: var(--af-ref-type-font-ui);
+  --af-sys-typeface-mono: var(--af-ref-type-font-mono);
+
+  /*
+   * Tenant brand typography is intentionally closed by default.
+   * A validated tenant may provide --af-tenant-type-font-brand.
+   * Only the display role consumes it.
+   */
+  --af-sys-typeface-brand: var(
+    --af-tenant-type-font-brand,
+    var(--af-ref-type-font-ui)
+  );
+
+  /* ========================================================================
+     PRODUCTIVE ROLES — COMFORTABLE DEFAULT
+     ======================================================================== */
+
+  /* action */
+  --af-sys-type-action-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-action-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-action-font-weight: var(--af-ref-type-weight-medium);
+  --af-sys-type-action-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-action-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* body */
+  --af-sys-type-body-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-body-font-size: var(--af-ref-type-size-md);
+  --af-sys-type-body-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-body-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-body-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* body-compact */
+  --af-sys-type-body-compact-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-body-compact-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-body-compact-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-body-compact-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-body-compact-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* caption */
+  --af-sys-type-caption-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-caption-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-caption-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-caption-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-caption-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* code */
+  --af-sys-type-code-font-family: var(--af-sys-typeface-mono);
+  --af-sys-type-code-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-code-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-code-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-code-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* component-heading */
+  --af-sys-type-component-heading-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-component-heading-font-size: var(--af-ref-type-size-lg);
+  --af-sys-type-component-heading-font-weight: var(
+    --af-ref-type-weight-semibold
+  );
+  --af-sys-type-component-heading-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-component-heading-letter-spacing: var(
+    --af-ref-type-tracking-tight
+  );
+
+  /* data */
+  --af-sys-type-data-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-data-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-data-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-data-line-height: var(--af-ref-type-leading-table);
+  --af-sys-type-data-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* data-compact */
+  --af-sys-type-data-compact-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-data-compact-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-data-compact-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-data-compact-line-height: var(--af-ref-type-leading-table);
+  --af-sys-type-data-compact-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* helper */
+  --af-sys-type-helper-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-helper-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-helper-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-helper-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-helper-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* identifier */
+  --af-sys-type-identifier-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-identifier-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-identifier-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-identifier-line-height: var(--af-ref-type-leading-table);
+  --af-sys-type-identifier-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* label */
+  --af-sys-type-label-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-label-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-label-font-weight: var(--af-ref-type-weight-medium);
+  --af-sys-type-label-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-label-letter-spacing: var(--af-ref-type-tracking-label);
+
+  /* legal */
+  --af-sys-type-legal-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-legal-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-legal-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-legal-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-legal-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  /* metric */
+  --af-sys-type-metric-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-metric-font-size: var(--af-ref-type-size-2xl);
+  --af-sys-type-metric-font-weight: var(--af-ref-type-weight-semibold);
+  --af-sys-type-metric-line-height: var(--af-ref-type-leading-tight);
+  --af-sys-type-metric-letter-spacing: var(--af-ref-type-tracking-tight);
+  --af-sys-type-metric-font-variant-numeric: tabular-nums lining-nums;
+
+  /* numeric */
+  --af-sys-type-numeric-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-numeric-font-size: var(--af-ref-type-size-sm);
+  --af-sys-type-numeric-font-weight: var(--af-ref-type-weight-regular);
+  --af-sys-type-numeric-line-height: var(--af-ref-type-leading-table);
+  --af-sys-type-numeric-letter-spacing: var(--af-ref-type-tracking-normal);
+  --af-sys-type-numeric-font-variant-numeric: tabular-nums lining-nums;
+
+  /* ========================================================================
+     STRUCTURAL HEADINGS
+     Typography does not imply HTML heading rank.
+     ======================================================================== */
+
+  /* page-title */
+  --af-sys-type-page-title-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-page-title-font-size: var(--af-ref-type-size-3xl);
+  --af-sys-type-page-title-font-weight: var(--af-ref-type-weight-semibold);
+  --af-sys-type-page-title-line-height: var(--af-ref-type-leading-tight);
+  --af-sys-type-page-title-letter-spacing: var(--af-ref-type-tracking-tight);
+
+  /* section-heading */
+  --af-sys-type-section-heading-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-section-heading-font-size: var(--af-ref-type-size-2xl);
+  --af-sys-type-section-heading-font-weight: var(--af-ref-type-weight-semibold);
+  --af-sys-type-section-heading-line-height: var(--af-ref-type-leading-tight);
+  --af-sys-type-section-heading-letter-spacing: var(
+    --af-ref-type-tracking-tight
+  );
+
+  /* subsection-heading */
+  --af-sys-type-subsection-heading-font-family: var(--af-sys-typeface-ui);
+  --af-sys-type-subsection-heading-font-size: var(--af-ref-type-size-xl);
+  --af-sys-type-subsection-heading-font-weight: var(
+    --af-ref-type-weight-semibold
+  );
+  --af-sys-type-subsection-heading-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-subsection-heading-letter-spacing: var(
+    --af-ref-type-tracking-tight
+  );
+
+  /* ========================================================================
+     EXPRESSIVE
+     Display is the only Level-1 role eligible for brand typeface and fluid
+     typography. The default remains restrained and fixed; a sparse expressive
+     surface may opt into the governed fluid projection below.
+     ======================================================================== */
+
+  --af-sys-type-display-font-family: var(--af-sys-typeface-brand);
+  --af-sys-type-display-font-size: var(--af-ref-type-size-4xl);
+  --af-sys-type-display-font-weight: var(--af-ref-type-weight-semibold);
+  --af-sys-type-display-line-height: var(--af-ref-type-leading-tight);
+  --af-sys-type-display-letter-spacing: var(--af-ref-type-tracking-tight);
+
+  /*
+   * Optional implementation field for expressive surfaces only.
+   * This does not change the display semantic role.
+   */
+  --af-sys-type-display-fluid-font-size: clamp(
+    var(--af-ref-type-size-4xl),
+    calc(var(--af-ref-type-size-4xl) + 1.25vw),
+    3rem
+  );
+
+  /* ========================================================================
+     EMPHASIS MODIFIER
+     Eligible roles may select this weight while retaining their semantic role.
+     ======================================================================== */
+
+  --af-sys-type-emphasis-emphasized-font-weight: var(
+    --af-ref-type-weight-semibold
+  );
+}
+
+/* ==========================================================================
+   DENSITY — COMPACT
+   Only Level-1 density-sensitive roles change.
+   ========================================================================== */
+
+:root[data-density="compact"] {
+  --af-sys-type-action-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-body-compact-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-caption-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-component-heading-font-size: var(--af-ref-type-size-md);
+
+  --af-sys-type-data-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-data-compact-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-identifier-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-label-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-numeric-font-size: var(--af-ref-type-size-xs);
+}
+
+/* ==========================================================================
+   DENSITY — DENSE
+   Dense is specialised, not the universal default. Typography bottoms out at
+   the governed 12px supporting/data scale; further density comes primarily
+   from geometry rather than unreadably small text.
+   ========================================================================== */
+
+:root[data-density="dense"] {
+  --af-sys-type-action-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-action-line-height: var(--af-ref-type-leading-table);
+
+  --af-sys-type-body-compact-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-body-compact-line-height: var(--af-ref-type-leading-table);
+
+  --af-sys-type-caption-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-caption-line-height: var(--af-ref-type-leading-table);
+
+  --af-sys-type-component-heading-font-size: var(--af-ref-type-size-md);
+
+  --af-sys-type-data-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-data-compact-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-identifier-font-size: var(--af-ref-type-size-xs);
+
+  --af-sys-type-label-font-size: var(--af-ref-type-size-xs);
+  --af-sys-type-label-line-height: var(--af-ref-type-leading-table);
+
+  --af-sys-type-numeric-font-size: var(--af-ref-type-size-xs);
+}
+
+/* ==========================================================================
+   SCRIPT ADAPTATION
+   Role identity and hierarchy remain unchanged. These selectors only adjust
+   metrics where Latin assumptions are unsafe.
+   ========================================================================== */
+
+:root[data-script="arabic"],
+:root[data-script="hebrew"] {
+  --af-sys-type-action-letter-spacing: var(--af-ref-type-tracking-normal);
+  --af-sys-type-label-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  --af-sys-type-body-line-height: var(--af-ref-type-leading-relaxed);
+  --af-sys-type-body-compact-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-helper-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-legal-line-height: var(--af-ref-type-leading-body);
+}
+
+:root[data-script="thai"],
+:root[data-script="devanagari"] {
+  --af-sys-type-action-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-label-line-height: var(--af-ref-type-leading-body);
+
+  --af-sys-type-body-line-height: var(--af-ref-type-leading-relaxed);
+  --af-sys-type-body-compact-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-caption-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-helper-line-height: var(--af-ref-type-leading-relaxed);
+  --af-sys-type-legal-line-height: var(--af-ref-type-leading-relaxed);
+
+  --af-sys-type-page-title-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-section-heading-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-subsection-heading-line-height: var(--af-ref-type-leading-ui);
+}
+
+:root[data-script="han"],
+:root[data-script="hangul"],
+:root[data-script="kana"] {
+  --af-sys-type-action-letter-spacing: var(--af-ref-type-tracking-normal);
+  --af-sys-type-label-letter-spacing: var(--af-ref-type-tracking-normal);
+
+  --af-sys-type-body-line-height: var(--af-ref-type-leading-relaxed);
+  --af-sys-type-body-compact-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-caption-line-height: var(--af-ref-type-leading-body);
+  --af-sys-type-data-line-height: var(--af-ref-type-leading-ui);
+  --af-sys-type-data-compact-line-height: var(--af-ref-type-leading-ui);
+}
+
+/*
+ * IDENTIFIER NOTE
+ * ---------------
+ * Identifier defaults to the productive UI face. A component may use the mono
+ * typeface only when exact character distinction materially improves accuracy.
+ * That decision belongs to the component/pattern implementation, not to all
+ * identifiers globally.
+ *
+ * NUMERIC NOTE
+ * ------------
+ * Numeric and metric roles provide tabular figures. Currency, percentages,
+ * accounting signs, units and dates remain content-formatting semantics.
+ *
+ * TENANT NOTE
+ * -----------
+ * Tenant typography may provide only:
+ *
+ *   --af-tenant-type-font-brand
+ *
+ * Core UI/mono typefaces, semantic roles, hierarchy, productive typography,
+ * numeric features and accessibility remain protected.
+ */

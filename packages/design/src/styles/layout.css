@@ -1,0 +1,546 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Layout Implementation
+ *
+ * File: packages/design/src/styles/layout.css
+ *
+ * Depends on:
+ *   ./geometry.css
+ *
+ * Purpose
+ * -------
+ * Implement the structural and adaptive layout language defined by
+ * foundation/05-layout.ts.
+ *
+ * Layout is NOT a token category. This file therefore does not create
+ * af.sys.layout.* tokens. It owns physical layout constants and reusable
+ * CSS implementations for Level-1 layout semantics.
+ *
+ * Canonical responsive vocabulary:
+ *
+ * Window width:
+ *   compact      < 600px
+ *   medium       >= 600px
+ *   expanded     >= 840px
+ *   large        >= 1200px
+ *   extra-large  >= 1600px
+ *
+ * Window height:
+ *   compact      < 480px
+ *   medium       >= 480px
+ *   expanded     >= 900px
+ *
+ * Container width:
+ *   compact      < 30rem
+ *   medium       >= 30rem
+ *   expanded     >= 48rem
+ *
+ * Product screens must not invent another breakpoint vocabulary.
+ * Reusable components should use container queries, not viewport width.
+ */
+
+/* ==========================================================================
+   PRIVATE LEVEL-2 PHYSICAL CONSTANTS
+   These are implementation values, not product-facing semantic tokens.
+   ========================================================================== */
+
+:root {
+  /* Current resolved window class, useful for diagnostics/runtime inspection. */
+  --af-layout-window-width-class: compact;
+  --af-layout-window-height-class: compact;
+
+  /* Content measures */
+  --af-layout-measure-compact: 20rem;
+  --af-layout-measure-reading: 45rem;
+  --af-layout-measure-form: 60rem;
+  --af-layout-measure-record: 72rem;
+  --af-layout-measure-fluid: 100%;
+
+  /* Governed pane implementation ranges */
+  --af-layout-pane-list-min: 16rem;
+  --af-layout-pane-list-preferred: 22rem;
+  --af-layout-pane-list-max: 28rem;
+
+  --af-layout-pane-inspector-min: 17rem;
+  --af-layout-pane-inspector-preferred: 20rem;
+  --af-layout-pane-inspector-max: 26rem;
+
+  --af-layout-pane-supporting-min: 18rem;
+  --af-layout-pane-supporting-preferred: 24rem;
+  --af-layout-pane-supporting-max: 30rem;
+
+  /* Grid implementation values */
+  --af-layout-grid-dashboard-min: 18rem;
+  --af-layout-grid-detail-min: 16rem;
+  --af-layout-grid-form-label: 12rem;
+
+  /* Safe regions */
+  --af-layout-safe-top: env(safe-area-inset-top, 0px);
+  --af-layout-safe-right: env(safe-area-inset-right, 0px);
+  --af-layout-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --af-layout-safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* ==========================================================================
+   WINDOW WIDTH CLASSES
+   Thresholds appear once in ascending cascade.
+   ========================================================================== */
+
+@media (min-width: 600px) {
+  :root {
+    --af-layout-window-width-class: medium;
+  }
+}
+
+@media (min-width: 840px) {
+  :root {
+    --af-layout-window-width-class: expanded;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --af-layout-window-width-class: large;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --af-layout-window-width-class: extra-large;
+  }
+}
+
+/* ==========================================================================
+   WINDOW HEIGHT CLASSES
+   Supplemental only; not a width × height breakpoint matrix.
+   ========================================================================== */
+
+@media (min-height: 480px) {
+  :root {
+    --af-layout-window-height-class: medium;
+  }
+}
+
+@media (min-height: 900px) {
+  :root {
+    --af-layout-window-height-class: expanded;
+  }
+}
+
+/* ==========================================================================
+   CONTAINER WIDTH CLASSES
+   .af-container-scope establishes the local adaptive boundary.
+   Reusable children respond to this scope rather than browser width.
+   ========================================================================== */
+
+.af-container-scope {
+  container-name: af-layout;
+  container-type: inline-size;
+}
+
+.af-container-adaptive {
+  --af-layout-container-width-class: compact;
+  min-inline-size: 0;
+}
+
+@container af-layout (min-width: 30rem) {
+  .af-container-adaptive {
+    --af-layout-container-width-class: medium;
+  }
+}
+
+@container af-layout (min-width: 48rem) {
+  .af-container-adaptive {
+    --af-layout-container-width-class: expanded;
+  }
+}
+
+/* ==========================================================================
+   SHELL / SCAFFOLD
+   Shell owns application-safe-region handling.
+   ========================================================================== */
+
+.af-layout-shell {
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-inline-size: 0;
+  min-block-size: 100dvh;
+
+  padding-block-start: var(--af-layout-safe-top);
+  padding-block-end: var(--af-layout-safe-bottom);
+  padding-inline-start: var(--af-layout-safe-left);
+  padding-inline-end: var(--af-layout-safe-right);
+}
+
+.af-layout-shell-workspace {
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+/* ==========================================================================
+   PANE
+   A pane is a task region, not a generic styled container.
+   ========================================================================== */
+
+.af-layout-pane {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.af-layout-pane[data-pane-scroll-owner="pane"] {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.af-layout-pane[data-pane-sizing="flexible"] {
+  flex: 1 1 0%;
+}
+
+.af-layout-pane[data-pane-sizing="fixed"] {
+  flex: 0 0 var(--af-layout-pane-preferred, auto);
+  min-inline-size: var(--af-layout-pane-min, 0);
+  max-inline-size: var(--af-layout-pane-max, none);
+}
+
+.af-layout-pane[data-pane-role="list"] {
+  --af-layout-pane-min: var(--af-layout-pane-list-min);
+  --af-layout-pane-preferred: var(--af-layout-pane-list-preferred);
+  --af-layout-pane-max: var(--af-layout-pane-list-max);
+}
+
+.af-layout-pane[data-pane-role="inspector"] {
+  --af-layout-pane-min: var(--af-layout-pane-inspector-min);
+  --af-layout-pane-preferred: var(--af-layout-pane-inspector-preferred);
+  --af-layout-pane-max: var(--af-layout-pane-inspector-max);
+}
+
+.af-layout-pane[data-pane-role="supporting"] {
+  --af-layout-pane-min: var(--af-layout-pane-supporting-min);
+  --af-layout-pane-preferred: var(--af-layout-pane-supporting-preferred);
+  --af-layout-pane-max: var(--af-layout-pane-supporting-max);
+}
+
+.af-layout-pane[data-pane-presentation="co-planar"] {
+  position: relative;
+}
+
+.af-layout-pane[data-pane-presentation="docked"] {
+  position: sticky;
+  inset-block-start: 0;
+  align-self: start;
+}
+
+.af-layout-pane[data-pane-presentation="floating"] {
+  position: absolute;
+  z-index: var(--af-sys-layer-overlay);
+}
+
+.af-layout-pane[data-pane-presentation="exclusive"] {
+  inline-size: 100%;
+  max-inline-size: none;
+}
+
+/*
+ * Pane resizing itself is NOT implemented with CSS `resize`.
+ * A resize handle is an interaction component and must provide its required
+ * keyboard, focus, pointer and accessibility mechanisms.
+ */
+
+/* ==========================================================================
+   COMPOSITION PRIMITIVES
+   ========================================================================== */
+
+.af-layout-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--af-layout-gap, var(--af-sys-space-item));
+  min-inline-size: 0;
+}
+
+.af-layout-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--af-layout-gap, var(--af-sys-space-inline));
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.af-layout-grid {
+  display: grid;
+  gap: var(--af-layout-gap, var(--af-sys-space-group));
+  min-inline-size: 0;
+}
+
+.af-layout-section {
+  min-inline-size: 0;
+}
+
+.af-layout-section + .af-layout-section {
+  margin-block-start: var(--af-sys-space-section);
+}
+
+.af-layout-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--af-sys-space-control);
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.af-layout-split {
+  display: grid;
+  grid-template-columns:
+    minmax(0, var(--af-layout-split-first, 1fr))
+    minmax(0, var(--af-layout-split-second, 1fr));
+  gap: var(--af-layout-gap, var(--af-sys-space-group));
+  min-inline-size: 0;
+}
+
+/* ==========================================================================
+   LOGICAL ALIGNMENT
+   ========================================================================== */
+
+[data-af-layout-align="start"] {
+  align-items: start;
+}
+
+[data-af-layout-align="center"] {
+  align-items: center;
+}
+
+[data-af-layout-align="end"] {
+  align-items: end;
+}
+
+[data-af-layout-align="stretch"] {
+  align-items: stretch;
+}
+
+[data-af-layout-align="baseline"] {
+  align-items: baseline;
+}
+
+/* ==========================================================================
+   GRID PURPOSES
+   Column count is implementation, never semantic identity.
+   ========================================================================== */
+
+.af-layout-grid[data-grid-purpose="page"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.af-layout-grid[data-grid-purpose="dashboard"] {
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, var(--af-layout-grid-dashboard-min)), 1fr)
+    );
+}
+
+.af-layout-grid[data-grid-purpose="detail"] {
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, var(--af-layout-grid-detail-min)), 1fr)
+    );
+}
+
+.af-layout-grid[data-grid-purpose="form"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/*
+ * Form horizontal alignment is container-driven, not viewport-driven.
+ * The form still owns semantic labels/fields; this only provides tracks.
+ */
+@container af-layout (min-width: 48rem) {
+  .af-layout-grid[data-grid-purpose="form"] {
+    grid-template-columns:
+      minmax(8rem, var(--af-layout-grid-form-label))
+      minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   CONTENT MEASURE
+   Pane width and content measure remain independent.
+   ========================================================================== */
+
+.af-layout-measure {
+  inline-size: min(100%, var(--af-layout-content-measure, 100%));
+  max-inline-size: 100%;
+}
+
+.af-layout-measure[data-measure="compact"] {
+  --af-layout-content-measure: var(--af-layout-measure-compact);
+}
+
+.af-layout-measure[data-measure="reading"] {
+  --af-layout-content-measure: var(--af-layout-measure-reading);
+}
+
+.af-layout-measure[data-measure="form"] {
+  --af-layout-content-measure: var(--af-layout-measure-form);
+}
+
+.af-layout-measure[data-measure="record"] {
+  --af-layout-content-measure: var(--af-layout-measure-record);
+}
+
+.af-layout-measure[data-measure="fluid"] {
+  --af-layout-content-measure: var(--af-layout-measure-fluid);
+}
+
+/* ==========================================================================
+   RULERS
+   Shared logical alignment edges.
+   ========================================================================== */
+
+.af-layout-ruler {
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin-inline: auto;
+}
+
+.af-layout-ruler[data-ruler="safety"] {
+  padding-inline-start: max(
+    var(--af-sys-space-page),
+    var(--af-layout-safe-left)
+  );
+  padding-inline-end: max(
+    var(--af-sys-space-page),
+    var(--af-layout-safe-right)
+  );
+}
+
+.af-layout-ruler[data-ruler="title"],
+.af-layout-ruler[data-ruler="content"],
+.af-layout-ruler[data-ruler="action"] {
+  padding-inline: var(--af-sys-space-page);
+}
+
+/* ==========================================================================
+   CANONICAL PATTERN TRACKS
+   Visibility/state transitions remain owned by the pattern/component because
+   CSS must not discard task state or decide which essential pane is active.
+   These selectors implement only the co-planar track geometry.
+   ========================================================================== */
+
+.af-layout-pattern {
+  display: grid;
+  gap: var(--af-sys-space-group);
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+/* Constrained default: one task pane at a time. */
+.af-layout-pattern {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Expanded: common two-pane professional composition. */
+@media (min-width: 840px) {
+  .af-layout-pattern[data-layout-pattern="master-detail"] {
+    grid-template-columns:
+      minmax(
+        var(--af-layout-pane-list-min),
+        var(--af-layout-pane-list-preferred)
+      )
+      minmax(0, 1fr);
+  }
+
+  .af-layout-pattern[data-layout-pattern="supporting-pane"] {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(
+        var(--af-layout-pane-supporting-min),
+        var(--af-layout-pane-supporting-preferred)
+      );
+  }
+
+  .af-layout-pattern[data-layout-pattern="workbench-inspector"] {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(
+        var(--af-layout-pane-inspector-min),
+        var(--af-layout-pane-inspector-preferred)
+      );
+  }
+
+  /*
+   * At expanded width, master-detail-inspector keeps the inspector adaptive
+   * (show/hide or levitate) rather than forcing three co-planar tracks.
+   */
+  .af-layout-pattern[data-layout-pattern="master-detail-inspector"] {
+    grid-template-columns:
+      minmax(
+        var(--af-layout-pane-list-min),
+        var(--af-layout-pane-list-preferred)
+      )
+      minmax(0, 1fr);
+  }
+}
+
+/* Large: three-pane co-planar composition becomes viable. */
+@media (min-width: 1200px) {
+  .af-layout-pattern[data-layout-pattern="master-detail-inspector"] {
+    grid-template-columns:
+      minmax(
+        var(--af-layout-pane-list-min),
+        var(--af-layout-pane-list-preferred)
+      )
+      minmax(0, 1fr)
+      minmax(
+        var(--af-layout-pane-inspector-min),
+        var(--af-layout-pane-inspector-preferred)
+      );
+  }
+}
+
+/* ==========================================================================
+   SCROLL OWNERSHIP
+   ========================================================================== */
+
+[data-scroll-owner="window"] {
+  overflow: visible;
+}
+
+[data-scroll-owner="pane"],
+[data-scroll-owner="region"] {
+  min-block-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* ==========================================================================
+   IMPLEMENTATION BOUNDARIES
+   ========================================================================== */
+
+/*
+ * ADAPTIVE STRATEGIES
+ * -------------------
+ * reflow    -> may be implemented by these grid/flex changes.
+ * resize    -> physical tracks may change here.
+ * show-hide -> requires the owning pattern/component to preserve reachability.
+ * levitate  -> requires presentation + dismissal/focus behaviour from the
+ *              owning component/interaction contract.
+ *
+ * Therefore this CSS file does not autonomously hide essential panes.
+ *
+ * DENSITY
+ * -------
+ * Layout does not change window/container class because density changes.
+ * Density compresses admitted geometry; it does not substitute for responsive
+ * or adaptive composition.
+ *
+ * DIRECTION
+ * ---------
+ * All authored alignment/padding uses logical CSS properties.
+ *
+ * TAILWIND
+ * --------
+ * Do not reproduce these breakpoints as a second Afenda layout vocabulary in
+ * product code. Governed responsive composition should consume these layout
+ * primitives/patterns; Tailwind remains an implementation tool, not authority.
+ */

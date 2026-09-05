@@ -1,0 +1,507 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Tailwind CSS v4 Projection
+ *
+ * File: packages/design/src/styles/tailwind.css
+ *
+ * Build requirement:
+ *   Tailwind CSS v4+
+ *
+ * Depends on the Afenda Level-2 semantic layers being present in the same
+ * compiled stylesheet.
+ *
+ * Purpose
+ * -------
+ * Project Afenda semantics into Tailwind v4 without allowing Tailwind's default
+ * theme to become a parallel design language.
+ *
+ * Direction:
+ *
+ *   Level 1 language
+ *        ↓
+ *   Afenda Level 2 --af-sys-* semantics
+ *        ↓
+ *   this Tailwind projection
+ *        ↓
+ *   utility syntax
+ *
+ * Tailwind's framework import is intentionally owned by the canonical
+ * index/application entry, not by this projection file.
+ *
+ * GOVERNANCE
+ * ----------
+ * Tailwind arbitrary values remain framework escape hatches and must be
+ * Level-3 linted in governed source.
+ *
+ * SHADCN
+ * ------
+ * No shadcn compatibility vocabulary is made public here. Imported shadcn
+ * implementations are adapted to Afenda semantics at the component layer.
+ */
+
+@theme inline {
+  /* Remove Tailwind's default design-decision vocabulary. */
+  --color-primary: var(--af-sys-color-primary);
+  --color-on-primary: var(--af-sys-color-on-primary);
+  --color-primary-container: var(--af-sys-color-primary-container);
+  --color-on-primary-container: var(--af-sys-color-on-primary-container);
+  --color-secondary: var(--af-sys-color-secondary);
+  --color-on-secondary: var(--af-sys-color-on-secondary);
+  --color-secondary-container: var(--af-sys-color-secondary-container);
+  --color-on-secondary-container: var(--af-sys-color-on-secondary-container);
+  --color-tertiary: var(--af-sys-color-tertiary);
+  --color-on-tertiary: var(--af-sys-color-on-tertiary);
+  --color-tertiary-container: var(--af-sys-color-tertiary-container);
+  --color-on-tertiary-container: var(--af-sys-color-on-tertiary-container);
+
+  /* ERROR / VALIDATION */
+  --color-error: var(--af-sys-color-error);
+  --color-on-error: var(--af-sys-color-on-error);
+  --color-error-container: var(--af-sys-color-error-container);
+  --color-on-error-container: var(--af-sys-color-on-error-container);
+
+  /* SURFACE */
+  --color-surface: var(--af-sys-color-surface);
+  --color-surface-dim: var(--af-sys-color-surface-dim);
+  --color-surface-bright: var(--af-sys-color-surface-bright);
+  --color-surface-container-lowest: var(
+    --af-sys-color-surface-container-lowest
+  );
+  --color-surface-container-low: var(--af-sys-color-surface-container-low);
+  --color-surface-container: var(--af-sys-color-surface-container);
+  --color-surface-container-high: var(--af-sys-color-surface-container-high);
+  --color-surface-container-highest: var(
+    --af-sys-color-surface-container-highest
+  );
+  --color-on-surface: var(--af-sys-color-on-surface);
+  --color-on-surface-variant: var(--af-sys-color-on-surface-variant);
+
+  /* STRUCTURE */
+  --color-outline: var(--af-sys-color-outline);
+  --color-outline-variant: var(--af-sys-color-outline-variant);
+  --color-scrim: var(--af-sys-color-scrim);
+
+  /* INVERSE */
+  --color-inverse-surface: var(--af-sys-color-inverse-surface);
+  --color-inverse-on-surface: var(--af-sys-color-inverse-on-surface);
+  --color-inverse-primary: var(--af-sys-color-inverse-primary);
+
+  /* FIXED ACCENT */
+  --color-primary-fixed: var(--af-sys-color-primary-fixed);
+  --color-primary-fixed-dim: var(--af-sys-color-primary-fixed-dim);
+  --color-on-primary-fixed: var(--af-sys-color-on-primary-fixed);
+  --color-on-primary-fixed-variant: var(
+    --af-sys-color-on-primary-fixed-variant
+  );
+  --color-secondary-fixed: var(--af-sys-color-secondary-fixed);
+  --color-secondary-fixed-dim: var(--af-sys-color-secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--af-sys-color-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(
+    --af-sys-color-on-secondary-fixed-variant
+  );
+  --color-tertiary-fixed: var(--af-sys-color-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--af-sys-color-tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--af-sys-color-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(
+    --af-sys-color-on-tertiary-fixed-variant
+  );
+
+  /* ENTERPRISE STATUS */
+  --color-positive: var(--af-sys-color-positive);
+  --color-on-positive: var(--af-sys-color-on-positive);
+  --color-positive-container: var(--af-sys-color-positive-container);
+  --color-on-positive-container: var(--af-sys-color-on-positive-container);
+  --color-negative: var(--af-sys-color-negative);
+  --color-on-negative: var(--af-sys-color-on-negative);
+  --color-negative-container: var(--af-sys-color-negative-container);
+  --color-on-negative-container: var(--af-sys-color-on-negative-container);
+  --color-warning: var(--af-sys-color-warning);
+  --color-on-warning: var(--af-sys-color-on-warning);
+  --color-warning-container: var(--af-sys-color-warning-container);
+  --color-on-warning-container: var(--af-sys-color-on-warning-container);
+  --color-informative: var(--af-sys-color-informative);
+  --color-on-informative: var(--af-sys-color-on-informative);
+  --color-informative-container: var(--af-sys-color-informative-container);
+  --color-on-informative-container: var(
+    --af-sys-color-on-informative-container
+  );
+
+  /* ANALYTICAL — CATEGORICAL */
+  --color-categorical-1: var(--af-sys-color-categorical-1);
+  --color-categorical-2: var(--af-sys-color-categorical-2);
+  --color-categorical-3: var(--af-sys-color-categorical-3);
+  --color-categorical-4: var(--af-sys-color-categorical-4);
+  --color-categorical-5: var(--af-sys-color-categorical-5);
+  --color-categorical-6: var(--af-sys-color-categorical-6);
+  --color-categorical-7: var(--af-sys-color-categorical-7);
+  --color-categorical-8: var(--af-sys-color-categorical-8);
+
+  /* ANALYTICAL — SEQUENTIAL */
+  --color-sequential-lowest: var(--af-sys-color-sequential-lowest);
+  --color-sequential-low: var(--af-sys-color-sequential-low);
+  --color-sequential-medium: var(--af-sys-color-sequential-medium);
+  --color-sequential-high: var(--af-sys-color-sequential-high);
+  --color-sequential-highest: var(--af-sys-color-sequential-highest);
+
+  /* ANALYTICAL — DIVERGING */
+  --color-diverging-negative: var(--af-sys-color-diverging-negative);
+  --color-diverging-neutral: var(--af-sys-color-diverging-neutral);
+  --color-diverging-positive: var(--af-sys-color-diverging-positive);
+
+  /* ANALYTICAL — COMPARISON */
+  --color-actual: var(--af-sys-color-actual);
+  --color-forecast: var(--af-sys-color-forecast);
+  --color-target: var(--af-sys-color-target);
+  --color-benchmark: var(--af-sys-color-benchmark);
+  --color-reference: var(--af-sys-color-reference);
+
+  /* SEMANTIC SPACING */
+  --spacing-inline-tight: var(--af-sys-space-inline-tight);
+  --spacing-inline: var(--af-sys-space-inline);
+  --spacing-control: var(--af-sys-space-control);
+  --spacing-item: var(--af-sys-space-item);
+  --spacing-field: var(--af-sys-space-field);
+  --spacing-group: var(--af-sys-space-group);
+  --spacing-section: var(--af-sys-space-section);
+  --spacing-pane: var(--af-sys-space-pane);
+  --spacing-page: var(--af-sys-space-page);
+
+  /* SHAPE */
+  --radius-none: var(--af-sys-shape-none);
+  --radius-control: var(--af-sys-shape-control);
+  --radius-container: var(--af-sys-shape-container);
+  --radius-overlay: var(--af-sys-shape-overlay);
+  --radius-prominent: var(--af-sys-shape-prominent);
+  --radius-full: var(--af-sys-shape-full);
+  --radius-brand: var(--af-sys-shape-brand);
+
+  /* ELEVATION */
+  --shadow-flat: var(--af-sys-elevation-flat);
+  --shadow-raised: var(--af-sys-elevation-raised);
+  --shadow-floating: var(--af-sys-elevation-floating);
+  --shadow-modal: var(--af-sys-elevation-modal);
+
+  /* WINDOW WIDTH — compact is base */
+  --breakpoint-medium: 600px;
+  --breakpoint-expanded: 840px;
+  --breakpoint-large: 1200px;
+  --breakpoint-extra-large: 1600px;
+
+  /* CONTAINER WIDTH — compact is base */
+  --container-medium: 30rem;
+  --container-expanded: 48rem;
+  /* Remove Tailwind's default design-decision vocabulary. */
+  --*: initial;
+}
+
+/* ==========================================================================
+   SEMANTIC SPACING
+   ========================================================================== */
+
+@utility gap-* {
+  gap: --value(--spacing-*);
+}
+@utility gap-x-* {
+  column-gap: --value(--spacing-*);
+}
+@utility gap-y-* {
+  row-gap: --value(--spacing-*);
+}
+
+@utility p-* {
+  padding: --value(--spacing-*);
+}
+@utility px-* {
+  padding-inline: --value(--spacing-*);
+}
+@utility py-* {
+  padding-block: --value(--spacing-*);
+}
+@utility ps-* {
+  padding-inline-start: --value(--spacing-*);
+}
+@utility pe-* {
+  padding-inline-end: --value(--spacing-*);
+}
+@utility pbs-* {
+  padding-block-start: --value(--spacing-*);
+}
+@utility pbe-* {
+  padding-block-end: --value(--spacing-*);
+}
+
+@utility m-* {
+  margin: --value(--spacing-*);
+}
+@utility mx-* {
+  margin-inline: --value(--spacing-*);
+}
+@utility my-* {
+  margin-block: --value(--spacing-*);
+}
+@utility ms-* {
+  margin-inline-start: --value(--spacing-*);
+}
+@utility me-* {
+  margin-inline-end: --value(--spacing-*);
+}
+@utility mbs-* {
+  margin-block-start: --value(--spacing-*);
+}
+@utility mbe-* {
+  margin-block-end: --value(--spacing-*);
+}
+
+/* ==========================================================================
+   SEMANTIC TYPOGRAPHY — one class = one complete Level-1 role
+   ========================================================================== */
+
+@utility type-action {
+  font-family: var(--af-sys-type-action-font-family);
+  font-size: var(--af-sys-type-action-font-size);
+  font-weight: var(--af-sys-type-action-font-weight);
+  line-height: var(--af-sys-type-action-line-height);
+  letter-spacing: var(--af-sys-type-action-letter-spacing);
+}
+
+@utility type-body {
+  font-family: var(--af-sys-type-body-font-family);
+  font-size: var(--af-sys-type-body-font-size);
+  font-weight: var(--af-sys-type-body-font-weight);
+  line-height: var(--af-sys-type-body-line-height);
+  letter-spacing: var(--af-sys-type-body-letter-spacing);
+}
+
+@utility type-body-compact {
+  font-family: var(--af-sys-type-body-compact-font-family);
+  font-size: var(--af-sys-type-body-compact-font-size);
+  font-weight: var(--af-sys-type-body-compact-font-weight);
+  line-height: var(--af-sys-type-body-compact-line-height);
+  letter-spacing: var(--af-sys-type-body-compact-letter-spacing);
+}
+
+@utility type-caption {
+  font-family: var(--af-sys-type-caption-font-family);
+  font-size: var(--af-sys-type-caption-font-size);
+  font-weight: var(--af-sys-type-caption-font-weight);
+  line-height: var(--af-sys-type-caption-line-height);
+  letter-spacing: var(--af-sys-type-caption-letter-spacing);
+}
+
+@utility type-code {
+  font-family: var(--af-sys-type-code-font-family);
+  font-size: var(--af-sys-type-code-font-size);
+  font-weight: var(--af-sys-type-code-font-weight);
+  line-height: var(--af-sys-type-code-line-height);
+  letter-spacing: var(--af-sys-type-code-letter-spacing);
+}
+
+@utility type-component-heading {
+  font-family: var(--af-sys-type-component-heading-font-family);
+  font-size: var(--af-sys-type-component-heading-font-size);
+  font-weight: var(--af-sys-type-component-heading-font-weight);
+  line-height: var(--af-sys-type-component-heading-line-height);
+  letter-spacing: var(--af-sys-type-component-heading-letter-spacing);
+}
+
+@utility type-data {
+  font-family: var(--af-sys-type-data-font-family);
+  font-size: var(--af-sys-type-data-font-size);
+  font-weight: var(--af-sys-type-data-font-weight);
+  line-height: var(--af-sys-type-data-line-height);
+  letter-spacing: var(--af-sys-type-data-letter-spacing);
+}
+
+@utility type-data-compact {
+  font-family: var(--af-sys-type-data-compact-font-family);
+  font-size: var(--af-sys-type-data-compact-font-size);
+  font-weight: var(--af-sys-type-data-compact-font-weight);
+  line-height: var(--af-sys-type-data-compact-line-height);
+  letter-spacing: var(--af-sys-type-data-compact-letter-spacing);
+}
+
+@utility type-display {
+  font-family: var(--af-sys-type-display-font-family);
+  font-size: var(--af-sys-type-display-font-size);
+  font-weight: var(--af-sys-type-display-font-weight);
+  line-height: var(--af-sys-type-display-line-height);
+  letter-spacing: var(--af-sys-type-display-letter-spacing);
+}
+
+@utility type-helper {
+  font-family: var(--af-sys-type-helper-font-family);
+  font-size: var(--af-sys-type-helper-font-size);
+  font-weight: var(--af-sys-type-helper-font-weight);
+  line-height: var(--af-sys-type-helper-line-height);
+  letter-spacing: var(--af-sys-type-helper-letter-spacing);
+}
+
+@utility type-identifier {
+  font-family: var(--af-sys-type-identifier-font-family);
+  font-size: var(--af-sys-type-identifier-font-size);
+  font-weight: var(--af-sys-type-identifier-font-weight);
+  line-height: var(--af-sys-type-identifier-line-height);
+  letter-spacing: var(--af-sys-type-identifier-letter-spacing);
+}
+
+@utility type-label {
+  font-family: var(--af-sys-type-label-font-family);
+  font-size: var(--af-sys-type-label-font-size);
+  font-weight: var(--af-sys-type-label-font-weight);
+  line-height: var(--af-sys-type-label-line-height);
+  letter-spacing: var(--af-sys-type-label-letter-spacing);
+}
+
+@utility type-legal {
+  font-family: var(--af-sys-type-legal-font-family);
+  font-size: var(--af-sys-type-legal-font-size);
+  font-weight: var(--af-sys-type-legal-font-weight);
+  line-height: var(--af-sys-type-legal-line-height);
+  letter-spacing: var(--af-sys-type-legal-letter-spacing);
+}
+
+@utility type-metric {
+  font-family: var(--af-sys-type-metric-font-family);
+  font-size: var(--af-sys-type-metric-font-size);
+  font-weight: var(--af-sys-type-metric-font-weight);
+  font-variant-numeric: var(--af-sys-type-metric-font-variant-numeric);
+  line-height: var(--af-sys-type-metric-line-height);
+  letter-spacing: var(--af-sys-type-metric-letter-spacing);
+}
+
+@utility type-numeric {
+  font-family: var(--af-sys-type-numeric-font-family);
+  font-size: var(--af-sys-type-numeric-font-size);
+  font-weight: var(--af-sys-type-numeric-font-weight);
+  font-variant-numeric: var(--af-sys-type-numeric-font-variant-numeric);
+  line-height: var(--af-sys-type-numeric-line-height);
+  letter-spacing: var(--af-sys-type-numeric-letter-spacing);
+}
+
+@utility type-page-title {
+  font-family: var(--af-sys-type-page-title-font-family);
+  font-size: var(--af-sys-type-page-title-font-size);
+  font-weight: var(--af-sys-type-page-title-font-weight);
+  line-height: var(--af-sys-type-page-title-line-height);
+  letter-spacing: var(--af-sys-type-page-title-letter-spacing);
+}
+
+@utility type-section-heading {
+  font-family: var(--af-sys-type-section-heading-font-family);
+  font-size: var(--af-sys-type-section-heading-font-size);
+  font-weight: var(--af-sys-type-section-heading-font-weight);
+  line-height: var(--af-sys-type-section-heading-line-height);
+  letter-spacing: var(--af-sys-type-section-heading-letter-spacing);
+}
+
+@utility type-subsection-heading {
+  font-family: var(--af-sys-type-subsection-heading-font-family);
+  font-size: var(--af-sys-type-subsection-heading-font-size);
+  font-weight: var(--af-sys-type-subsection-heading-font-weight);
+  line-height: var(--af-sys-type-subsection-heading-line-height);
+  letter-spacing: var(--af-sys-type-subsection-heading-letter-spacing);
+}
+
+/* ==========================================================================
+   GEOMETRY
+   ========================================================================== */
+
+@utility border-separator {
+  border-width: var(--af-sys-size-stroke-separator);
+}
+
+@utility border-boundary {
+  border-width: var(--af-sys-size-stroke-boundary);
+}
+
+@utility border-emphasis {
+  border-width: var(--af-sys-size-stroke-emphasis);
+}
+
+@utility outline-focus {
+  outline-width: var(--af-sys-size-stroke-focus);
+}
+
+@utility size-icon-compact {
+  inline-size: var(--af-sys-size-icon-compact);
+  block-size: var(--af-sys-size-icon-compact);
+}
+
+@utility size-icon-default {
+  inline-size: var(--af-sys-size-icon-default);
+  block-size: var(--af-sys-size-icon-default);
+}
+
+@utility size-icon-prominent {
+  inline-size: var(--af-sys-size-icon-prominent);
+  block-size: var(--af-sys-size-icon-prominent);
+}
+
+@utility size-icon-display {
+  inline-size: var(--af-sys-size-icon-display);
+  block-size: var(--af-sys-size-icon-display);
+}
+
+@utility target-compact {
+  min-inline-size: var(--af-sys-size-target-compact);
+  min-block-size: var(--af-sys-size-target-compact);
+}
+
+@utility target-default {
+  min-inline-size: var(--af-sys-size-target-default);
+  min-block-size: var(--af-sys-size-target-default);
+}
+
+@utility target-prominent {
+  min-inline-size: var(--af-sys-size-target-prominent);
+  min-block-size: var(--af-sys-size-target-prominent);
+}
+
+@utility z-base {
+  z-index: var(--af-sys-layer-base);
+}
+@utility z-sticky {
+  z-index: var(--af-sys-layer-sticky);
+}
+@utility z-dropdown {
+  z-index: var(--af-sys-layer-dropdown);
+}
+@utility z-popover {
+  z-index: var(--af-sys-layer-popover);
+}
+@utility z-overlay {
+  z-index: var(--af-sys-layer-overlay);
+}
+@utility z-modal {
+  z-index: var(--af-sys-layer-modal);
+}
+@utility z-toast {
+  z-index: var(--af-sys-layer-toast);
+}
+@utility z-tooltip {
+  z-index: var(--af-sys-layer-tooltip);
+}
+
+/* ==========================================================================
+   CONTEXT / RESPONSIVE ALIGNMENT
+   ========================================================================== */
+
+/*
+ * Semantic colours already adapt through Afenda variables. The dark variant is
+ * aligned only so any legitimate non-colour structural dark: usage follows the
+ * same explicit data-theme context.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Supplemental Level-1 window-height conditions. */
+@custom-variant height-medium {
+  @media (min-height: 480px) {
+    @slot;
+  }
+}
+
+@custom-variant height-expanded {
+  @media (min-height: 900px) {
+    @slot;
+  }
+}

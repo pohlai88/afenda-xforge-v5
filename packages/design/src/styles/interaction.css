@@ -1,0 +1,477 @@
+/*
+ * AFENDA DESIGN LANGUAGE — LEVEL 2
+ * Interaction State Presentation
+ *
+ * File: packages/design/src/styles/interaction.css
+ *
+ * Depends on:
+ *   ./color.css
+ *   ./geometry.css
+ *   ./motion.css
+ *
+ * Purpose
+ * -------
+ * Implement Level-1 interaction-state presentation without creating a second
+ * component API.
+ *
+ * Interaction state is semantic behaviour first and visual presentation
+ * second. Independent state axes remain independent:
+ *
+ *   availability
+ *   engagement
+ *   selection
+ *   check
+ *   navigation
+ *   disclosure
+ *   validation
+ *   operation
+ *   drag
+ *
+ * Component contracts decide which axes apply and which combinations are legal.
+ *
+ * This file does NOT implement:
+ *   - component event handlers
+ *   - focus-management algorithms
+ *   - roving tabindex / aria-activedescendant logic
+ *   - activation semantics
+ *   - drag/drop domain operations
+ *   - gesture recognition
+ *   - status announcement
+ *   - validation wording
+ *
+ * Those remain with the component/accessibility/content implementations.
+ */
+
+/* ==========================================================================
+   PRIVATE LEVEL-2 PRESENTATION VALUES
+   Raw state-layer opacity is explicitly a Level-2 concern.
+   ========================================================================== */
+
+:root {
+  --af-int-state-hover-opacity: var(--af-ref-opacity-4);
+  --af-int-state-pressed-opacity: var(--af-ref-opacity-8);
+  --af-int-state-drag-opacity: var(--af-ref-opacity-12);
+
+  --af-int-disabled-content-opacity: var(--af-ref-opacity-38);
+  --af-int-loading-content-opacity: var(--af-ref-opacity-60);
+
+  --af-int-focus-offset: var(--af-ref-size-2);
+
+  --af-int-indicator-size: var(--af-ref-size-2);
+  --af-int-disclosure-rotation-collapsed: 0deg;
+  --af-int-disclosure-rotation-expanded: 180deg;
+}
+
+/* ==========================================================================
+   INTERACTIVE PRESENTATION CONTRACT
+   Components may consume these variables directly in their own recipes.
+   They are implementation projections, not new public semantic states.
+   ========================================================================== */
+
+.af-interactive {
+  --af-int-container-color: transparent;
+  --af-int-content-color: currentColor;
+  --af-int-content-opacity: 1;
+
+  --af-int-state-layer-color: var(--af-sys-color-on-surface);
+  --af-int-state-layer-opacity: 0;
+
+  --af-int-outline-color: transparent;
+  --af-int-outline-width: var(--af-sys-size-stroke-boundary);
+
+  --af-int-indicator-color: transparent;
+  --af-int-indicator-opacity: 0;
+
+  --af-int-state-shadow: 0 0 0 0 transparent;
+  --af-int-elevation: var(--af-sys-elevation-flat);
+
+  --af-int-disclosure-rotation: var(--af-int-disclosure-rotation-collapsed);
+
+  --af-int-cursor: default;
+  color: var(--af-int-content-color);
+  cursor: var(--af-int-cursor);
+
+  background-color: var(--af-int-container-color);
+
+  box-shadow: var(--af-int-state-shadow), var(--af-int-elevation);
+  opacity: var(--af-int-content-opacity);
+  transition-timing-function: var(--af-sys-motion-fast-effects-easing);
+  transition-duration: var(--af-sys-motion-fast-effects-duration);
+
+  transition-property: background-color, color, box-shadow, opacity;
+}
+
+/* ==========================================================================
+   OPTIONAL STATE LAYER
+   M3-style state layer is available as a presentation mechanism, not required
+   for every Afenda component.
+   ========================================================================== */
+
+.af-state-layer {
+  position: relative;
+  isolation: isolate;
+}
+
+.af-state-layer::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: var(--af-int-state-layer-color);
+  border-radius: inherit;
+  opacity: var(--af-int-state-layer-opacity);
+  transition-timing-function: var(--af-sys-motion-fast-effects-easing);
+  transition-duration: var(--af-sys-motion-fast-effects-duration);
+
+  transition-property: opacity;
+}
+
+/* ==========================================================================
+   ENGAGEMENT — HOVER
+   Hover is preview/emphasis only. It never means selected or activated.
+   ========================================================================== */
+
+@media (hover: hover) {
+  .af-interactive:hover,
+  .af-interactive[data-hovered="true"] {
+    --af-int-state-layer-opacity: var(--af-int-state-hover-opacity);
+  }
+}
+
+/* ==========================================================================
+   ENGAGEMENT — PRESSED
+   Transient feedback only; persistent states remain visible underneath it.
+   ========================================================================== */
+
+.af-interactive:active,
+.af-interactive[data-pressed="true"] {
+  --af-int-state-layer-opacity: var(--af-int-state-pressed-opacity);
+}
+
+/* ==========================================================================
+   FOCUS-VISIBLE
+   Focus uses its own outer ring so selected/current/invalid/loading treatments
+   remain independently observable.
+   ========================================================================== */
+
+.af-interactive:focus-visible,
+.af-interactive[data-focus-visible="true"] {
+  outline: var(--af-sys-size-stroke-focus) solid var(--af-sys-color-primary);
+  outline-offset: var(--af-int-focus-offset);
+}
+
+/*
+ * Never suppress the focus ring merely because another state is active.
+ * Components must not override this with outline: none unless an equivalent
+ * visible mechanism is provided by the accessibility implementation.
+ */
+
+/* ==========================================================================
+   AVAILABILITY — DISABLED
+   Disabled is not loading and is not readonly.
+ *
+ * Pointer events are intentionally NOT disabled here. aria-disabled controls
+ * may still need focus, explanation, tooltip access, or component-managed
+ * cancellation semantics.
+   ========================================================================== */
+
+.af-interactive:disabled,
+.af-interactive[aria-disabled="true"],
+.af-interactive[data-disabled="true"] {
+  --af-int-content-opacity: var(--af-int-disabled-content-opacity);
+  --af-int-state-layer-opacity: 0;
+  --af-int-cursor: not-allowed;
+}
+
+/* ==========================================================================
+   AVAILABILITY — READONLY
+   Readonly preserves legibility and access to value/content.
+   ========================================================================== */
+
+.af-interactive[readonly],
+.af-interactive[aria-readonly="true"],
+.af-interactive[data-readonly="true"] {
+  --af-int-container-color: var(--af-sys-color-surface-container-low);
+  --af-int-content-color: var(--af-sys-color-on-surface);
+  --af-int-cursor: default;
+}
+
+/* ==========================================================================
+   SELECTION
+   Selection is not focus, checked state, or current navigation.
+   A persistent container treatment is paired with an available indicator
+   channel for components that require non-colour state distinction.
+   ========================================================================== */
+
+.af-interactive[aria-selected="true"],
+.af-interactive[data-selected="true"] {
+  --af-int-container-color: var(--af-sys-color-primary-container);
+  --af-int-content-color: var(--af-sys-color-on-primary-container);
+  --af-int-indicator-color: var(--af-sys-color-primary);
+  --af-int-indicator-opacity: 1;
+}
+
+/* ==========================================================================
+   CHECKED / INDETERMINATE
+   Component-specific check marks, switch thumbs, or radio indicators consume
+   these variables. Checked state does not imply collection selection.
+   ========================================================================== */
+
+.af-interactive[aria-checked="true"],
+.af-interactive[data-checked="true"] {
+  --af-int-indicator-color: var(--af-sys-color-primary);
+  --af-int-indicator-opacity: 1;
+}
+
+.af-interactive[aria-checked="mixed"],
+.af-interactive[data-check="indeterminate"] {
+  --af-int-indicator-color: var(--af-sys-color-primary);
+  --af-int-indicator-opacity: 1;
+}
+
+/* ==========================================================================
+   CURRENT NAVIGATION
+   Current is persistent navigation context, independent from focus/selection.
+   ========================================================================== */
+
+.af-interactive[aria-current]:not([aria-current="false"]),
+.af-interactive[data-current="true"] {
+  --af-int-container-color: var(--af-sys-color-surface-container-high);
+  --af-int-content-color: var(--af-sys-color-on-surface);
+  --af-int-indicator-color: var(--af-sys-color-primary);
+  --af-int-indicator-opacity: 1;
+}
+
+/* ==========================================================================
+   DISCLOSURE
+   CSS rotates only the admitted visual indicator. Programmatic expanded state
+   and controlled relationship are component/accessibility responsibilities.
+   ========================================================================== */
+
+.af-interactive[aria-expanded="false"],
+.af-interactive[data-disclosure="collapsed"] {
+  --af-int-disclosure-rotation: var(--af-int-disclosure-rotation-collapsed);
+}
+
+.af-interactive[aria-expanded="true"],
+.af-interactive[data-disclosure="expanded"] {
+  --af-int-disclosure-rotation: var(--af-int-disclosure-rotation-expanded);
+}
+
+.af-disclosure-indicator {
+  rotate: var(--af-int-disclosure-rotation);
+  transition-timing-function: var(--af-sys-motion-fast-spatial-easing);
+  transition-duration: var(--af-sys-motion-fast-spatial-duration);
+  transition-property: rotate;
+}
+
+/* ==========================================================================
+   VALIDATION — INVALID
+   Invalid is validation failure, not generic warning or negative business state.
+   Focus remains an independent outer ring when both are active.
+   ========================================================================== */
+
+.af-interactive[aria-invalid="true"],
+.af-interactive[data-invalid="true"] {
+  --af-int-content-color: var(--af-sys-color-on-error-container);
+  --af-int-indicator-color: var(--af-sys-color-error);
+  --af-int-indicator-opacity: 1;
+
+  --af-int-state-shadow: inset 0 0 0 var(--af-sys-size-stroke-boundary)
+    var(--af-sys-color-error);
+}
+
+/* ==========================================================================
+   OPERATION — LOADING
+   Loading and disabled remain separate.
+   Loading presentation does not determine whether repeated activation is
+   blocking, nonblocking, or cancellable.
+   ========================================================================== */
+
+.af-interactive[aria-busy="true"],
+.af-interactive[data-loading="true"] {
+  --af-int-indicator-color: var(--af-sys-color-informative);
+  --af-int-indicator-opacity: 1;
+}
+
+.af-interactive[data-loading-behaviour="blocking"] {
+  --af-int-content-opacity: var(--af-int-loading-content-opacity);
+  --af-int-cursor: progress;
+}
+
+.af-interactive[data-loading-behaviour="nonblocking"] {
+  --af-int-cursor: progress;
+}
+
+.af-interactive[data-loading-behaviour="cancellable"] {
+  --af-int-cursor: progress;
+}
+
+/*
+ * An animated progress treatment, when admitted, composes with motion.css:
+ *
+ *   .af-motion-progress-indeterminate
+ *
+ * Loading meaning must remain visible/programmatic when that motion is removed.
+ */
+
+/* ==========================================================================
+   DRAG / DROP
+   Direct manipulation follows input continuously; no decorative timing is
+   applied to position.
+   ========================================================================== */
+
+.af-interactive[data-drag-state="grabbed"] {
+  --af-int-elevation: var(--af-sys-elevation-raised);
+  --af-int-state-layer-opacity: var(--af-int-state-hover-opacity);
+  --af-int-cursor: grab;
+}
+
+.af-interactive[data-drag-state="dragging"] {
+  --af-int-elevation: var(--af-sys-elevation-floating);
+  --af-int-state-layer-opacity: var(--af-int-state-drag-opacity);
+  --af-int-cursor: grabbing;
+}
+
+/*
+ * Drop target uses a geometric boundary in addition to colour, satisfying the
+ * Level-1 requirement that valid destination state not rely on colour alone.
+ */
+.af-interactive[data-drag-state="drop-target"] {
+  --af-int-container-color: var(--af-sys-color-primary-container);
+  --af-int-content-color: var(--af-sys-color-on-primary-container);
+  --af-int-indicator-color: var(--af-sys-color-primary);
+  --af-int-indicator-opacity: 1;
+
+  --af-int-state-shadow: inset 0 0 0 var(--af-sys-size-stroke-emphasis)
+    var(--af-sys-color-primary);
+}
+
+/* ==========================================================================
+   OPTIONAL NON-COLOUR INDICATOR CHANNEL
+   Selected/current/checked/invalid/loading components may use this governed
+   mark where their anatomy admits an edge indicator.
+   ========================================================================== */
+
+.af-state-indicator {
+  position: relative;
+}
+
+.af-state-indicator::before {
+  position: absolute;
+  inset-block: var(--af-ref-space-1);
+  inset-inline-start: 0;
+  inline-size: var(--af-int-indicator-size);
+  pointer-events: none;
+  content: "";
+  background: var(--af-int-indicator-color);
+  border-radius: var(--af-sys-shape-full);
+  opacity: var(--af-int-indicator-opacity);
+  transition-timing-function: var(--af-sys-motion-fast-effects-easing);
+  transition-duration: var(--af-sys-motion-fast-effects-duration);
+
+  transition-property: background-color, opacity;
+}
+
+/* ==========================================================================
+   OPERATION INDICATOR CHANNEL
+   Remains visible even when repetitive motion is removed.
+   ========================================================================== */
+
+.af-operation-indicator {
+  inline-size: var(--af-ref-size-icon-xs);
+  block-size: var(--af-ref-size-icon-xs);
+  background: var(--af-int-indicator-color);
+  border-radius: var(--af-sys-shape-full);
+  opacity: var(--af-int-indicator-opacity);
+}
+
+/* ==========================================================================
+   INTERACTION PRIORITY
+ *
+ * Semantic priority from Level 1:
+ *
+ *   availability
+ *   focus-visible
+ *   operation
+ *   validation
+ *   drag
+ *   pressed
+ *   selection / check / current
+ *   hover
+ *   rest
+ *
+ * This is NOT implemented as one mutually-exclusive CSS state stack.
+ *
+ * Instead:
+ *   - disabled changes availability variables
+ *   - focus is an independent outer outline
+ *   - loading/invalid/drag retain independent indicator/boundary channels
+ *   - selection/check/current are persistent channels
+ *   - hover/pressed affect only the optional transient state layer
+ *
+ * Therefore lower-priority transient emphasis cannot erase the higher-priority
+ * semantic presentation.
+   ========================================================================== */
+
+/* ==========================================================================
+   INPUT MODALITY
+   ========================================================================== */
+
+/*
+ * Hover styling is gated by actual hover capability, not viewport size.
+ * Keyboard focus uses :focus-visible.
+ * Touch target ergonomics belong to geometry/component contracts.
+ *
+ * No persistent "last input was keyboard/pointer/touch" class is established
+ * here because Level 1 explicitly rejects permanent modality classification.
+ */
+
+/* ==========================================================================
+   FOCUS STRATEGY
+   ========================================================================== */
+
+/*
+ * direct
+ *   Native focus moves among interactive items.
+ *
+ * roving
+ *   Component logic maintains one sequential tab stop among peers.
+ *
+ * descendant
+ *   Composite retains DOM focus and identifies an active descendant.
+ *
+ * These are behavioural algorithms, not CSS variants. interaction.css only
+ * guarantees that whichever element is semantically focus-visible can render
+ * the governed focus presentation.
+ */
+
+/* ==========================================================================
+   GESTURES / DRAG ALTERNATIVES
+   ========================================================================== */
+
+/*
+ * CSS cannot satisfy the required simple-pointer, keyboard, cancellation, or
+ * non-drag alternatives for gesture-driven interaction. Owning components must
+ * implement those mechanisms explicitly.
+ */
+
+/* ==========================================================================
+   TENANT CONTRACT
+   ========================================================================== */
+
+/*
+ * Interaction is protected product behaviour.
+ *
+ * Tenant styling must not redefine:
+ *   state semantics
+ *   selection/check/current distinction
+ *   focus behaviour
+ *   activation behaviour
+ *   loading semantics
+ *   validation semantics
+ *   drag semantics
+ *   keyboard behaviour
+ *
+ * No --af-tenant-interaction-* inputs exist.
+ */
