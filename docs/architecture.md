@@ -260,7 +260,7 @@ screens       apps/web/app/**/page.tsx — composition only; no styling decision
 
 - **No boolean-prop proliferation.** Behaviour is composed from parts, not switched on. **Compound components share context**; the provider is the only place that knows how state is managed. **Children over render props**; `cva` for the variant axes a primitive genuinely has. **React 19**: `ref` is a prop; `use()` over `useContext()`.
 - **Behaviour contracts** live in `packages/design/tests/`: Dialog moves focus inside, closes on Escape and returns focus to the trigger; DropdownMenu opens from the keyboard, arrows move, Escape closes and restores focus; Field marks the input invalid and associates the error text as its accessible description. Axe cannot prove these; the tests do.
-- **Parts are `data-slot` names.** The anatomy of a component is discovered from the slots it stamps — 73 names on 12 components — and pinned in `packages/design/tests/anatomy.test.ts` (R2), so a regenerated component that gains or loses a part is a one-line reviewed diff. `badge` and `sonner` stamp none and say why there. M3's container / label / supporting text map onto the root slot, `*-title` and `*-description`.
+- **Parts are `data-slot` names, and every part has a class.** The anatomy of a component is discovered from the slots it stamps — 73 names on 12 components — and pinned in `packages/design/tests/anatomy.test.ts` (R2), so a regenerated component that gains or loses a part is a one-line reviewed diff. `packages/design/src/anatomy.ts` is the vocabulary as data: ten closed classes from M3's grammar (container, label, supporting, action, indicator, divider, scrim, media, icon, structural), what each may draw, and the class of every slot. R2 refuses a slot without a class, a class outside the list, a divider that draws a target boundary (`--input`, `--primary`, `--ring`) and the field boundary on anything but a container or indicator — each with a planted defect. `badge` and `sonner` stamp none and say why in the same file. What stays prose: that a label is its container's on-partner is true by upstream construction and no cheap static check follows a class string to the element it colours.
 
 ### 6.4 What enters the design package
 
@@ -274,7 +274,7 @@ A component enters `packages/design` when a screen uses it and it knows nothing 
 | --- | --- | --- | --- |
 | Lint + format | `pnpm check` | ~0.2 s (106 files) | every edit (hook) and before any claim of done |
 | Types | `pnpm typecheck` | ~12 s, 3 packages | before done |
-| Unit | `pnpm test` — 79 tests (contracts 12, design 15, web 52) | ~30 s | before done |
+| Unit | `pnpm test` — 84 tests (contracts 12, design 20, web 52) | ~30 s | before done |
 | Browser | `pnpm --filter @xforge/web test:e2e` — 13 tests in Chromium and WebKit, plus Firefox in CI (35 runs there): axe on every screen state, a phone viewport, and Core Web Vitals and JavaScript budgets (`e2e/vitals.e2e.ts`, Chromium-only) against a production build | ~2 min incl. build + start | per screen path |
 | Build | `pnpm build` | ~15 s | before done |
 | CI | `.github/workflows/ci.yml` — all of the above against a production build | on push and PR | always |
