@@ -5,6 +5,7 @@ import { Button } from "@xforge/design/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,8 +31,8 @@ const RoleItem = ({
   onPick,
   role,
 }: Readonly<{ onPick: (role: MemberRole) => void; role: MemberRole }>) => {
-  const onSelect = () => onPick(role);
-  return <DropdownMenuItem onSelect={onSelect}>Make {role}</DropdownMenuItem>;
+  const onClick = () => onPick(role);
+  return <DropdownMenuItem onClick={onClick}>Make {role}</DropdownMenuItem>;
 };
 
 export const MemberRowActions = ({
@@ -58,25 +59,30 @@ export const MemberRowActions = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          aria-label={`Actions for ${member.name}`}
-          disabled={pending}
-          size="icon-sm"
-          variant="ghost"
-        >
-          <Ellipsis />
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            aria-label={`Actions for ${member.name}`}
+            disabled={pending}
+            size="icon-sm"
+            variant="ghost"
+          />
+        }
+      >
+        <Ellipsis />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Change role</DropdownMenuLabel>
-        {roles
-          .filter((role) => role !== member.role)
-          .map((role) => (
-            <RoleItem key={role} onPick={changeRole} role={role} />
-          ))}
+        {/* Base UI: a group label must live inside a group. */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Change role</DropdownMenuLabel>
+          {roles
+            .filter((role) => role !== member.role)
+            .map((role) => (
+              <RoleItem key={role} onPick={changeRole} role={role} />
+            ))}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={remove} variant="destructive">
+        <DropdownMenuItem onClick={remove} variant="destructive">
           Remove from workspace
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -11,9 +11,7 @@ import { describe, expect, it, vi } from "vitest";
 
 const Example = () => (
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button>Actions</Button>
-    </DropdownMenuTrigger>
+    <DropdownMenuTrigger render={<Button />}>Actions</DropdownMenuTrigger>
     <DropdownMenuContent>
       <DropdownMenuItem>First</DropdownMenuItem>
       <DropdownMenuItem>Second</DropdownMenuItem>
