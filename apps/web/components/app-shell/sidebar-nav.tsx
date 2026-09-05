@@ -15,7 +15,7 @@ export const SidebarNav = ({
   const pathname = usePathname();
   return (
     <nav aria-label="Workspace">
-      <ul className="flex flex-col gap-1">
+      <ul className="flex gap-1 md:flex-col">
         {items.map((item) => {
           const isCurrent = pathname === item.href;
           return (
