@@ -14,6 +14,40 @@
   },
   "overrides": [
     {
+      // The contract package is framework-blind: zod only. A React, Next or
+      // app import here would drag the domain into a runtime it must not know.
+      "includes": ["packages/contracts/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next": "contracts are framework-blind",
+                  "react": "contracts are framework-blind",
+                  "react-dom": "contracts are framework-blind",
+                  "server-only": "contracts run anywhere"
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "next/*",
+                      "react/*",
+                      "@/*",
+                      "@xforge/design*",
+                      "@xforge/web*"
+                    ],
+                    "message": "contracts are framework-blind and app-blind"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       // shadcn's CLI generates these in its own style: namespace React import,
       // cva variant maps ordered by meaning rather than alphabetically.
       "includes": ["packages/design/src/components/**"],

@@ -1,0 +1,28 @@
+{
+  "name": "@xforge/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./errors": "./src/errors.ts",
+    "./ids": "./src/ids.ts",
+    "./sources": "./src/sources.ts",
+    "./organization/*": "./src/organization/*.ts",
+    "./member/*": "./src/member/*.ts",
+    "./fixtures/*": "./src/fixtures/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@xforge/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
