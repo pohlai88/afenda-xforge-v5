@@ -10,9 +10,12 @@ export const metadata: Metadata = {
   title: { default: "Afenda xForge", template: "%s · Afenda xForge" },
 };
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
-const geistMono = GeistMono({ subsets: ["latin"], variable: "--font-mono" });
+const geistMono = GeistMono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export default function RootLayout({
   children,
