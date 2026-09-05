@@ -18,7 +18,11 @@ const inviteInput = scoped.extend(inviteMemberInputSchema.shape);
 const memberInput = scoped.extend({ memberId: memberIdSchema });
 const roleInput = memberInput.extend({ role: memberRoleSchema });
 
-const membersPath = (slug: string) => `/${slug}/members`;
+/** Members show on two screens of the same domain; both revalidate together. */
+const revalidateMemberScreens = (slug: string) => {
+  revalidatePath(`/${slug}/members`);
+  revalidatePath(`/${slug}/organization`);
+};
 
 export const inviteMember = async (
   _previous: ActionResult<Member> | null,
@@ -33,7 +37,7 @@ export const inviteMember = async (
       name: input.name,
       role: input.role,
     });
-    revalidatePath(membersPath(organization.slug));
+    revalidateMemberScreens(organization.slug);
     return member;
   });
 
@@ -51,7 +55,7 @@ export const updateMemberRole = async (
         role: parsed.role,
       }
     );
-    revalidatePath(membersPath(organization.slug));
+    revalidateMemberScreens(organization.slug);
     return member;
   });
 
@@ -63,5 +67,5 @@ export const removeMember = async (
     const sources = getDomainSources();
     const organization = await sources.organizations.getBySlug(parsed.orgSlug);
     await sources.members.remove(organization.id, parsed.memberId);
-    revalidatePath(membersPath(organization.slug));
+    revalidateMemberScreens(organization.slug);
   });

@@ -1,9 +1,13 @@
 const operations = [
+  "members.get",
   "members.invite",
   "members.list",
+  "members.move",
   "members.remove",
+  "members.update",
   "members.updateRole",
   "organizations.getBySlug",
+  "units.list",
 ] as const;
 
 export type FaultOperation = (typeof operations)[number];

@@ -49,9 +49,8 @@
   --color-popover-foreground: var(--af-sys-color-on-surface);
   --color-primary: var(--af-sys-color-primary);
   --color-primary-foreground: var(--af-sys-color-on-primary);
-  /* shadcn's secondary is the quiet tonal control, not the teal accent. */
-  --color-secondary: var(--af-sys-color-surface-container-high);
-  --color-secondary-foreground: var(--af-sys-color-on-surface);
+  /* secondary retired 2026-09-05: its last consumers were the superseded
+     button/badge twins, which R4 no longer counts as surfaces. */
   /* muted keeps its legacy physics: the one fill below the ground. */
   --color-muted: var(--af-sys-color-surface-dim);
   --color-muted-foreground: var(--af-sys-color-on-surface-variant);

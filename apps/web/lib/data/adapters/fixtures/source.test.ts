@@ -2,12 +2,14 @@ import { organizations } from "@xforge/contracts/fixtures/organizations";
 import { runMemberContract } from "@xforge/contracts/member/contract";
 import { memberFilterSchema } from "@xforge/contracts/member/schema";
 import { runOrganizationContract } from "@xforge/contracts/organization/contract";
+import { runOrganizationUnitContract } from "@xforge/contracts/unit/contract";
 import { describe, expect, it } from "vitest";
 import { parseFaultsEnv } from "./faults";
 import { createFixtureDomainSources } from "./source";
 
 runOrganizationContract(() => createFixtureDomainSources());
 runMemberContract(() => createFixtureDomainSources());
+runOrganizationUnitContract(() => createFixtureDomainSources());
 
 describe("fault injection", () => {
   it("throws only for the faulted operation and organization", async () => {

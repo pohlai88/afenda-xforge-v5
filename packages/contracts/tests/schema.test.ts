@@ -3,6 +3,8 @@ import { organizationSlugSchema } from "../src/ids";
 import {
   inviteMemberInputSchema,
   memberFilterSchema,
+  moveMembersInputSchema,
+  updateMemberInputSchema,
 } from "../src/member/schema";
 
 describe("memberFilterSchema", () => {
@@ -53,6 +55,25 @@ describe("inviteMemberInputSchema", () => {
         name: "A",
         role: "god",
       }).success
+    ).toBe(false);
+  });
+});
+
+describe("updateMemberInputSchema", () => {
+  it("accepts explicit nulls for title and unit, never absence", () => {
+    expect(
+      updateMemberInputSchema.safeParse({
+        name: "Ada",
+        title: null,
+        unitId: null,
+      }).success
+    ).toBe(true);
+    expect(updateMemberInputSchema.safeParse({ name: "Ada" }).success).toBe(
+      false
+    );
+    expect(
+      moveMembersInputSchema.safeParse({ memberIds: [], unitId: "unit_0001" })
+        .success
     ).toBe(false);
   });
 });

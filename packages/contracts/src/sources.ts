@@ -1,5 +1,6 @@
 import type { MemberSource } from "./member/source";
 import type { OrganizationSource } from "./organization/source";
+import type { OrganizationUnitSource } from "./unit/source";
 
 /**
  * Everything the application reads or writes goes through these. Screens
@@ -9,4 +10,5 @@ import type { OrganizationSource } from "./organization/source";
 export interface DomainSources {
   members: MemberSource;
   organizations: OrganizationSource;
+  units: OrganizationUnitSource;
 }

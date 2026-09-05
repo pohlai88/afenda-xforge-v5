@@ -2,8 +2,10 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { type DataSourceErrorCode, isDataSourceError } from "../errors";
 import { acmeMembers, northwindMembers } from "../fixtures/members";
 import { organizations } from "../fixtures/organizations";
+import { acmeUnits, northwindUnits } from "../fixtures/units";
 import { memberIdSchema } from "../ids";
 import type { DomainSources } from "../sources";
+import type { OrganizationUnit } from "../unit/types";
 import { memberFilterSchema } from "./schema";
 import type { Member } from "./types";
 
@@ -29,6 +31,17 @@ const byEmail = (members: readonly Member[], email: string): Member => {
   return found;
 };
 
+const unitNamed = (
+  units: readonly OrganizationUnit[],
+  name: string
+): OrganizationUnit => {
+  const found = units.find((unit) => unit.name === name);
+  if (!found) {
+    throw new Error(`fixture missing unit: ${name}`);
+  }
+  return found;
+};
+
 /**
  * The executable contract for MemberSource. Any adapter must pass it, seeded
  * with the canonical fixtures. `makeSources` must return a FRESH, isolated
@@ -43,8 +56,14 @@ export const runMemberContract = (
     const northwind = organizations.northwind.id;
     const ada = byEmail(acmeMembers, "ada@acme.example");
     const grace = byEmail(acmeMembers, "grace@acme.example");
+    const radia = byEmail(acmeMembers, "radia@acme.example");
+    const frances = byEmail(acmeMembers, "frances@acme.example");
     const annie = byEmail(northwindMembers, "annie@northwind.example");
     const mary = byEmail(northwindMembers, "mary@northwind.example");
+    const operations = unitNamed(acmeUnits, "Operations");
+    const support = unitNamed(acmeUnits, "Support");
+    const finance = unitNamed(acmeUnits, "Finance");
+    const northwindHq = unitNamed(northwindUnits, "Headquarters");
 
     beforeEach(async () => {
       sources = await makeSources();
@@ -93,6 +112,8 @@ export const runMemberContract = (
           organizationId: acme,
           role: "member",
           status: "invited",
+          title: null,
+          unitId: null,
         });
         expect(memberIdSchema.safeParse(member.id).success).toBe(true);
         const page = await sources.members.list(acme, filter());
@@ -119,6 +140,144 @@ export const runMemberContract = (
           })
         );
         expect(outcome).toBe("none");
+      });
+    });
+
+    describe("get", () => {
+      it("returns the member inside the organization", async () => {
+        const member = await sources.members.get(acme, ada.id);
+        expect(member).toEqual(ada);
+      });
+
+      it("is NotFound for another organization's member", async () => {
+        expect(await outcomeOf(() => sources.members.get(acme, mary.id))).toBe(
+          "NotFound"
+        );
+      });
+
+      it("is NotFound for an unknown member", async () => {
+        const ghost = memberIdSchema.parse("mem_9998");
+        expect(await outcomeOf(() => sources.members.get(acme, ghost))).toBe(
+          "NotFound"
+        );
+      });
+    });
+
+    describe("update", () => {
+      it("updates name, title and unit, and persists it", async () => {
+        const updated = await sources.members.update(acme, ada.id, {
+          name: "Ada King",
+          title: "Chair",
+          unitId: finance.id,
+        });
+        expect(updated).toMatchObject({
+          name: "Ada King",
+          title: "Chair",
+          unitId: finance.id,
+        });
+        expect(await sources.members.get(acme, ada.id)).toEqual(updated);
+      });
+
+      it("clears title and unit with null", async () => {
+        const updated = await sources.members.update(acme, ada.id, {
+          name: ada.name,
+          title: null,
+          unitId: null,
+        });
+        expect(updated).toMatchObject({ title: null, unitId: null });
+      });
+
+      it("rejects a unit belonging to another organization, changing nothing", async () => {
+        const outcome = await outcomeOf(() =>
+          sources.members.update(acme, ada.id, {
+            name: "Ada King",
+            title: ada.title,
+            unitId: northwindHq.id,
+          })
+        );
+        expect(outcome).toBe("NotFound");
+        expect(await sources.members.get(acme, ada.id)).toEqual(ada);
+      });
+
+      it("cannot update another organization's member", async () => {
+        const outcome = await outcomeOf(() =>
+          sources.members.update(acme, mary.id, {
+            name: "Mary",
+            title: null,
+            unitId: null,
+          })
+        );
+        expect(outcome).toBe("NotFound");
+      });
+    });
+
+    describe("move", () => {
+      it("moves every member to the unit and the counts follow", async () => {
+        const moved = await sources.members.move(acme, {
+          memberIds: [radia.id, frances.id],
+          unitId: finance.id,
+        });
+        expect(moved).toHaveLength(2);
+        expect(moved.every((member) => member.unitId === finance.id)).toBe(
+          true
+        );
+        const units = await sources.units.list(acme);
+        expect(units.find((unit) => unit.id === finance.id)?.memberCount).toBe(
+          4
+        );
+        expect(units.find((unit) => unit.id === support.id)?.memberCount).toBe(
+          0
+        );
+      });
+
+      it("is atomic: one foreign member moves nobody", async () => {
+        const outcome = await outcomeOf(() =>
+          sources.members.move(acme, {
+            memberIds: [radia.id, mary.id],
+            unitId: finance.id,
+          })
+        );
+        expect(outcome).toBe("NotFound");
+        expect(await sources.members.get(acme, radia.id)).toEqual(radia);
+      });
+
+      it("rejects a target unit outside the organization", async () => {
+        const outcome = await outcomeOf(() =>
+          sources.members.move(acme, {
+            memberIds: [radia.id],
+            unitId: northwindHq.id,
+          })
+        );
+        expect(outcome).toBe("NotFound");
+      });
+    });
+
+    describe("unit scope", () => {
+      it("scopes the list to a unit and its descendants", async () => {
+        const scoped = await sources.members.list(
+          acme,
+          filter({ unitId: operations.id })
+        );
+        expect(scoped.total).toBe(4);
+        expect(scoped.items.map((member) => member.email).sort()).toEqual([
+          "frances@acme.example",
+          "grace@acme.example",
+          "katherine@acme.example",
+          "radia@acme.example",
+        ]);
+        const leaf = await sources.members.list(
+          acme,
+          filter({ unitId: support.id })
+        );
+        expect(leaf.total).toBe(2);
+      });
+
+      it("leaks nothing through a foreign unit scope", async () => {
+        const page = await sources.members.list(
+          acme,
+          filter({ unitId: northwindHq.id })
+        );
+        expect(page).toMatchObject({ items: [], total: 0 });
       });
     });
 

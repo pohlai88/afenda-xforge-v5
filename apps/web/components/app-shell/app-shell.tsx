@@ -21,6 +21,7 @@ export const AppShell = ({
         <SidebarNav
           items={[
             { href: base, label: "Overview" },
+            { href: `${base}/organization`, label: "Organization" },
             { href: `${base}/members`, label: "Members" },
           ]}
         />

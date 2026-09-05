@@ -20,13 +20,13 @@ All from the repo root. pnpm 11, Node ≥ 22. `pnpm-workspace.yaml` sets `saveEx
 | Typecheck | `pnpm typecheck` |
 | Lint + format check, whole repo | `pnpm check` (`pnpm lint` is an alias; ~0.2 s) |
 | Auto-fix lint + format | `pnpm fix` — one file: `pnpm exec ultracite fix <path>` |
-| Unit tests, all packages | `pnpm test` (103: contracts 12, design 39, web 52) |
+| Unit tests, all packages | `pnpm test` (200: contracts 13, design 78, web 109) |
 | Unit tests, one package | `pnpm --filter @xforge/contracts test` |
 | One test file | `pnpm --filter @xforge/web exec vitest run tests/members/actions.test.ts` |
 | One test by name | `pnpm --filter @xforge/contracts exec vitest run -t "last active owner"` |
 | Watch mode | `pnpm --filter @xforge/web test:watch` |
 | Coverage | `pnpm test:coverage` — `@vitest/coverage-v8`, text + lcov into each package's `coverage/`; its own Turbo task with `"outputs": ["coverage/**"]`, so a cache hit restores the report |
-| E2E (Playwright + axe; builds and starts the app on :3100 itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium firefox webkit`. Always a production build: Next 16 allows one `next dev` per project, so it never collides with your dev server. 13 tests in Chromium and WebKit, plus Firefox in CI or with `E2E_FIREFOX=1` (Playwright's Firefox runs on a software compositor on this Windows box and takes 30–40 s a test); the vitals spec is Chromium-only because LCP and INP are Chromium APIs. `e2e/vitals.e2e.ts` carries the Core Web Vitals and per-route JavaScript budgets |
+| E2E (Playwright + axe; builds and starts the app on :3100 itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium firefox webkit`. Always a production build: Next 16 allows one `next dev` per project, so it never collides with your dev server. 20 tests in Chromium and WebKit, plus Firefox in CI or with `E2E_FIREFOX=1` (Playwright's Firefox runs on a software compositor on this Windows box and takes 30–40 s a test); the vitals spec is Chromium-only because LCP and INP are Chromium APIs. `e2e/vitals.e2e.ts` carries the Core Web Vitals and per-route JavaScript budgets |
 | See the error state in dev | `FIXTURE_FAULTS=members.list@glitch pnpm --filter @xforge/web dev -p 3200` → `/glitch/members` |
 | Bundle analyzer | `pnpm analyze` — Turbopack's `next experimental-analyze`: an interactive treemap with import chains, no app build. `@next/bundle-analyzer` is the Webpack plugin and is not installed |
 | Add a shadcn component | `pnpm dlx shadcn@4.21.0 add <name> -c apps/web --overwrite` → lands in `packages/design/src/components/`; check `git diff -- '*/package.json'` afterwards — the CLI writes new deps into `apps/web`, and a dep the *component* imports belongs in `packages/design` (see `sonner`) |
@@ -43,7 +43,11 @@ apps/web                    @xforge/web        Next.js 16 app (Turbopack)
   app/(auth)/sign-in          stub until Better Auth
   app/(app)/[orgSlug]         tenant from the URL; layout resolves it through the contract or notFound()
     members/                  page (read), loading.tsx, error.tsx; (app)/not-found.tsx says "Workspace unavailable"
+    organization/             the single-page Organization & People workspace: unit tree scope, people table
+                              (selection, j/k/x/Escape), URL-driven member inspector (?member=), edit Sheet,
+                              bulk move with impact preview; view= people | chart | positions
   features/<domain>/          filter.ts (URL → filter), queries.ts, actions.ts ('use server'), components/
+                              (members: the CRUD screen; organization: the workspace — both revalidate both routes)
   components/app-shell/       sidebar-nav is the client leaf; one DOM, top bar under md, sidebar above
   components/theme-toggle.tsx visible twin of the d hotkey (client leaf)
   lib/data/                   getDomainSources() — the ONLY module that knows adapters exist; adapters/fixtures/{store,source,faults}
@@ -62,11 +66,11 @@ packages/typescript-config                     base.json → library.json (Bundl
 
 ## Rules the code is built to
 
-1. **Contract-first is not future-first.** The seam (`@xforge/contracts`) exists before implementation, but only for capabilities a screen observes: `OrganizationSource.getBySlug`, `MemberSource.{list,invite,updateRole,remove}`. Add `members.get` or `organizations.create` when a screen needs them, with contract tests in the same commit.
+1. **Contract-first is not future-first.** The seam (`@xforge/contracts`) exists before implementation, but only for capabilities a screen observes: `OrganizationSource.getBySlug`, `MemberSource.{list,get,invite,update,updateRole,move,remove}`, `OrganizationUnitSource.list` (flat units + derived direct member counts; screens build the tree — `features/organization/tree.ts`). Add `organizations.create` or unit mutations when a screen needs them, with contract tests in the same commit.
 2. **Tenant scope is part of the operation, not an optional filter.** Every member operation takes `organizationId`; the server resolves it from the URL slug (`[orgSlug]/layout.tsx`, `features/*/actions.ts`); the client never supplies an organization id. A member outside the organization is `NotFound`, never "found elsewhere".
 3. **Five states, five mechanisms.** loading → `loading.tsx`; empty → domain UI; populated → domain UI; resource absent → `notFound()` / `not-found.tsx`; system failure → `throw` → `error.tsx`. Expected mutation outcomes are `ActionResult` values (`VALIDATION` with field errors, `CONFLICT`, `INVARIANT`, `NOT_FOUND`) — never throws.
 4. **`features/**`, `app/**` and `components/**` import data only through `@/lib/data`** — never `adapters/*`, never `@xforge/contracts/fixtures/*` (Biome enforces both).
-5. **Fixtures describe valid domain state only.** acme (populated, two owners), blank-co (empty), northwind (one owner — the invariant), orbit (the workspace mutation e2e may change), glitch (ordinary; the e2e harness faults its list). Failure is injected by the adapter (`FIXTURE_FAULTS=op@slug`), never modelled as a fixture. `createFixtureDomainSources()` is always a fresh instance (tests); `getFixtureDomainSources()` is the dev-only singleton.
+5. **Fixtures describe valid domain state only.** acme (populated, two owners, and the only real unit tree: Acme Group → Operations → Support, plus Finance — subtree scoping is observable there), blank-co (empty, no units), northwind (one owner — the invariant), orbit (one root unit; the workspace mutation e2e may change), glitch (ordinary; the e2e harness faults its list). A member's `title`/`unitId` are nullable — unassigned is a surfaced fact, not an absent key (Hedy, Dorothy). Failure is injected by the adapter (`FIXTURE_FAULTS=op@slug`), never modelled as a fixture. `createFixtureDomainSources()` is always a fresh instance (tests); `getFixtureDomainSources()` is the dev-only singleton.
 6. **Invariants live in the contract suite** (`packages/contracts/src/<domain>/contract.ts`) and every adapter must pass it: tenant isolation, email unique per organization, ≥ 1 active owner, pagination bounds. The fixture adapter passes it today (`apps/web/lib/data/adapters/fixtures/source.test.ts`); the database adapter must later.
 7. **A screen writes vocabulary, not values.** `apps/web/{app,components,features}` may not carry a Tailwind palette colour, a colour literal, an arbitrary `[…]` value or a raw `z-`/`duration-`/`opacity-` step — `apps/web/tests/design-vocabulary.test.ts` (R3) refuses them; a named utility (`z-overlay`, `duration-fast`) is minted in `globals.css` when the first screen needs it. Every token the `@theme` bridge projects has a statically discoverable consumer or a declared reason (R4, same file). A component's parts are its `data-slot` names, each classified in `packages/design/src/anatomy.ts` (ten closed classes; a divider never draws `--input`, `--primary` or `--ring`) and pinned in `packages/design/tests/anatomy.test.ts` (R2). Each of these checks carries a planted defect beside it; a rule that cannot be shown failing ships as labelled prose.
 

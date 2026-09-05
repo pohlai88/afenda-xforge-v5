@@ -9,6 +9,7 @@
     "./sources": "./src/sources.ts",
     "./organization/*": "./src/organization/*.ts",
     "./member/*": "./src/member/*.ts",
+    "./unit/*": "./src/unit/*.ts",
     "./fixtures/*": "./src/fixtures/*.ts"
   },
   "scripts": {

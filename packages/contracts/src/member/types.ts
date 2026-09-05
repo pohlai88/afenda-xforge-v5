@@ -6,6 +6,8 @@ import type {
   memberRoleSchema,
   memberSchema,
   memberStatusSchema,
+  moveMembersInputSchema,
+  updateMemberInputSchema,
   updateMemberRoleInputSchema,
 } from "./schema";
 
@@ -13,7 +15,9 @@ export type Member = z.infer<typeof memberSchema>;
 export type MemberRole = z.infer<typeof memberRoleSchema>;
 export type MemberStatus = z.infer<typeof memberStatusSchema>;
 export type InviteMemberInput = z.infer<typeof inviteMemberInputSchema>;
+export type UpdateMemberInput = z.infer<typeof updateMemberInputSchema>;
 export type UpdateMemberRoleInput = z.infer<typeof updateMemberRoleInputSchema>;
+export type MoveMembersInput = z.infer<typeof moveMembersInputSchema>;
 /** Parsed filter — page and pageSize are always present after parsing. */
 export type MemberFilter = z.infer<typeof memberFilterSchema>;
 export type MemberPage = z.infer<typeof memberPageSchema>;

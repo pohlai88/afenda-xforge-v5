@@ -66,6 +66,7 @@ const ANATOMY: Readonly<Record<string, readonly string[]>> = {
     "card-header",
     "card-title",
   ],
+  checkbox: ["checkbox", "checkbox-indicator"],
   dialog: [
     "dialog",
     "dialog-close",
@@ -123,6 +124,18 @@ const ANATOMY: Readonly<Record<string, readonly string[]>> = {
     "select-value",
   ],
   separator: ["separator"],
+  sheet: [
+    "sheet",
+    "sheet-close",
+    "sheet-content",
+    "sheet-description",
+    "sheet-footer",
+    "sheet-header",
+    "sheet-overlay",
+    "sheet-portal",
+    "sheet-title",
+    "sheet-trigger",
+  ],
   skeleton: ["skeleton"],
   table: [
     "table",

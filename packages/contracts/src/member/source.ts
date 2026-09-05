@@ -4,6 +4,8 @@ import type {
   Member,
   MemberFilter,
   MemberPage,
+  MoveMembersInput,
+  UpdateMemberInput,
   UpdateMemberRoleInput,
 } from "./types";
 
@@ -12,6 +14,7 @@ import type {
  * outside `organizationId` is NotFound, never "found elsewhere".
  */
 export interface MemberSource {
+  get: (organizationId: OrganizationId, memberId: MemberId) => Promise<Member>;
   /** Email must be unique within the organization → Conflict otherwise. */
   invite: (
     organizationId: OrganizationId,
@@ -21,8 +24,22 @@ export interface MemberSource {
     organizationId: OrganizationId,
     filter: MemberFilter
   ) => Promise<MemberPage>;
+  /**
+   * Atomic: every member and the target unit must belong to the organization
+   * or nobody moves (NotFound). Returns the members in their new state.
+   */
+  move: (
+    organizationId: OrganizationId,
+    input: MoveMembersInput
+  ) => Promise<Member[]>;
   /** Removing the last active owner → Invariant. */
   remove: (organizationId: OrganizationId, memberId: MemberId) => Promise<void>;
+  /** A `unitId` outside the organization → NotFound. */
+  update: (
+    organizationId: OrganizationId,
+    memberId: MemberId,
+    input: UpdateMemberInput
+  ) => Promise<Member>;
   /** Demoting the last active owner → Invariant. */
   updateRole: (
     organizationId: OrganizationId,

@@ -38,6 +38,8 @@ export const makeMember = (
     organizationId,
     role: "member",
     status: "active",
+    title: null,
+    unitId: null,
     ...overrides,
   };
 };

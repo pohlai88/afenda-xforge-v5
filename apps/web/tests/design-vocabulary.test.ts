@@ -38,6 +38,33 @@ const walk = (dir: string): string[] => {
   return out;
 };
 
+/** Vendored modules a block has superseded, and the block that replaces each. */
+const SUPERSEDED: Readonly<Record<string, string>> = {
+  "@xforge/design/components/avatar": "@xforge/design/blocks/avatar",
+  "@xforge/design/components/badge": "@xforge/design/blocks/badge",
+  "@xforge/design/components/button": "@xforge/design/blocks/button",
+  "@xforge/design/components/dialog": "@xforge/design/blocks/dialog",
+};
+
+const SUPERSEDED_TWINS = new Set(
+  Object.keys(SUPERSEDED).map((mod) => `${mod.split("/").at(-1) ?? ""}.tsx`)
+);
+
+/**
+ * A superseded vendored twin is not a consumer. R16 keeps it out of app
+ * code, so a class it still writes must not keep a bridge alias alive —
+ * without this, the bridge could never shrink until the last vendored
+ * file died, all at once. The block's own render keeps its name (a near
+ * miss this predicate must clear): only the components/ copy is refused.
+ */
+const isSupersededTwin = (file: string): boolean => {
+  const path = file.replaceAll("\\", "/");
+  return (
+    path.includes("/src/components/") &&
+    SUPERSEDED_TWINS.has(path.split("/").at(-1) ?? "")
+  );
+};
+
 // ---------------------------------------------------------------- R3 ----
 
 const PALETTE_HUES =
@@ -216,12 +243,34 @@ const staleExemptions = (
 describe("R4 — every projected token has a statically discoverable consumer", () => {
   const css = readFileSync(GLOBALS, "utf8");
   const surfaces = [...SCREEN_DIRS.flatMap(walk), ...walk(DESIGN_SRC)]
-    .filter((f) => !(f.endsWith(".test.ts") || f.endsWith(".test.tsx")))
+    .filter(
+      (f) =>
+        !(
+          f.endsWith(".test.ts") ||
+          f.endsWith(".test.tsx") ||
+          isSupersededTwin(f)
+        )
+    )
     .map((f) => readFileSync(f, "utf8"));
 
   it("reads a real bridge and a real set of surfaces", () => {
     expect(bridge(css).length).toBeGreaterThanOrEqual(20);
     expect(surfaces.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it("strips every superseded twin from its surfaces, and clears the near misses", () => {
+    expect(isSupersededTwin(join(DESIGN_SRC, "components/badge.tsx"))).toBe(
+      true
+    );
+    // The block render carries the same basename; only the twin is refused.
+    expect(isSupersededTwin(join(DESIGN_SRC, "blocks/badge/badge.tsx"))).toBe(
+      false
+    );
+    expect(isSupersededTwin(join(DESIGN_SRC, "components/table.tsx"))).toBe(
+      false
+    );
+    const twins = walk(join(DESIGN_SRC, "components")).filter(isSupersededTwin);
+    expect(twins.length).toBe(Object.keys(SUPERSEDED).length);
   });
 
   it("finds a consumer for every projected token, or a reason", () => {
@@ -350,14 +399,8 @@ describe("R10 — motion is a preference", () => {
 // its shadcn twin exports the same names and an auto-importer will offer
 // either, so "the block is the way" needs teeth in app code. The vendored
 // layer itself may keep importing its own (dialog's close button does).
-
-/** Vendored modules a block has superseded, and the block that replaces each. */
-const SUPERSEDED: Readonly<Record<string, string>> = {
-  "@xforge/design/components/avatar": "@xforge/design/blocks/avatar",
-  "@xforge/design/components/badge": "@xforge/design/blocks/badge",
-  "@xforge/design/components/button": "@xforge/design/blocks/button",
-  "@xforge/design/components/dialog": "@xforge/design/blocks/dialog",
-};
+// The SUPERSEDED map lives at the top of the file — R4 shares it to strip
+// the twins from its consumer surfaces.
 
 const supersededFindings = (source: string, where: string): string[] => {
   const out: string[] = [];

@@ -14,3 +14,9 @@ export type OrganizationSlug = z.infer<typeof organizationSlugSchema>;
 
 export const memberIdSchema = z.string().min(1).brand<"MemberId">();
 export type MemberId = z.infer<typeof memberIdSchema>;
+
+export const organizationUnitIdSchema = z
+  .string()
+  .min(1)
+  .brand<"OrganizationUnitId">();
+export type OrganizationUnitId = z.infer<typeof organizationUnitIdSchema>;
