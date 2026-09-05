@@ -146,8 +146,8 @@ is unaffected (`isCI` makes it false, and the server is built fresh).
 
 ## 8. Where the numbers stand, and what the harness does not yet do
 
-Measured 2026-09-05 after the members slice: **59 Vitest tests** (contracts 12, design 6, web 41)
-and **9 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
+Measured 2026-09-05 after hardening: **61 Vitest tests** (contracts 12, design 6, web 43)
+and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 
 - **Cleanup is explicit.** Vitest exposes no globals, so Testing Library cannot register its own
   `afterEach(cleanup)`; both `tests/setup.ts` files do it. Without it a second `render` in the
@@ -169,7 +169,15 @@ and **9 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 - **Base UI, not Radix, since the migration:** triggers take `render={<Button />}`, menu items
   `onClick`, and a `DropdownMenuLabel` outside a `DropdownMenuGroup` throws at open — the
   behaviour contracts in `packages/design/tests` are what caught it.
-- **No coverage.** `turbo.json`'s `test` task declares neither `inputs` nor `outputs`. Adding
-  `--coverage` without adding `"outputs": ["coverage/**"]` gives you a cached task that
-  produces no restorable artefact.
+- **Coverage is its own task.** `pnpm test:coverage` runs `vitest run --coverage`
+  (`@vitest/coverage-v8`, text + lcov into `coverage/`); `turbo.json`'s `test:coverage` task
+  declares `"outputs": ["coverage/**"]`, so a cache hit restores the report. The plain `test`
+  task has no outputs on purpose — never add `--coverage` to it.
+- **Web Vitals are measured, not estimated.** `e2e/vitals.e2e.ts` injects `web-vitals` with
+  `addInitScript` before navigation, presses Tab once so LCP finalises and INP has an
+  interaction, then reads the values back; budgets live in the file. INP is undefined when no
+  interaction exceeded 40 ms — that passes and is not a gap.
+- **One test runs on a phone.** `workspace.e2e.ts` uses `test.use({ viewport: 375×812 })` and
+  asserts `scrollWidth === clientWidth`. The shell is one DOM re-laid out by CSS, so there is no
+  second `<nav>` landmark per breakpoint to keep in sync.
 - **One browser.** `projects` is chromium only. Cross-browser claims are unfounded here.

@@ -110,6 +110,7 @@ apps/web/
     components/                 members-table, members-empty-state, members-pagination (server);
                                 members-filters, member-row-actions, invite-member-dialog ('use client' leaves)
   components/app-shell/         app-shell, page-header (server); sidebar-nav ('use client': usePathname)
+  components/theme-toggle.tsx   'use client': useTheme — the d hotkey's visible twin
   lib/data/                     index.ts (server-only; DATA_SOURCE switch) · adapters/fixtures/{store,source,faults,index}
   lib/actions/result.ts         ActionResult<T> and toActionResult()
   tests/ · e2e/                 Vitest (*.test.tsx) · Playwright (*.e2e.ts) + axe.ts
@@ -261,8 +262,8 @@ A component enters `packages/design` when a screen uses it and it knows nothing 
 | --- | --- | --- | --- |
 | Lint + format | `pnpm check` | ~0.2 s (106 files) | every edit (hook) and before any claim of done |
 | Types | `pnpm typecheck` | ~12 s, 3 packages | before done |
-| Unit | `pnpm test` — 59 tests (contracts 12, design 6, web 41) | ~30 s | before done |
-| Browser | `pnpm --filter @xforge/web test:e2e` — 9 tests + axe on every screen state, against a production build | ~40 s incl. build + start | per screen path |
+| Unit | `pnpm test` — 61 tests (contracts 12, design 6, web 43) | ~30 s | before done |
+| Browser | `pnpm --filter @xforge/web test:e2e` — 13 tests: axe on every screen state, Core Web Vitals and JavaScript budgets (`e2e/vitals.e2e.ts`), a phone viewport, against a production build | ~60 s incl. build + start | per screen path |
 | Build | `pnpm build` | ~15 s | before done |
 | CI | `.github/workflows/ci.yml` — all of the above against a production build | on push and PR | always |
 
@@ -277,12 +278,12 @@ Two runners split by filename — `*.test.tsx` renders under Vitest, `*.e2e.ts` 
 - No token added outside `@theme`; no `'use client'` above a leaf; reads parallelised.
 - `pnpm check`, `typecheck`, `test`, `build`, e2e green — and the report says so, with the commands it ran.
 
-### 7.4 Budgets — *planned, enforced in CI*
+### 7.4 Budgets — *in force, enforced in CI*
 
-- Core Web Vitals on the slowest screen, measured in Playwright: LCP < 2.5 s, INP < 200 ms, CLS < 0.1.
+- Core Web Vitals: **in force** — `e2e/vitals.e2e.ts` injects `web-vitals` before navigation on `/` and `/acme/members` (the heaviest screen) and asserts LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1 against the production build.
 - Accessibility: **in force** — axe (`@axe-core/playwright`, WCAG 2.2 AA tags) with zero serious/critical violations per screen state.
-- Bundle: `@next/bundle-analyzer` on every build; a client bundle that grows by more than 10 % needs a sentence in the PR.
-- Coverage: when added, `turbo.json`'s `test` task gains `"outputs": ["coverage/**"]` in the same commit.
+- Bundle: **in force** — the same spec budgets the JavaScript transferred per route (measured baseline plus headroom; the numbers live in the file). Exceeding it fails CI; raising it needs a sentence in the PR. `pnpm analyze` opens Turbopack's `next experimental-analyze` treemap; `@next/bundle-analyzer` is Webpack-only and not installed.
+- Coverage: **in force** — `pnpm test:coverage` (`@vitest/coverage-v8`, text + lcov) is its own Turbo task with `"outputs": ["coverage/**"]`; the plain `test` task is unchanged.
 
 ### 7.5 Performance rules in force
 
@@ -304,7 +305,7 @@ Eliminate waterfalls (`Promise.all`, Suspense boundaries), import directly rathe
 4. **Client server-state** — TanStack Query when the first live/optimistic screen appears.
 5. **Backend** — Better Auth + organisations, Drizzle + Neon, `db` adapter; `DATA_SOURCE=db` (§5.5).
 6. **Cache Components on** — with real latency to reason about; audit for `<Activity>` navigation assumptions.
-7. **Hardening** — CWV and bundle budgets, multi-browser Playwright, coverage, TypeScript 7 once the toolchain is validated against it.
+7. **Hardening** — ~~CWV and bundle budgets, coverage~~ done 2026-09-05 (§7.4), plus a visible theme toggle and a responsive shell; still open: multi-browser Playwright, TypeScript 7 once the toolchain is validated against it.
 
 ## 10. ADR register
 

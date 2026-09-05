@@ -20,13 +20,15 @@ All from the repo root. pnpm 11, Node ≥ 22. `pnpm-workspace.yaml` sets `saveEx
 | Typecheck | `pnpm typecheck` |
 | Lint + format check, whole repo | `pnpm check` (`pnpm lint` is an alias; ~0.2 s) |
 | Auto-fix lint + format | `pnpm fix` — one file: `pnpm exec ultracite fix <path>` |
-| Unit tests, all packages | `pnpm test` (59: contracts 12, design 6, web 41) |
+| Unit tests, all packages | `pnpm test` (61: contracts 12, design 6, web 43) |
 | Unit tests, one package | `pnpm --filter @xforge/contracts test` |
 | One test file | `pnpm --filter @xforge/web exec vitest run tests/members/actions.test.ts` |
 | One test by name | `pnpm --filter @xforge/contracts exec vitest run -t "last active owner"` |
 | Watch mode | `pnpm --filter @xforge/web test:watch` |
-| E2E (Playwright + axe; builds and starts the app on :3100 itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium`. Always a production build: Next 16 allows one `next dev` per project, so it never collides with your dev server |
+| Coverage | `pnpm test:coverage` — `@vitest/coverage-v8`, text + lcov into each package's `coverage/`; its own Turbo task with `"outputs": ["coverage/**"]`, so a cache hit restores the report |
+| E2E (Playwright + axe; builds and starts the app on :3100 itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium`. Always a production build: Next 16 allows one `next dev` per project, so it never collides with your dev server. 13 tests; `e2e/vitals.e2e.ts` carries the Core Web Vitals and per-route JavaScript budgets |
 | See the error state in dev | `FIXTURE_FAULTS=members.list@glitch pnpm --filter @xforge/web dev -p 3200` → `/glitch/members` |
+| Bundle analyzer | `pnpm analyze` — Turbopack's `next experimental-analyze`: an interactive treemap with import chains, no app build. `@next/bundle-analyzer` is the Webpack plugin and is not installed |
 | Add a shadcn component | `pnpm dlx shadcn@4.21.0 add <name> -c apps/web --overwrite` → lands in `packages/design/src/components/`; check `git diff -- '*/package.json'` afterwards — the CLI writes new deps into `apps/web`, and a dep the *component* imports belongs in `packages/design` (see `sonner`) |
 
 The `.claude/settings.json` PostToolUse hook runs the single-file fix after every Write/Edit; still run `pnpm check` before calling a change done. CI (`.github/workflows/ci.yml`) runs check, typecheck, test, build and the e2e against a production build.
@@ -42,7 +44,8 @@ apps/web                    @xforge/web        Next.js 16 app (Turbopack)
   app/(app)/[orgSlug]         tenant from the URL; layout resolves it through the contract or notFound()
     members/                  page (read), loading.tsx, error.tsx; (app)/not-found.tsx says "Workspace unavailable"
   features/<domain>/          filter.ts (URL → filter), queries.ts, actions.ts ('use server'), components/
-  components/app-shell/       sidebar-nav is the client leaf
+  components/app-shell/       sidebar-nav is the client leaf; one DOM, top bar under md, sidebar above
+  components/theme-toggle.tsx visible twin of the d hotkey (client leaf)
   lib/data/                   getDomainSources() — the ONLY module that knows adapters exist; adapters/fixtures/{store,source,faults}
   lib/actions/result.ts       ActionResult — what a server action returns
   tests/ · e2e/               Vitest (*.test.tsx) · Playwright (*.e2e.ts, axe.ts helper)
@@ -55,7 +58,7 @@ packages/typescript-config                     base.json → library.json (Bundl
 - `apps/web/components.json` + `packages/design/components.json` are the shadcn config (style `base-nova`, base `base`). Base UI, not Radix: polymorphism is the `render` prop (`<Button render={<Link href="/" />}>Home</Button>`), never `asChild`; menu items take `onClick`; a `DropdownMenuLabel` must sit inside a `DropdownMenuGroup` or the popup throws; `Select.onValueChange` receives `string | null` and `SelectValue` needs `items` on the root to label the value on the server. Always run the CLI with `-c apps/web`; it writes into `packages/design` through the aliases.
 - Every package resolves modules with `moduleResolution: Bundler`; `verbatimModuleSyntax` is on, so type-only imports must be `import type` — Biome's `useImportType` rewrites them on `pnpm fix`. Compiler flags go in `packages/typescript-config`, not per package.
 - Tailwind is compiled once, in `apps/web` (`postcss.config.mjs`), from `packages/design/src/styles/globals.css`; that file's `@source` globs add `apps/**` and the design package to content scanning. Tailwind only inlines **string** `@import`s; `@import url(...)` is left for Turbopack, which cannot resolve it under pnpm's isolated `node_modules`. Biome's CSS formatter leaves the notation alone.
-- Theme: `next-themes` with `attribute="class"`; `apps/web/components/theme-provider.tsx` also binds the `d` hotkey. Colours are oklch CSS variables in `globals.css`, exposed to Tailwind via `@theme inline`. `--muted-foreground` is `oklch(0.52 0 0)`, darker than shadcn's default, because muted text also lands on `bg-muted` (avatar fallbacks) and must reach 4.5:1 — axe caught 4.34.
+- Theme: `next-themes` with `attribute="class"`; `apps/web/components/theme-provider.tsx` also binds the `d` hotkey; `components/theme-toggle.tsx` is its visible twin in the shell. Colours are oklch CSS variables in `globals.css`, exposed to Tailwind via `@theme inline`. `--muted-foreground` is `oklch(0.52 0 0)`, darker than shadcn's default, because muted text also lands on `bg-muted` (avatar fallbacks) and must reach 4.5:1 — axe caught 4.34.
 
 ## Rules the code is built to
 
@@ -74,7 +77,7 @@ Everywhere else Ultracite's standards apply and `pnpm fix` enforces most of them
 
 ## Tests
 
-Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright against a production build on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`.
+Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright against a production build on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`. `e2e/vitals.e2e.ts` injects `web-vitals` before navigation and asserts LCP/CLS/INP plus the JavaScript transferred per route against budgets in the file; raise a budget only with the number that justifies it.
 
 ## Agent config in `.claude/`
 
