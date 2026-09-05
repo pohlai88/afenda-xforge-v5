@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import type { BlockManifest } from "../src/blocks/manifest";
+import type { BlockManifest, PartManifest } from "../src/blocks/manifest";
 import { COMPONENT_RULE_ID_PATTERN } from "../src/foundation/00-principles";
 import { COLOR_PUBLIC_API } from "../src/foundation/02-color";
 import { STATE_SIGNALS } from "../src/foundation/07-interaction";
@@ -10,12 +10,13 @@ import type { ComponentContract } from "../src/foundation/10-components/contract
 /**
  * R15 — a block is held equal to its contract (ADR-016,
  * docs/architecture.md §6.2). A block is DEFINED, not rendered: its
- * folder carries manifest.ts — base, variants and sizes as ADL utility
- * literals — and index.tsx derives its classes from that data. For every
- * contract in foundation/10-components/, the manifest declares exactly
- * the contract's anatomy slot, exactly its admitted variants and sizes,
- * and draws exactly the colour roles it admits — both directions, so the
- * admitted list cannot rot. Behaviour rules must exist, AF-CMP rule IDs
+ * folder carries manifest.ts — parts keyed by the data-slot each stamps,
+ * every part's base, variants and sizes as ADL utility literals — and
+ * index.tsx derives its classes from that data. For every contract in
+ * foundation/10-components/, the manifest's part keys equal the contract's
+ * anatomy, it defines exactly the admitted variants and sizes, and draws
+ * exactly the colour roles it admits — both directions, so the admitted
+ * list cannot rot and a boolean-gated part has nowhere to live. Behaviour rules must exist, AF-CMP rule IDs
  * stay inside the grammar, the exemplar must use the block, and a
  * data-slot string literal in a render is refused (the definition owns
  * identity, never the render). Contracts, manifests and block folders are
@@ -162,14 +163,17 @@ const slotFindings = (
   source: string
 ): string[] => {
   const declared = Object.keys(contract.anatomy);
+  const defined = Object.keys(manifest.parts);
   const out: string[] = [];
-  if (!declared.includes(manifest.slot)) {
-    out.push(
-      `${contract.id}: manifest slot ${manifest.slot} is not in the contract's anatomy`
-    );
+  for (const slot of defined) {
+    if (!declared.includes(slot)) {
+      out.push(
+        `${contract.id}: manifest part ${slot} is not in the contract's anatomy`
+      );
+    }
   }
   for (const slot of declared) {
-    if (slot !== manifest.slot) {
+    if (!defined.includes(slot)) {
       out.push(`${contract.id}: declared part ${slot} is not in the manifest`);
     }
   }
@@ -181,6 +185,16 @@ const slotFindings = (
   return out;
 };
 
+/** Axis names defined anywhere in the block: the union across its parts. */
+const definedAxis = (
+  manifest: BlockManifest,
+  axis: "sizes" | "variants"
+): string[] => [
+  ...new Set(
+    Object.values(manifest.parts).flatMap((p) => Object.keys(p[axis] ?? {}))
+  ),
+];
+
 const apiFindings = (
   contract: ComponentContract,
   manifest: BlockManifest
@@ -190,9 +204,9 @@ const apiFindings = (
     [
       "variant",
       Object.keys(contract.api.variants),
-      Object.keys(manifest.variants),
+      definedAxis(manifest, "variants"),
     ],
-    ["size", Object.keys(contract.api.sizes), Object.keys(manifest.sizes)],
+    ["size", Object.keys(contract.api.sizes), definedAxis(manifest, "sizes")],
   ] as const) {
     for (const name of declared) {
       if (!defined.includes(name)) {
@@ -211,11 +225,13 @@ const apiFindings = (
 };
 
 const manifestClasses = (manifest: BlockManifest): string =>
-  [
-    ...manifest.base,
-    ...Object.values(manifest.variants).flat(),
-    ...Object.values(manifest.sizes).flat(),
-  ].join(" ");
+  Object.values(manifest.parts)
+    .flatMap((p) => [
+      ...p.base,
+      ...Object.values(p.variants ?? {}).flat(),
+      ...Object.values(p.sizes ?? {}).flat(),
+    ])
+    .join(" ");
 
 const roleFindings = (
   contract: ComponentContract,
@@ -318,9 +334,10 @@ const mechanismFindings = (
   contract: ComponentContract,
   manifest: BlockManifest
 ): string[] =>
-  contract.api.states.length > 0 && !manifest.base.includes(STATE_MECHANISM)
+  contract.api.states.length > 0 &&
+  !Object.values(manifest.parts).some((p) => p.base.includes(STATE_MECHANISM))
     ? [
-        `${contract.id}: admits states but its base omits ${STATE_MECHANISM}, which delivers them`,
+        `${contract.id}: admits states but no part's base composes ${STATE_MECHANISM}, which delivers them`,
       ]
     : [];
 
@@ -331,6 +348,15 @@ const conventionFindings = (styles: string): string[] =>
     (selector) =>
       `${selector} matches a boolean state by value; Base UI serialises one as the empty string, so a boolean state is matched by presence (AF-INT-157)`
   );
+
+/** The first part of a manifest, with its slot, for planted rebuilds. */
+const soleEntry = (manifest: BlockManifest): [string, PartManifest] => {
+  const [entry] = Object.entries(manifest.parts);
+  if (!entry) {
+    throw new Error("manifest has no parts");
+  }
+  return entry;
+};
 
 const paired = (): [ComponentContract, BlockManifest][] =>
   [...contracts.entries()].flatMap(([id, contract]) => {
@@ -410,15 +436,16 @@ describe("R15 — a block is held equal to its contract", () => {
     }
   });
 
-  it("proves itself on a slot the contract never declared", () => {
+  it("proves itself on a part the contract never declared", () => {
     const [pair] = paired();
     if (!pair) {
       throw new Error("no paired block");
     }
     const [contract, manifest] = pair;
-    const planted = { ...manifest, slot: "button-glow" };
+    const [, part] = soleEntry(manifest);
+    const planted = { parts: { "button-glow": part } };
     expect(slotFindings(contract, planted, blockSource(contract.id))).toEqual([
-      `${contract.id}: manifest slot button-glow is not in the contract's anatomy`,
+      `${contract.id}: manifest part button-glow is not in the contract's anatomy`,
       `${contract.id}: declared part button is not in the manifest`,
     ]);
   });
@@ -429,10 +456,9 @@ describe("R15 — a block is held equal to its contract", () => {
       throw new Error("no paired block");
     }
     const [contract, manifest] = pair;
-    const planted = blockSource(contract.id).replace(
-      "data-slot={COMMON_BUTTON_MANIFEST.slot}",
-      'data-slot="button"'
-    );
+    const source = blockSource(contract.id);
+    const planted = source.replace("data-slot={SLOT}", 'data-slot="button"');
+    expect(planted).not.toBe(source);
     expect(slotFindings(contract, manifest, planted)).toEqual([
       `${contract.id}: index.tsx carries a data-slot string literal — identity belongs to the manifest, not the render`,
     ]);
@@ -444,13 +470,12 @@ describe("R15 — a block is held equal to its contract", () => {
       throw new Error("no paired block");
     }
     const [contract, manifest] = pair;
-    const { ghost, ...rest } = manifest.variants as Record<
-      string,
-      readonly string[]
-    >;
+    const [slot, part] = soleEntry(manifest);
+    const { ghost, ...rest } = part.variants ?? {};
     const planted = {
-      ...manifest,
-      variants: { ...rest, phantom: ghost ?? [] },
+      parts: {
+        [slot]: { ...part, variants: { ...rest, phantom: ghost ?? [] } },
+      },
     };
     const findings = apiFindings(contract, planted);
     expect(findings).toContain(
@@ -467,18 +492,27 @@ describe("R15 — a block is held equal to its contract", () => {
       throw new Error("no paired block");
     }
     const [contract, manifest] = pair;
+    const [slot, part] = soleEntry(manifest);
     const planted = {
-      ...manifest,
-      variants: {
-        ...manifest.variants,
-        // positive is unadmitted; dropping border-outline leaves outline
-        // (drawn by exactly one class) admitted but undrawn.
-        default: ["bg-positive", "text-on-primary", "state-layer-on-primary"],
-        outline: [
-          "border-boundary",
-          "text-on-surface",
-          "state-layer-on-surface",
-        ],
+      parts: {
+        [slot]: {
+          ...part,
+          variants: {
+            ...part.variants,
+            // positive is unadmitted; dropping border-outline leaves outline
+            // (drawn by exactly one class) admitted but undrawn.
+            default: [
+              "bg-positive",
+              "text-on-primary",
+              "state-layer-on-primary",
+            ],
+            outline: [
+              "border-boundary",
+              "text-on-surface",
+              "state-layer-on-surface",
+            ],
+          },
+        },
       },
     };
     const findings = roleFindings(contract, planted);
@@ -536,12 +570,17 @@ describe("R15 — a block is held equal to its contract", () => {
       throw new Error("no paired block");
     }
     const [contract, manifest] = pair;
+    const [slot, part] = soleEntry(manifest);
     const planted = {
-      ...manifest,
-      base: manifest.base.filter((c) => c !== STATE_MECHANISM),
+      parts: {
+        [slot]: {
+          ...part,
+          base: part.base.filter((c) => c !== STATE_MECHANISM),
+        },
+      },
     };
     expect(mechanismFindings(contract, planted)).toEqual([
-      `${contract.id}: admits states but its base omits ${STATE_MECHANISM}, which delivers them`,
+      `${contract.id}: admits states but no part's base composes ${STATE_MECHANISM}, which delivers them`,
     ]);
   });
 

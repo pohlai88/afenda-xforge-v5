@@ -11,14 +11,20 @@ import { COMMON_BUTTON_MANIFEST } from "./manifest";
  * Focus, disabled and invalid presentation come from af-interactive;
  * hover is the state layer at the governed opacity.
  */
-const buttonVariants = cva(COMMON_BUTTON_MANIFEST.base.join(" "), {
+
+// The slot is a key reference into the definition, so a typo fails the
+// compile and the render never restates identity as a free literal.
+const SLOT = "button" satisfies keyof typeof COMMON_BUTTON_MANIFEST.parts;
+const part = COMMON_BUTTON_MANIFEST.parts[SLOT];
+
+const buttonVariants = cva(part.base.join(" "), {
   defaultVariants: {
     size: "default",
     variant: "default",
   },
   variants: {
-    size: classMap(COMMON_BUTTON_MANIFEST.sizes),
-    variant: classMap(COMMON_BUTTON_MANIFEST.variants),
+    size: classMap(part.sizes),
+    variant: classMap(part.variants),
   },
 });
 
@@ -43,7 +49,7 @@ function Button({
   return (
     <ButtonPrimitive
       className={cn(buttonVariants({ className, size, variant }))}
-      data-slot={COMMON_BUTTON_MANIFEST.slot}
+      data-slot={SLOT}
       {...props}
     />
   );
