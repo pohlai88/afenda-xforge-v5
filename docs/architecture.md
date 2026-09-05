@@ -263,7 +263,7 @@ A component enters `packages/design` when a screen uses it and it knows nothing 
 | Lint + format | `pnpm check` | ~0.2 s (106 files) | every edit (hook) and before any claim of done |
 | Types | `pnpm typecheck` | ~12 s, 3 packages | before done |
 | Unit | `pnpm test` — 61 tests (contracts 12, design 6, web 43) | ~30 s | before done |
-| Browser | `pnpm --filter @xforge/web test:e2e` — 13 tests: axe on every screen state, Core Web Vitals and JavaScript budgets (`e2e/vitals.e2e.ts`), a phone viewport, against a production build | ~60 s incl. build + start | per screen path |
+| Browser | `pnpm --filter @xforge/web test:e2e` — 13 tests in Chromium and WebKit, plus Firefox in CI (35 runs there): axe on every screen state, a phone viewport, and Core Web Vitals and JavaScript budgets (`e2e/vitals.e2e.ts`, Chromium-only) against a production build | ~2 min incl. build + start | per screen path |
 | Build | `pnpm build` | ~15 s | before done |
 | CI | `.github/workflows/ci.yml` — all of the above against a production build | on push and PR | always |
 
@@ -305,7 +305,7 @@ Eliminate waterfalls (`Promise.all`, Suspense boundaries), import directly rathe
 4. **Client server-state** — TanStack Query when the first live/optimistic screen appears.
 5. **Backend** — Better Auth + organisations, Drizzle + Neon, `db` adapter; `DATA_SOURCE=db` (§5.5).
 6. **Cache Components on** — with real latency to reason about; audit for `<Activity>` navigation assumptions.
-7. **Hardening** — ~~CWV and bundle budgets, coverage~~ done 2026-09-05 (§7.4), plus a visible theme toggle and a responsive shell; still open: multi-browser Playwright, TypeScript 7 once the toolchain is validated against it.
+7. **Hardening** — ~~CWV and bundle budgets, coverage~~ done 2026-09-05 (§7.4), plus a visible theme toggle and a responsive shell; ~~multi-browser Playwright~~ done the same day (Firefox in CI); still open: TypeScript 7 once the toolchain is validated against it.
 
 ## 10. ADR register
 

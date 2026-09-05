@@ -35,7 +35,7 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
-      - run: pnpm --filter @xforge/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @xforge/web exec playwright install --with-deps chromium firefox webkit
       # playwright.config.ts builds and starts the app on port 3100 when CI is set,
       # and faults the glitch workspace so the error state has a browser test.
       - run: pnpm --filter @xforge/web test:e2e

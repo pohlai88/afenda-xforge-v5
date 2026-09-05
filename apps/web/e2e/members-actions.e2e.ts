@@ -1,25 +1,22 @@
 import { expect, test } from "@playwright/test";
 import { expectNoSeriousViolations } from "./axe";
 
-const niaRow = /Nia Imara/;
-
 // orbit is the mutable workspace: the read-slice e2e counts acme, which must
 // stay untouched; northwind's owner cannot be removed, so that run is
-// side-effect free.
+// side-effect free. Three browsers invite into orbit at the same time, so the
+// proof is the row this test added (unique email), never a row count.
 test.describe("members mutations", () => {
   test("invites a member and shows the new row", async ({ page }) => {
     await page.goto("/orbit/members");
-    const rowsBefore = await page.getByRole("row").count();
+    const email = `nia-${Date.now()}-${test.info().project.name}@orbit.example`;
     await page.getByRole("button", { name: "Invite member" }).click();
     const dialog = page.getByRole("dialog", { name: "Invite a member" });
     await dialog.getByLabel("Name").fill("Nia Imara");
-    // Unique per run: the dev server keeps fixture mutations until it restarts.
-    await dialog.getByLabel("Email").fill(`nia-${Date.now()}@orbit.example`);
+    await dialog.getByLabel("Email").fill(email);
     await dialog.getByRole("button", { name: "Send invite" }).click();
     await expect(page.getByText("Invited Nia Imara")).toBeVisible();
     await expect(dialog).toBeHidden();
-    await expect(page.getByRole("row")).toHaveCount(rowsBefore + 1);
-    await expect(page.getByRole("row", { name: niaRow }).first()).toContainText(
+    await expect(page.getByRole("row", { name: email })).toContainText(
       "invited"
     );
   });

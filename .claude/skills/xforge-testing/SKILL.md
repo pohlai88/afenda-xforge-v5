@@ -104,7 +104,8 @@ the installed package's `exports` map, not assumed.
 
 `playwright.config.ts` sets `webServer` on port 3100 (`pnpm dev -p 3100` locally,
 `pnpm build && pnpm start -p 3100` in CI), `expect.timeout` 10 s,
-`baseURL`, `trace: "on-first-retry"`, `retries: 2` in CI only, and a single chromium project.
+`baseURL`, `trace: "on-first-retry"`, `retries: 2` in CI only, and projects chromium, webkit and firefox (CI, or `E2E_FIREFOX=1`) for the screens, plus a
+Chromium-only `vitals` project that depends on `chromium`.
 
 Because `expect(locator)` assertions auto-retry until the timeout, a test never needs
 `waitForTimeout`, `waitForSelector` or a manual sleep. If a test needs one, the assertion is
@@ -182,4 +183,10 @@ and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 - **One test runs on a phone.** `workspace.e2e.ts` uses `test.use({ viewport: 375×812 })` and
   asserts `scrollWidth === clientWidth`. The shell is one DOM re-laid out by CSS, so there is no
   second `<nav>` landmark per breakpoint to keep in sync.
-- **One browser.** `projects` is chromium only. Cross-browser claims are unfounded here.
+- **Three browsers, two by default.** chromium and webkit run every screen test locally; firefox
+  joins in CI or with `E2E_FIREFOX=1`. On this Windows machine Playwright's Firefox falls back to
+  a software compositor (`RenderCompositorSWGL failed mapping default framebuffer` in its log)
+  and spends 30–40 s per test, which blows the 30 s budget; the tests that finish pass, so the
+  app is not the cause. Only the budgets are Chromium-bound. Three engines mutate `orbit` at
+  the same time, so a mutation test proves the row it added by its unique email (`Date.now()`
+  plus the project name) and never counts rows.
