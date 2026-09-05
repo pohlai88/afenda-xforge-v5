@@ -8,7 +8,6 @@ const baseURL = `http://localhost:${port}`;
 const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
-  // next dev compiles routes on first request; give assertions headroom.
   expect: { timeout: 10_000 },
   forbidOnly: isCI,
   fullyParallel: true,
@@ -21,23 +20,22 @@ export default defineConfig({
   testMatch: "**/*.e2e.ts",
   timeout: 30_000,
   use: {
-    actionTimeout: isCI ? 10_000 : 30_000,
+    actionTimeout: 10_000,
     baseURL,
-    // next dev compiles a route on first visit; six parallel first visits
-    // to a heavy route exceed 15 s locally. CI runs a prebuilt server.
-    navigationTimeout: isCI ? 15_000 : 60_000,
+    navigationTimeout: 15_000,
     screenshot: "only-on-failure",
     trace: "on-first-retry",
     video: "retain-on-failure",
   },
   webServer: {
-    command: isCI
-      ? `pnpm build && pnpm start -p ${port}`
-      : `pnpm dev -p ${port}`,
+    // Always a production build: Next 16 allows one `next dev` per project,
+    // so an e2e dev server would collide with the one you are working in —
+    // and testing the built app is what CI does anyway.
+    command: `pnpm build && pnpm start -p ${port}`,
     // The glitch members list is faulted so the error state has an e2e.
     env: { ...process.env, FIXTURE_FAULTS: "members.list@glitch" },
     reuseExistingServer: !isCI,
-    timeout: 120_000,
+    timeout: 180_000,
     url: baseURL,
   },
 });

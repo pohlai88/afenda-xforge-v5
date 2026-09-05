@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Afenda xForge v5 — a SaaS being built **frontend-first**. pnpm workspaces + Turborepo; Next.js 16 App Router; shadcn/ui on the Radix base; Ultracite on the Biome backend for lint/format. No database, server endpoints or auth exist yet — that is sequencing, not the product's shape. The planned data layer is Drizzle + Neon Postgres with Better Auth; adding it is a deliberate decision that updates this file before it changes code. Until then, screens read and mutate through the **contract seam**: `@xforge/contracts` defines the domain, `apps/web/lib/data` serves it from an in-memory fixture adapter, and server actions mutate through the same interface.
+Afenda xForge v5 — a SaaS being built **frontend-first**. pnpm workspaces + Turborepo; Next.js 16 App Router; shadcn/ui on the Base UI base; Ultracite on the Biome backend for lint/format. No database, server endpoints or auth exist yet — that is sequencing, not the product's shape. The planned data layer is Drizzle + Neon Postgres with Better Auth; adding it is a deliberate decision that updates this file before it changes code. Until then, screens read and mutate through the **contract seam**: `@xforge/contracts` defines the domain, `apps/web/lib/data` serves it from an in-memory fixture adapter, and server actions mutate through the same interface.
 
 Also read `AGENTS.md` (Next.js 16 is not the Next.js in training data — consult `node_modules/next/dist/docs/`; Ultracite code standards) and load the `nextjs-16` skill before touching `apps/web`, `xforge-testing` before writing a test. The architecture — boundaries, the contract/data seam, design-system layers, the ADR register — is `docs/architecture.md`; read it before adding a package, a route group or a data source. `next dev` regenerates `apps/web/AGENTS.md` and `apps/web/CLAUDE.md` on every run; commit them rather than fighting them.
 
@@ -25,13 +25,13 @@ All from the repo root. pnpm 11, Node ≥ 22. `pnpm-workspace.yaml` sets `saveEx
 | One test file | `pnpm --filter @xforge/web exec vitest run tests/members/actions.test.ts` |
 | One test by name | `pnpm --filter @xforge/contracts exec vitest run -t "last active owner"` |
 | Watch mode | `pnpm --filter @xforge/web test:watch` |
-| E2E (Playwright + axe; starts `next dev -p 3100` itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium` |
+| E2E (Playwright + axe; builds and starts the app on :3100 itself) | `pnpm --filter @xforge/web test:e2e` — first time: `pnpm --filter @xforge/web exec playwright install chromium`. Always a production build: Next 16 allows one `next dev` per project, so it never collides with your dev server |
 | See the error state in dev | `FIXTURE_FAULTS=members.list@glitch pnpm --filter @xforge/web dev -p 3200` → `/glitch/members` |
 | Add a shadcn component | `pnpm dlx shadcn@4.21.0 add <name> -c apps/web --overwrite` → lands in `packages/design/src/components/`; check `git diff -- '*/package.json'` afterwards — the CLI writes new deps into `apps/web`, and a dep the *component* imports belongs in `packages/design` (see `sonner`) |
 
 The `.claude/settings.json` PostToolUse hook runs the single-file fix after every Write/Edit; still run `pnpm check` before calling a change done. CI (`.github/workflows/ci.yml`) runs check, typecheck, test, build and the e2e against a production build.
 
-**Version pins live in one place:** `pnpm-workspace.yaml` `catalog:` (workspaces reference entries as `"catalog:"`). Bump there, then `pnpm install`. Two pins are deliberate ceilings: TypeScript 5.9.3 (Next's tooling and Biome's type inference are validated against 5.x; TS 7 is a separate decision), and `radix-ui` 1.6.7 rather than Base UI — a deliberate start on the primitives the team knows, not a maturity wait: `@base-ui/react` is stable (1.8.0) and has been shadcn's default base since July 2026 — see _Planned direction_. pnpm blocks install scripts by default; `allowBuilds` in the workspace file is the allowlist. pnpm's `minimumReleaseAge` policy is on; it appends `minimumReleaseAgeExclude` entries itself when a pinned version is younger than the cutoff.
+**Version pins live in one place:** `pnpm-workspace.yaml` `catalog:` (workspaces reference entries as `"catalog:"`). Bump there, then `pnpm install`. Two pins are deliberate ceilings: TypeScript 5.9.3 (Next's tooling and Biome's type inference are validated against 5.x; TS 7 is a separate decision), and `@base-ui/react` 1.8.0 (shadcn's default base since July 2026; the scaffold started on Radix and was migrated per component the same day — reports in `.migration/`). pnpm blocks install scripts by default; `allowBuilds` in the workspace file is the allowlist. pnpm's `minimumReleaseAge` policy is on; it appends `minimumReleaseAgeExclude` entries itself when a pinned version is younger than the cutoff.
 
 ## Layout
 
@@ -52,7 +52,7 @@ packages/typescript-config                     base.json → library.json (Bundl
 ```
 
 - Import design code as `@xforge/design/components/<name>`, `@xforge/design/lib/utils` (`cn`), and the stylesheet as `@xforge/design/globals.css`; contracts as `@xforge/contracts/<domain>/<file>`, `@xforge/contracts/ids`, `/errors`, `/sources`, `/fixtures/<file>`. These resolve through each package's `exports` **and** the `paths` in `apps/web/tsconfig.json` — keep both in sync when adding an export.
-- `apps/web/components.json` + `packages/design/components.json` are the shadcn config (style `radix-nova`). Always run the CLI with `-c apps/web`; it writes into `packages/design` through the aliases.
+- `apps/web/components.json` + `packages/design/components.json` are the shadcn config (style `base-nova`, base `base`). Base UI, not Radix: polymorphism is the `render` prop (`<Button render={<Link href="/" />}>Home</Button>`), never `asChild`; menu items take `onClick`; a `DropdownMenuLabel` must sit inside a `DropdownMenuGroup` or the popup throws; `Select.onValueChange` receives `string | null` and `SelectValue` needs `items` on the root to label the value on the server. Always run the CLI with `-c apps/web`; it writes into `packages/design` through the aliases.
 - Every package resolves modules with `moduleResolution: Bundler`; `verbatimModuleSyntax` is on, so type-only imports must be `import type` — Biome's `useImportType` rewrites them on `pnpm fix`. Compiler flags go in `packages/typescript-config`, not per package.
 - Tailwind is compiled once, in `apps/web` (`postcss.config.mjs`), from `packages/design/src/styles/globals.css`; that file's `@source` globs add `apps/**` and the design package to content scanning. Tailwind only inlines **string** `@import`s; `@import url(...)` is left for Turbopack, which cannot resolve it under pnpm's isolated `node_modules`. Biome's CSS formatter leaves the notation alone.
 - Theme: `next-themes` with `attribute="class"`; `apps/web/components/theme-provider.tsx` also binds the `d` hotkey. Colours are oklch CSS variables in `globals.css`, exposed to Tailwind via `@theme inline`. `--muted-foreground` is `oklch(0.52 0 0)`, darker than shadcn's default, because muted text also lands on `bg-muted` (avatar fallbacks) and must reach 4.5:1 — axe caught 4.34.
@@ -74,7 +74,7 @@ Everywhere else Ultracite's standards apply and `pnpm fix` enforces most of them
 
 ## Tests
 
-Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`.
+Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright against a production build on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`.
 
 ## Agent config in `.claude/`
 
@@ -82,6 +82,5 @@ Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. I
 
 ## Planned direction (not yet in code)
 
-- **Design primitives: Radix → Base UI.** `@base-ui/react` is stable (1.8.0) and shadcn's default since July 2026; Radix stays supported and every shadcn component ships for both. Migrate per component with the `migrate-radix-to-base` skill (shadcn's documented route); reference docs in `.claude/llmx/base-ui/`. Until that decision, do not mix `@base-ui/react` into `packages/design`.
 - **Backend:** Better Auth (organisations) + Drizzle + Neon behind the same contract — `docs/architecture.md` §5.5 is the playbook. `DATA_SOURCE=db` already exists as a switch that throws "not implemented".
 - **Client server-state:** TanStack Query when the first live/optimistic screen appears; not before.

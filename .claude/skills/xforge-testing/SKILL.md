@@ -163,9 +163,12 @@ and **9 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
   `FIXTURE_FAULTS=members.list@glitch` on Playwright's web server for the error state.
 - **Axe runs on every screen state** via `e2e/axe.ts` — serious and critical block; its first
   catch was a real one (muted text on `bg-muted` at 4.34:1, fixed in the token).
-- **Timeouts are looser locally on purpose.** `navigationTimeout`/`actionTimeout` are 60 s/30 s
-  outside CI because `next dev` cold-compiles the members route under six parallel first visits;
-  CI runs a prebuilt server with the tight values.
+- **The e2e server is always a production build** (`pnpm build && pnpm start -p 3100`). Next 16
+  allows one `next dev` per project ("Another next dev server is already running"), so a dev-mode
+  e2e collided with the developer's own server; a built app also needs no cold-compile timeouts.
+- **Base UI, not Radix, since the migration:** triggers take `render={<Button />}`, menu items
+  `onClick`, and a `DropdownMenuLabel` outside a `DropdownMenuGroup` throws at open — the
+  behaviour contracts in `packages/design/tests` are what caught it.
 - **No coverage.** `turbo.json`'s `test` task declares neither `inputs` nor `outputs`. Adding
   `--coverage` without adding `"outputs": ["coverage/**"]` gives you a cached task that
   produces no restorable artefact.
