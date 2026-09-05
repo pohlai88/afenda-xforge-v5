@@ -28,28 +28,34 @@ exists. That is the failure this skill is against.
 ## What this repository actually is
 
 Frontend-first, and that is a **sequencing decision, not the product's shape**. A SaaS backend
-is the destination (see `CLAUDE.md`); there is no database, server or authentication in this
-repository today, and the Next.js surface in use is deliberately small. Measured 2026-09-05,
-at the v5 scaffold:
+is the destination (see `CLAUDE.md`); there is no database, server endpoint or authentication in
+this repository today. Screens read and mutate through the contract seam (`@xforge/contracts`,
+served by the fixture adapter behind `apps/web/lib/data`). Measured 2026-09-05, after the
+members slice:
 
-    apps/web/app/              layout.tsx, page.tsx — Server Components, both export metadata
-    apps/web/components/       theme-provider.tsx — the only 'use client' file
-    'use server'               none
+    apps/web/app/              (marketing)/page, (auth)/sign-in/page, (app)/[orgSlug]/{layout,page},
+                               (app)/[orgSlug]/members/{page,loading,error}, (app)/not-found, not-found
+    params / searchParams      Promises — `await params` in every page and layout
+    'use client'               6 app files: components/theme-provider, components/app-shell/sidebar-nav,
+                               features/members/components/{members-filters,member-row-actions,invite-member-dialog},
+                               app/(app)/[orgSlug]/members/error.tsx — all leaves
+    'use server'               features/members/actions.ts — inviteMember, updateMemberRole, removeMember;
+                               each resolves the organization from the URL slug and returns an ActionResult
     route handlers             none
     proxy / middleware         none
     next.config.ts             transpilePackages: ["@xforge/design"] — nothing else
     cacheComponents            NOT set → the previous caching model is in force
     reactCompiler              NOT set
 
-Re-measure before relying on these numbers; they describe the scaffold, and screens are added
-on top of it.
+Re-measure before relying on these numbers; they describe the first slice, and screens are
+added on top of it.
 
 ## The standing position, and how to change it
 
-Screens are built against local or mocked data at the UI edge. Do not add a Route Handler, a
-Server Action or server-side `fetch` to satisfy a screen while the backend is undecided — a
-server path added now is one nobody has designed, and it hides the API contract the screen
-actually needs. When the backend lands, that is a deliberate decision that changes `CLAUDE.md`
+Screens read through `getDomainSources()` in Server Components and mutate through Server
+Actions that call the same interface — that seam is the API contract. Do not add a Route
+Handler or server-side `fetch` to satisfy a screen while the transport is undecided; a server
+endpoint added now is one nobody has designed. When the backend lands, that is a deliberate decision that changes `CLAUDE.md`
 before it changes code; `references/server-actions.md` is written for that day and is not
 guidance for today.
 

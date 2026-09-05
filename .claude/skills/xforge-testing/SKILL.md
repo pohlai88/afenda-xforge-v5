@@ -144,14 +144,29 @@ The fix that followed: e2e now runs on its own port, 3100, so a dev server on 30
 different project) is never tested by mistake. CI
 is unaffected (`isCI` makes it false, and the server is built fresh).
 
-## 8. What the harness does not yet do
+## 8. Where the numbers stand, and what the harness does not yet do
 
-State these rather than silently assuming otherwise:
+Measured 2026-09-05 after the members slice: **59 Vitest tests** (contracts 12, design 6, web 41)
+and **9 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 
+- **Cleanup is explicit.** Vitest exposes no globals, so Testing Library cannot register its own
+  `afterEach(cleanup)`; both `tests/setup.ts` files do it. Without it a second `render` in the
+  same file finds the first one's DOM.
+- **Mock at the boundary, with `vi.hoisted`.** Component tests mock `@/features/<domain>/actions`
+  (server actions import `@/lib/data`, and `server-only` throws under jsdom by design); action
+  tests mock `@/lib/data` to return a fresh `createFixtureDomainSources()` per test. Declare mock
+  functions inside `vi.hoisted(() => ({...}))` — a plain `const` is in its temporal dead zone when
+  the hoisted factory runs.
+- **Fixture workspaces have roles.** acme is counted by the read e2e and must not change; orbit is
+  the one the mutation e2e may change (use a unique email per run — the dev server keeps
+  mutations until it restarts); northwind holds the single-owner invariant; glitch is faulted by
+  `FIXTURE_FAULTS=members.list@glitch` on Playwright's web server for the error state.
+- **Axe runs on every screen state** via `e2e/axe.ts` — serious and critical block; its first
+  catch was a real one (muted text on `bg-muted` at 4.34:1, fixed in the token).
+- **Timeouts are looser locally on purpose.** `navigationTimeout`/`actionTimeout` are 60 s/30 s
+  outside CI because `next dev` cold-compiles the members route under six parallel first visits;
+  CI runs a prebuilt server with the tight values.
 - **No coverage.** `turbo.json`'s `test` task declares neither `inputs` nor `outputs`. Adding
   `--coverage` without adding `"outputs": ["coverage/**"]` gives you a cached task that
   produces no restorable artefact.
 - **One browser.** `projects` is chromium only. Cross-browser claims are unfounded here.
-- **Three Vitest tests and one Playwright spec.** `packages/design/tests/button.test.tsx` (2)
-  and `apps/web/tests/home.test.tsx` (1). Any statement about suite health is a statement
-  about three tests.

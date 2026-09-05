@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectNoSeriousViolations } from "./axe";
 
 const ownersOnly = /role=owner/;
 
@@ -7,6 +8,7 @@ test.describe("members list", () => {
     await page.goto("/acme/members");
     await expect(page.getByRole("heading", { name: "Members" })).toBeVisible();
     await expect(page.getByRole("row")).toHaveCount(9);
+    await expectNoSeriousViolations(page);
     await page.getByRole("combobox", { name: "Role" }).click();
     await page.getByRole("option", { name: "owner" }).click();
     await expect(page).toHaveURL(ownersOnly);
@@ -21,6 +23,7 @@ test.describe("members list", () => {
     await expect(
       page.getByRole("heading", { name: "No members yet" })
     ).toBeVisible();
+    await expectNoSeriousViolations(page);
   });
 
   test("shows the error boundary when the list fails, with a retry", async ({
@@ -28,12 +31,12 @@ test.describe("members list", () => {
   }) => {
     // FIXTURE_FAULTS=members.list@glitch is set for the e2e server.
     await page.goto("/glitch/members");
-    await expect(
-      page.getByRole("heading", { name: "Members could not be loaded" })
-    ).toBeVisible();
+    const heading = page.getByRole("heading", {
+      name: "Members could not be loaded",
+    });
+    await expect(heading).toBeVisible();
+    await expectNoSeriousViolations(page);
     await page.getByRole("button", { name: "Try again" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Members could not be loaded" })
-    ).toBeVisible();
+    await expect(heading).toBeVisible();
   });
 });

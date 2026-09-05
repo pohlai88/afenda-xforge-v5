@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectNoSeriousViolations } from "./axe";
 
 const niaRow = /Nia Imara/;
 
@@ -37,6 +38,7 @@ test.describe("members mutations", () => {
     await expect(
       dialog.getByText("A member with this email already exists")
     ).toBeVisible();
+    await expectNoSeriousViolations(page);
   });
 
   test("refuses to remove the last active owner and says why", async ({

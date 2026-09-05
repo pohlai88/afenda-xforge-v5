@@ -2,20 +2,20 @@
 
 | | |
 | --- | --- |
-| Status | Draft 1 — decisions marked **ADR** are accepted; sections marked *planned* describe intent, not code |
-| Date | 2026-09-05 |
-| Applies to | commit `75e8263` and later |
+| Status | Draft 2 — decisions marked **ADR** are accepted; sections marked *planned* describe intent, not code |
+| Date | 2026-09-05 (first slice landed the same day; see §9) |
+| Applies to | commit `9400dbf` and later |
 | Companion files | `CLAUDE.md` (operating rules), `AGENTS.md` (Next 16 + code standards), `.claude/skills/nextjs-16`, `.claude/skills/xforge-testing` |
 
 ## 0. How to read this
 
 Every claim below is one of three kinds, and the kind is marked:
 
-- **Verified** — read from the tree or run here on 2026-09-05 (versions, file paths, measured timings).
+- **Verified** — read from the tree or run here on 2026-09-05 (versions, file paths, measured timings, test counts).
 - **Decision (ADR-n)** — accepted and binding until superseded; the register in §10 carries status and consequences.
 - *Planned* — the direction we have agreed to build toward. Nothing planned is assumed by code today.
 
-The document is domain-agnostic on purpose: the product's screens are defined by specs that do not exist yet. Examples use a generic multi-tenant workspace (organisations, members, records) because that shape is what every SaaS shares and what the auth and tenancy seams must carry regardless of domain.
+The document is domain-agnostic on purpose. The first domain built — the workspace core of organisations and members — is what every SaaS shares and what the auth and tenancy seams must carry regardless of product; it is used as the worked example throughout.
 
 ## 1. The frontend-first thesis
 
@@ -24,9 +24,9 @@ The document is domain-agnostic on purpose: the product's screens are defined by
 Four principles follow from that, and every later section is an application of one of them.
 
 1. **One source of truth per fact.** A type, a token, a version, a fixture is defined once and derived everywhere else. When two places must agree, one is generated from the other or a check holds them equal. (This is the lesson v4 paid for: "which components exist" was answered independently six times, and the answers drifted.)
-2. **Every boundary is explicit.** Server/client, contract/adapter, design-system/application, vendored/owned. A boundary you cannot point at in the file tree is not a boundary.
+2. **Every boundary is explicit.** Server/client, contract/adapter, design-system/application, vendored/owned. A boundary you cannot point at in the file tree is not a boundary — and where it matters most, Biome enforces it (§3.3).
 3. **Verifiable by machine.** The repository is vibe-coded: the human steers from what the agent reports, never from the code. So a report is only trustworthy if every claim in it maps to a check the human can re-run — `pnpm check`, `pnpm typecheck`, `pnpm test`, `pnpm --filter @xforge/web test:e2e`. Architecture that cannot be checked is advice.
-4. **Accessibility and performance are architecture, not polish.** Roles-first tests, Server Components by default, client code at the leaves, and budgets (§7) are structural choices made now because they cannot be retrofitted cheaply.
+4. **Accessibility and performance are architecture, not polish.** Roles-first tests, axe on every screen state, Server Components by default, client code at the leaves, and budgets (§7) are structural choices made now because they cannot be retrofitted cheaply.
 
 **Non-goals for this phase.** No database, no server endpoints, no authentication, no deployment topology. Each is a deliberate decision that changes `CLAUDE.md` before it changes code (§5.5, §9).
 
@@ -35,174 +35,187 @@ Four principles follow from that, and every later section is an application of o
 ```
                     ┌──────────────────────────────────────────────────────────┐
                     │                    apps/web  (Next.js 16)                 │
-   Browser ◄──────► │  Server Components ──► contract interface ──► adapter    │
-                    │  Client Components ◄── props / TanStack Query (planned)  │
+   Browser ◄──────► │  Server Components ──► getDomainSources() ──► adapter    │
+                    │  Client leaves ──► Server Actions ──► same interface     │
                     └───────────────────────────────┬──────────────────────────┘
                                                     │ today: fixtures (in-process, server-only)
                                                     │ planned: Drizzle → Neon Postgres
                                                     │ planned: Better Auth (session, organisations)
 ```
 
-**Verified today:** one Next.js app, one design package, no network I/O, no persistence. Every screen renders from in-process data. **Planned:** the same screens, the same contract interface, with adapters that talk to Postgres and an auth session — the seam in the middle is what makes the swap a configuration change (§5).
+**Verified today:** one Next.js app, one design package, one contract package, no network I/O, no persistence. Every screen renders from in-process fixtures through the contract interface, and every mutation goes back through it. **Planned:** the same screens, the same interface, with adapters that talk to Postgres and an auth session — the seam in the middle is what makes the swap a configuration change (§5).
 
 ## 3. Repository architecture
 
 ### 3.1 Workspaces and the dependency direction
 
-| Workspace | Package | Role | May depend on |
-| --- | --- | --- | --- |
-| `apps/web` | `@xforge/web` | The product: routes, screens, features | every `packages/*` |
-| `packages/design` | `@xforge/design` | Design system: tokens, primitives, composites | `react`, `radix-ui`, `cn`, `cva` — **never** an app or a domain |
-| `packages/typescript-config` | `@xforge/typescript-config` | Shared compiler bases | nothing |
-| `packages/contracts` *(planned, §5)* | `@xforge/contracts` | Zod schemas, types, data-source interfaces, fixture factories | `zod` only — **no React, no Next** |
-| `packages/mocks` *(planned, when HTTP exists)* | `@xforge/mocks` | MSW handlers derived from fixtures | `@xforge/contracts`, `msw` |
-| `packages/db` *(planned, §5.5)* | `@xforge/db` | Drizzle schema + the `db` adapter | `@xforge/contracts`, `drizzle-orm` |
+| Workspace | Package | Role | May depend on | Status |
+| --- | --- | --- | --- | --- |
+| `apps/web` | `@xforge/web` | The product: routes, screens, features | every `packages/*` | Verified |
+| `packages/contracts` | `@xforge/contracts` | Zod schemas, branded ids, `DomainSources` interfaces, executable contract suites, canonical fixtures | `zod` only — **no React, no Next** (Biome-enforced) | Verified |
+| `packages/design` | `@xforge/design` | Design system: tokens, primitives, composites, behaviour contracts | `react`, `radix-ui`, `cn`, `cva` — **never** an app or a domain | Verified |
+| `packages/typescript-config` | `@xforge/typescript-config` | Shared compiler bases (`base` → `library` → `react-library`; `nextjs`) | nothing | Verified |
+| `packages/mocks` *(planned, when HTTP exists)* | `@xforge/mocks` | MSW handlers derived from fixtures | `@xforge/contracts`, `msw` | Planned |
+| `packages/db` *(planned, §5.5)* | `@xforge/db` | Drizzle schema + the `db` adapter | `@xforge/contracts`, `drizzle-orm` | Planned |
 
 **ADR-001** — pnpm workspaces + Turborepo; dependencies point one way: `apps → packages`, `packages` never import an app, and `packages/design` never imports a domain package. A package that needs to know about the product is in the wrong layer.
 
-**Verified tooling** (all pinned exactly, in `pnpm-workspace.yaml` `catalog:`): pnpm 11.20.0, Turborepo 2.10.12, Next 16.3.4, React 19.2.8, TypeScript 5.9.3, Tailwind 4.3.3, shadcn 4.21.0 on `radix-ui` 1.6.7, Biome 2.5.12 via Ultracite 7.10.8, Vitest 5.0.0, Playwright 1.62.1. Compiler bases: `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noFallthroughCasesInSwitch`, `verbatimModuleSyntax`, `moduleResolution: Bundler` everywhere.
+**Verified tooling** (all pinned exactly, in `pnpm-workspace.yaml` `catalog:`): pnpm 11.20.0, Turborepo 2.10.12, Next 16.3.4, React 19.2.8, TypeScript 5.9.3, Tailwind 4.3.3, shadcn 4.21.0 on `radix-ui` 1.6.7, zod 4.5.4, Biome 2.5.12 via Ultracite 7.10.8, Vitest 5.0.0, Playwright 1.62.1, axe-core/playwright 4.13.0. Compiler bases: `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noFallthroughCasesInSwitch`, `verbatimModuleSyntax`, `moduleResolution: Bundler` everywhere.
 
 ### 3.2 Adding a package — the checklist
 
-1. `packages/<name>/package.json` with `"name": "@xforge/<name>"`, `"private": true`, versions as `catalog:` or `workspace:*`; declare `exports` for every public path.
-2. Extend the right base in `tsconfig.json` (`react-library.json` for anything with JSX, `base.json` otherwise).
+1. `packages/<name>/package.json` with `"name": "@xforge/<name>"`, `"private": true`, versions as `catalog:` or `workspace:*`; declare `exports` for every public path (wildcards such as `"./member/*": "./src/member/*.ts"` are fine; a barrel `index.ts` is not — Biome's `noBarrelFile`).
+2. Extend the right base in `tsconfig.json` (`react-library.json` for JSX, `library.json` otherwise).
 3. Scripts `typecheck` and `test` so Turborepo picks the package up with no `turbo.json` change.
-4. Mirror any path alias in the consumer's `tsconfig.json` `paths` **and** the package `exports` — the two must agree (`CLAUDE.md` §Layout).
-5. `pnpm install`, then `pnpm check && pnpm typecheck && pnpm test`.
+4. Mirror any path alias in the consumer's `tsconfig.json` `paths` **and** the package `exports` — the two must agree.
+5. Declare a dependency in the package that *imports* it. shadcn's CLI writes new deps into `apps/web` even when the component lives in `packages/design` (`sonner` did); move them.
+6. `pnpm install`, then `pnpm check && pnpm typecheck && pnpm test`.
 
-### 3.3 Lint, format and the hook
+### 3.3 Lint, format and the enforced boundaries
 
-**ADR-003** — Ultracite on the Biome backend (`biome.jsonc`). The ESLint provider was tried first and replaced the same day: ~60 s per check, 36 dev dependencies, seven provider defects; Biome checks the repository in under a second with two. Deviations from the preset are exactly two and are commented in the file: vendored `.agents/` and `.claude/` are excluded, and shadcn-generated paths keep shadcn's style. The `.claude/settings.json` hook runs the single-file fix after every agent edit; it decides nothing and blocks nothing.
+**ADR-003** — Ultracite on the Biome backend (`biome.jsonc`). The ESLint provider was tried first and replaced the same day: ~60 s per check, 36 dev dependencies, seven provider defects; Biome checks 106 files in ~0.2 s with two. One deprecated setting is kept on purpose (`files.experimentalScannerIgnores: ["node_modules"]`): with zod's typings in the module graph, Biome's type inference took ~20 s per check; the documented replacement (`!!**/node_modules` in `includes`) was measured not to have the same effect.
+
+Three overrides turn principle 2 into lint errors:
+
+- `packages/contracts/**` may not import `react`, `next`, `server-only` or any app path — the contract stays framework-blind.
+- `apps/web/{app,components,features}/**` may not import `@/lib/data/adapters/*` or `@xforge/contracts/fixtures/*` — data is reached only through `getDomainSources()`.
+- `packages/design/src/components/**` keeps shadcn's upstream style (namespace React import, unsorted cva maps, a few suspicious/a11y rules off) so `shadcn diff` stays meaningful; hand-written composites beside them follow the house style.
+
+The `.claude/settings.json` hook runs the single-file fix after every agent edit; it decides nothing and blocks nothing.
 
 ## 4. Application architecture — `apps/web`
 
-### 4.1 Routing and folders
-
-`app/` is for routing only. Domain code lives in `features/`; the app shell in `components/`; infrastructure in `lib/`. Route groups organise URLs without changing them; private folders (`_components`) colocate route-local pieces without creating routes.
+### 4.1 Routing and folders — as built
 
 ```
 apps/web/
   app/
-    (marketing)/            public pages — static, no session
-      page.tsx
-    (auth)/                 sign-in, sign-up, invitations — planned with Better Auth
-      sign-in/page.tsx
-    (app)/                  the product — every route here has a session (planned)
-      [orgSlug]/            tenant context in the URL from day one (§5.5)
-        layout.tsx          org switcher, navigation; reads session + org
-        page.tsx            dashboard
-        <domain>/           one folder per domain screen group
-          page.tsx
-          loading.tsx       streaming fallback
-          error.tsx         error boundary
-          _components/      route-local pieces (not a route)
-    layout.tsx              root: fonts, ThemeProvider, metadata
-    not-found.tsx
-  features/<domain>/        components/, hooks/, queries.ts, schemas.ts, fixtures.ts — the domain's UI and logic
-  components/               app shell: navigation, providers, theme
-  lib/
-    data/                   contract adapters and the DATA_SOURCE switch (§5.3)
-    auth/                   planned: server helpers around Better Auth
-  tests/                    Vitest (*.test.tsx)
-  e2e/                      Playwright (*.e2e.ts)
+    (marketing)/page.tsx        landing → "Open demo workspace" → /acme
+    (auth)/sign-in/page.tsx     stub card until Better Auth; no fake form
+    (app)/
+      not-found.tsx             "Workspace unavailable" — never echoes the slug; catches notFound() from the layout below
+      [orgSlug]/
+        layout.tsx              validates the slug with the contract schema, resolves the tenant through getDomainSources(),
+                                notFound() on NotFound, renders AppShell + Toaster
+        page.tsx                overview — two reads started together
+        members/
+          page.tsx              parse URL → filter, Promise.all([members.list, organizations.getBySlug]) → screen
+          loading.tsx           skeleton table
+          error.tsx             'use client' boundary with reset — reached only by unexpected failures
+    layout.tsx · not-found.tsx  root: fonts, ThemeProvider, metadata template; generic "Page not found"
+  features/members/
+    filter.ts                   parseMemberListQuery(searchParams) → MemberFilter; memberListQueryString(filter)
+    queries.ts                  listMembers(organizationId, filter) via getDomainSources()
+    actions.ts                  'use server': inviteMember, updateMemberRole, removeMember → ActionResult
+    components/                 members-table, members-empty-state, members-pagination (server);
+                                members-filters, member-row-actions, invite-member-dialog ('use client' leaves)
+  components/app-shell/         app-shell, page-header (server); sidebar-nav ('use client': usePathname)
+  lib/data/                     index.ts (server-only; DATA_SOURCE switch) · adapters/fixtures/{store,source,faults,index}
+  lib/actions/result.ts         ActionResult<T> and toActionResult()
+  tests/ · e2e/                 Vitest (*.test.tsx) · Playwright (*.e2e.ts) + axe.ts
 ```
 
-**Placement rule.** If a component is used by exactly one route, it lives in that route's `_components/`. If it belongs to a domain and more than one route, `features/<domain>/components/`. If it knows nothing about the domain, it is a design-system candidate — but a component enters `packages/design` only when a screen uses it (§6.4).
+**Placement rule.** Used by exactly one route → that route's `_components/` (none yet). Belongs to a domain and more than one route → `features/<domain>/components/`. Knows nothing about the domain → a design-system candidate, but a component enters `packages/design` only when a screen uses it (§6.4).
 
 ### 4.2 The server/client boundary
 
 Everything in `app/` is a Server Component unless it says `'use client'`. The working rule (from `.claude/skills/nextjs-16/references/boundary.md`):
 
-- `'use client'` **only** when the component has state, an event handler, an effect, or a browser API — and it goes on the **leaf**, never on a page or layout. A Server Component fetches through the contract and passes plain props to a small client leaf.
-- Context providers are client components that take `children` and are rendered from a server layout; the subtree inside stays server. `components/theme-provider.tsx` is the reference shape.
-- Adapters and anything that will later hold a secret import `server-only` at the top. Nothing under `lib/data/` is ever imported from a `'use client'` file. This is a package-boundary rule, not a code-review hope.
-
-**Verified today:** two Server Components (`app/layout.tsx`, `app/page.tsx`), one client file (`theme-provider.tsx`), no route handlers, no server actions, no proxy/middleware.
+- `'use client'` **only** when the component has state, an event handler, an effect, or a browser API — and it goes on the **leaf**, never on a page or layout. **Verified:** six client files, all leaves (theme provider, sidebar nav, filters, row actions, invite dialog, the members error boundary).
+- Context providers are client components that take `children` and are rendered from a server layout; the subtree inside stays server.
+- `lib/data/index.ts` imports `server-only`. Nothing under `lib/data/` is imported from a `'use client'` file; importing it under jsdom throws, which is the test suite's reminder to mock at the boundary.
 
 ### 4.3 Rendering and caching
 
-**ADR-008** — `cacheComponents` stays **off** until the first screen renders real (non-fixture) data. Next 16.3 makes it opt-in and plans to default it in a future major; it is running in production elsewhere without incident, but it changes two things we are not ready to reason about on fixtures: data becomes dynamic-by-default with `use cache` opt-ins, and client navigation switches to React `<Activity>` — the previous route is hidden, not unmounted, so component state survives navigation and effects re-run on return. Enabling it is a documented step in §9, taken when caching decisions can be made against real latency.
+**ADR-008** — `cacheComponents` stays **off** until the first screen renders real (non-fixture) data. Next 16.3 makes it opt-in and plans to default it in a future major; it changes two things we cannot yet reason about on fixtures: data becomes dynamic-by-default with `use cache` opt-ins, and client navigation switches to React `<Activity>` — the previous route is hidden, not unmounted. Enabling it is step 6 in §9. Until then: the previous model, Suspense boundaries with `loading.tsx`, and `error.tsx` per domain.
 
-Until then: the previous model (`fetch` options, route segment config), Suspense boundaries with `loading.tsx` per route group, and `error.tsx` per domain. Streaming is still available and expected for any screen with more than one data dependency.
-
-### 4.4 Data flow inside a screen
+### 4.4 Data flow inside a screen — as built
 
 ```
-   Route (Server Component)
-     │  await Promise.all([ds.members.list(), ds.org.get()])   ← no waterfalls
+   Route page.tsx (Server Component)
+     │  await Promise.all([params, searchParams]) → parseMemberListQuery()
+     │  await Promise.all([sources.members.list(org.id, filter), sources.organizations.getBySlug(slug)])
      ▼
-   Screen (Server Component, features/<domain>/components/*)   ← markup, no interactivity
+   Screen (Server Components: MembersTable, MembersPagination, MembersEmptyState)
      │  plain props
      ▼
-   Leaf ('use client'): filters, dialogs, forms, tables with sorting
-     │  URL state via searchParams; form state via react-hook-form + zod
+   Leaves ('use client'): MembersFilters (writes searchParams), InviteMemberDialog (useActionState),
+                          MemberRowActions (startTransition + toast)
+     │  { orgSlug, memberId, … } — never an organization id
      ▼
-   Mutation: today an in-memory fixture mutation; planned: Server Action → db adapter,
-             revalidatePath — or TanStack Query mutation when the screen is live/optimistic
+   Server Action: parse → organizations.getBySlug(orgSlug) → members.<op>(organization.id, …)
+                  → revalidatePath → ActionResult
 ```
 
-- **Reads** happen in Server Components through the contract interface (§5). Independent reads are started together (`Promise.all`); a screen never awaits in sequence what it could await in parallel.
-- **Client server-state** — polling, optimistic updates, infinite lists — uses TanStack Query (**ADR-010**, *proposed*: Next's own client-fetching guide documents it as the standard integration; SWR is the lighter alternative if bundle size ever dominates). Until a screen needs it, it is not installed.
-- **URL is the state store for anything shareable**: filters, sort, pagination, selected tab live in `searchParams` so a link reproduces the view.
-- **Forms** are `react-hook-form` + the domain's zod schema (the same schema the contract uses) + shadcn's `Form` primitives. Validation messages come from the schema, once.
-- **Every screen ships four states** — loading, empty, error, populated — and each has a test. A screen missing one is not done (§7.3).
+- **Reads** happen in Server Components through the contract; independent reads start together.
+- **The URL is the state store** for anything shareable: `?query=&role=&status=&page=&pageSize=`. `parseMemberListQuery` is the named boundary between the user-editable URL and the domain filter: invalid values normalise to defaults (`?page=abc` → 1, `?pageSize=999999` → 25), repeated keys take the first value. Bounds live in the zod schema, once.
+- **Mutations** are Server Actions that resolve the tenant server-side (rule 2, §5.4) and return an `ActionResult` (ADR-011). Forms use `useActionState` and the contract's zod schema — no form library; the smallest form in the application does not justify one.
+- **Five states, five mechanisms** (ADR-012):
+
+| State | Mechanism | Proven by |
+| --- | --- | --- |
+| Loading | `loading.tsx` / Suspense | build + navigation |
+| Empty | domain UI (`MembersEmptyState`) | e2e `/blank-co/members` |
+| Populated | domain UI | e2e `/acme/members` |
+| Resource absent | `notFound()` → `(app)/not-found.tsx` | e2e `/nope` (404, slug never echoed) |
+| System failure | `throw` → `error.tsx` with reset | e2e `/glitch/members` under `FIXTURE_FAULTS` |
+| Expected mutation failure | `ActionResult` → field error or toast | e2e duplicate email, last-owner removal |
 
 ## 5. The contract and data seam
 
 This is the section that makes frontend-first work. Everything else is ordinary Next.js.
 
-### 5.1 The contract
-
-**ADR-005** — `packages/contracts` (*planned*, first thing built when the first screen is specified) holds, per domain:
+### 5.1 The contract — `@xforge/contracts` (Verified)
 
 ```
-packages/contracts/src/<domain>/
-  schema.ts       zod schemas: entities, create/update inputs, list filters
-  types.ts        `z.infer` types — the only types screens import
-  source.ts       the DataSource interface: list(filter) / get(id) / create(input) / update(id, patch)
-  fixtures.ts     deterministic factories (seeded) — synthetic data, never real PII
-  contract.test.ts  tests any adapter must pass (shape, invariants, error cases)
+packages/contracts/src/
+  ids.ts              branded OrganizationId, MemberId, OrganizationSlug — tenant scope is a type, not a string
+  errors.ts           DataSourceError { code: NotFound | Conflict | Validation | Invariant }
+  sources.ts          DomainSources = { organizations: OrganizationSource; members: MemberSource }
+  organization/       schema · types · source (getBySlug) · contract (executable suite)
+  member/             schema (Member, InviteMemberInput, UpdateMemberRoleInput, MemberFilter, MemberPage)
+                      · types · source (list · invite · updateRole · remove — every one takes organizationId)
+                      · contract (executable suite)
+  fixtures/           seed (deterministic ids/dates) · organizations · members · factory
 ```
 
-One zod definition yields the TypeScript type, the form validator, the fixture shape and — when HTTP arrives — the request/response validation. That is principle 1 applied to data.
+**ADR-005** — contract-first, but not future-first: the seam exists before implementation, and only for capabilities a screen observes. `members.get`, `organizations.list/create` arrive with the screens that need them, with contract tests in the same commit.
+
+One zod definition yields the TypeScript type, the form validator, the URL parser's bounds, the fixture shape and — when HTTP arrives — the request/response validation. Principle 1, applied to data.
 
 ### 5.2 Adapters
 
-An adapter implements a domain's `DataSource`. Three exist over the product's life; one exists now.
-
 | Adapter | Where it runs | Backed by | Status |
 | --- | --- | --- | --- |
-| `fixtures` | server only (RSC, Vitest, Playwright's dev server) | in-process seeded factories; mutations live in server memory for the dev session | **today** |
-| `db` | server only | Drizzle → Neon Postgres | *planned* (§5.5) |
-| `http` | client (TanStack Query) | Route Handlers / server functions that themselves call `db` | *planned, when a screen needs live client data* |
+| `fixtures` | server only — RSC, server actions, Vitest, Playwright's dev server | `createFixtureStore()`: deep-copied maps from the canonical fixtures; all tenant checks and invariants in the adapter | **Verified** — passes both contract suites |
+| `db` | server only | Drizzle → Neon Postgres | *planned* (§5.5); `DATA_SOURCE=db` already throws "not implemented" |
+| `http` | client (TanStack Query) | Route Handlers / server functions that themselves call `db` | *planned*, when a screen needs live client data |
 
-`lib/data/index.ts` selects by `DATA_SOURCE` (`fixtures` default in dev and test; `db` in production once it exists) and is the **only** module that knows adapters exist. Screens import `getDataSource()` and nothing else. The contract tests in `packages/contracts` run against every adapter, so the fixture adapter and the database adapter are held to the same behaviour — the fixtures are not a toy, they are the executable specification.
+`apps/web/lib/data/index.ts` selects by `DATA_SOURCE` and is the **only** module that knows adapters exist. `createFixtureDomainSources(options)` is always a fresh, isolated instance — tests build one per case; `getFixtureDomainSources()` is the dev-only `globalThis` singleton that survives HMR. **Fault injection is an adapter concern, never a fixture:** `FIXTURE_FAULTS=members.list@glitch` makes one operation throw for one workspace, which is how the error state is driven in dev and e2e; the fixtures themselves describe only valid domain state.
+
+The contract suites (`runOrganizationContract`, `runMemberContract`) run against the fixture adapter today (`lib/data/adapters/fixtures/source.test.ts`); the `db` adapter must pass the same suites — the fixtures are the executable specification, not a toy.
 
 ### 5.3 Why in-process adapters, and where MSW fits
 
-The obvious alternative is HTTP-first: RSCs `fetch` an API that MSW mocks. It is what v4 did ("the MSW handlers are the API"). We are not doing that first, for three reasons:
+The obvious alternative is HTTP-first: RSCs `fetch` an API that MSW mocks — what v4 did. We did not do that first, for three reasons: there is no transport to mock yet (Route Handlers, server functions or an RPC layer is undecided, and committing to HTTP shapes now decides it by accident); RSC + MSW is workable but not free (`msw/node` from `instrumentation.ts`, `fetch` patching that has needed fixes on both sides, unhandled requests aborting); and the contract is the source of truth, not the wire format.
 
-1. **There is no transport to mock yet.** Whether the backend is Route Handlers, server functions, or an RPC layer is undecided; committing to HTTP shapes now decides it by accident.
-2. **RSC + MSW is workable but not free.** Server-side interception needs `msw/node` started from `instrumentation.ts`, and Next patches `fetch` in ways that have needed fixes on both sides; unhandled requests abort. It is a solved integration, not a zero-cost one.
-3. **The contract is the source of truth, not the wire format.** An interface + zod schema is what the backend must implement either way; the HTTP encoding is derived from it later.
+MSW enters the moment HTTP exists — client fetches, or an e2e that must see network failures — and its handlers are **generated from the same fixtures** (`packages/mocks`), so the browser and the server never disagree about the data. Until then Playwright's network needs are met by the fault harness and `page.route()`.
 
-MSW enters the moment HTTP exists — client fetches, or an e2e that must see network failures — and its handlers are **generated from the same fixtures** (`packages/mocks`), so the browser and the server never disagree about the data. Playwright's network needs are met first by `page.route()` against the dev server; a full MSW browser worker is the escalation, not the default.
+### 5.4 Contract rules (Verified — each is a test or a lint error)
 
-### 5.4 Contract rules
-
-- Screens never import `fixtures.ts` directly. Fixtures are reached through the adapter, so swapping the adapter cannot leave a screen secretly reading fake data.
-- Fixture factories are seeded and deterministic; a test that depends on a value asserts the value, not the seed.
-- No real personal data in fixtures — names, emails and identifiers are synthetic. This is a privacy rule and a legal one.
-- A change to a schema is a change to the contract tests in the same commit.
+- **Tenant scope is part of the operation, not an optional filter** (ADR-009). Every member operation takes `organizationId`; a member outside it is `NotFound`, never "found elsewhere". Server actions take `orgSlug` from the client and resolve the organisation themselves; an organisation id from the client is never trusted.
+- **Invariants live in the contract suite:** email unique within an organisation (`Conflict`, and the same email may exist in two organisations); an organisation always keeps ≥ 1 active owner (`Invariant` on removing or demoting the last); invited members join as `invited`; pagination bounds honoured and `total` counts the filtered set.
+- Screens never import fixtures or adapters directly (Biome); fixture factories are seeded and deterministic; no real personal data — names and `.example` emails are synthetic.
+- A schema change is a contract-test change in the same commit.
 
 ### 5.5 When the backend lands — the playbook
 
 *Planned.* The decision is the human's; the mechanics are known:
 
-1. **Identity — Better Auth.** `auth.ts` on the server; the Next handler at `/api/auth/[...all]`; the `nextCookies` plugin because Server Components cannot set cookies (the cookie cache refreshes only through Server Actions or Route Handlers). In RSC and layouts: `auth.api.getSession({ headers: await headers() })`. In client leaves: `authClient.useSession()`. Environment: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`.
-2. **Tenancy — the `organization` plugin.** Organisations, members, invitations, roles. The `(app)/[orgSlug]` route segment already carries the tenant; the layout resolves the slug to an organisation the session may access, and every adapter call receives the organisation id. Designing the URL this way now is why the backend slots in without a route rewrite.
-3. **Persistence — Drizzle on Neon.** `packages/db` holds the schema; the `db` adapter implements each `DataSource`; `@better-auth/cli generate` emits the auth tables into the same Drizzle schema; migrations through `drizzle-kit`. The contract tests run against a Neon branch in CI.
-4. **Flip `DATA_SOURCE=db`** for production; keep `fixtures` for Vitest and for any environment without a database.
+1. **Identity — Better Auth.** `auth.ts` on the server; the handler at `/api/auth/[...all]`; the `nextCookies` plugin because Server Components cannot set cookies. In RSC and layouts: `auth.api.getSession({ headers: await headers() })`. In client leaves: `authClient.useSession()`.
+2. **Tenancy — the `organization` plugin.** `(app)/[orgSlug]` already carries the tenant; the layout resolves the slug to an organisation the session may access, and every adapter call already receives the organisation id. The sequence becomes: URL slug → resolve organisation → authenticate actor → authorise actor for organisation → domain operation → adapter.
+3. **Persistence — Drizzle on Neon.** `packages/db` holds the schema; the `db` adapter implements each source and passes the contract suites against a Neon branch in CI; `@better-auth/cli generate` emits the auth tables into the same schema; migrations through `drizzle-kit`. Row-level security is defence layer two — the application contract already encodes tenant scope.
+4. **Flip `DATA_SOURCE=db`** for production; keep `fixtures` for Vitest and any environment without a database.
 5. **Then** revisit `cacheComponents` (§4.3) with real latency to reason about.
 
 ## 6. Design system architecture — `packages/design`
@@ -212,91 +225,86 @@ MSW enters the moment HTTP exists — client fetches, or an e2e that must see ne
 ```
 tokens        globals.css: @theme inline over oklch CSS variables (light + .dark), radius scale, fonts
    ▼
-primitives    shadcn/ui components on Radix (radix-ui 1.6.7) — generated by the CLI, styled by tokens
+primitives    shadcn/ui on Radix — avatar, badge, button, card, dialog, dropdown-menu, field, input, label, select,
+              separator, skeleton, sonner, table — generated by the CLI, styled by tokens
    ▼
-composites    compound components assembled from primitives (Card + CardHeader…, DataTable, FormField)
+composites    (none yet — the first one arrives when two screens need the same assembly)
    ▼
 feature UI    apps/web/features/<domain>/components — knows the domain, uses only the layers above
    ▼
 screens       apps/web/app/**/page.tsx — composition only; no styling decisions of its own
 ```
 
-**ADR-004** — shadcn/ui on the **Radix** base for the scaffold. `@base-ui/react` has been stable since 1.0.0 (December 2025), is at 1.8.0, and has been shadcn's default base since July 2026; Radix is still supported and every shadcn component ships for both. Starting on Radix was a choice for the primitives the team already knows, not a maturity wait. The migration is per component through the `migrate-radix-to-base` skill (shadcn's documented route, which writes a report per component under `.migration/`); §9 schedules the decision.
+**ADR-004** — shadcn/ui on the **Radix** base for the scaffold. `@base-ui/react` has been stable since 1.0.0 (December 2025), is at 1.8.0, and has been shadcn's default base since July 2026; Radix is still supported and every shadcn component ships for both. Starting on Radix was a choice for the primitives the team already knows, not a maturity wait. Migration is per component through the `migrate-radix-to-base` skill; §9 schedules the decision.
 
 ### 6.2 Token rules
 
-- Colour, space, radius and type come from `@theme` tokens; components use semantic utilities (`bg-primary`, `text-muted-foreground`), never a hex or an arbitrary value. Biome's `useSortedClasses` knows `cn` and `cva`.
-- A missing value is added to `globals.css` — `:root`, `.dark`, and `@theme inline` in the same edit — not worked around with the nearest class that compiles. (v4's recorded failure mode: a text colour applied to an empty element painted nothing, and every check stayed green.)
-- Ink goes on things with text; fills go on things without. A value used by two components is one token.
-- Dark mode is the `.dark` class set by `next-themes` (`attribute="class"`), declared to Tailwind by `@custom-variant dark`.
+- Colour, space, radius and type come from `@theme` tokens; components use semantic utilities, never a hex or an arbitrary value. Biome's `useSortedClasses` knows `cn` and `cva`.
+- A missing or wrong value is fixed in `globals.css` — `:root`, `.dark` and `@theme inline` in the same edit — not worked around at the usage site. **Verified example:** axe found muted text on `bg-muted` (avatar fallbacks) at 4.34:1; the fix was `--muted-foreground` to `oklch(0.52 0 0)`, once, not a class on the avatar.
+- Ink goes on things with text; fills on things without. A value used by two components is one token.
+- Dark mode is the `.dark` class set by `next-themes`, declared to Tailwind by `@custom-variant dark`.
 
 ### 6.3 Composition rules
 
-From the React composition guidance in force here:
-
-- **No boolean-prop proliferation.** `<Dialog size="lg" withFooter>` becomes `<Dialog><DialogFooter>…`. Behaviour is composed from parts, not switched on.
-- **Compound components share context**; the provider is the only place that knows how state is managed.
-- **Children over render props**; explicit variant components over mode booleans; `cva` for the variant axes a primitive genuinely has.
-- **React 19**: `ref` is a prop — no `forwardRef`; `use()` over `useContext()`.
+- **No boolean-prop proliferation.** Behaviour is composed from parts, not switched on. **Compound components share context**; the provider is the only place that knows how state is managed. **Children over render props**; `cva` for the variant axes a primitive genuinely has. **React 19**: `ref` is a prop; `use()` over `useContext()`.
+- **Behaviour contracts** live in `packages/design/tests/`: Dialog moves focus inside, closes on Escape and returns focus to the trigger; DropdownMenu opens from the keyboard, arrows move, Escape closes and restores focus; Field marks the input invalid and associates the error text as its accessible description. Axe cannot prove these; the tests do.
 
 ### 6.4 What enters the design package
 
-A component enters `packages/design` when a screen uses it and it knows nothing about the domain — not before (building a library ahead of screens is how v4 accumulated components nobody rendered). shadcn components are added with `pnpm dlx shadcn@4.21.0 add <name> -c apps/web` and land in `packages/design/src/components/`; hand-written composites sit beside them and follow the same file anatomy.
+A component enters `packages/design` when a screen uses it and it knows nothing about the domain — not before. shadcn components are added with `pnpm dlx shadcn@4.21.0 add <name> -c apps/web --overwrite` and land in `packages/design/src/components/`; hand-written composites sit beside them and follow the house style.
 
 ## 7. Quality architecture
 
-### 7.1 The gates
+### 7.1 The gates (Verified, 2026-09-05)
 
-| Gate | Command | Verified timing | Runs |
+| Gate | Command | Timing | Runs |
 | --- | --- | --- | --- |
-| Lint + format | `pnpm check` | ~0.25 s | every edit (hook, single file) and before any claim of done |
-| Types | `pnpm typecheck` | ~12 s | before done |
-| Components | `pnpm test` (Vitest 5, Testing Library, jsdom) | ~25 s | before done |
-| Browser | `pnpm --filter @xforge/web test:e2e` (Playwright, port 3100) | ~11 s incl. server start | per screen path |
+| Lint + format | `pnpm check` | ~0.2 s (106 files) | every edit (hook) and before any claim of done |
+| Types | `pnpm typecheck` | ~12 s, 3 packages | before done |
+| Unit | `pnpm test` — 59 tests (contracts 12, design 6, web 41) | ~30 s | before done |
+| Browser | `pnpm --filter @xforge/web test:e2e` — 9 tests + axe on every screen state | ~40 s incl. server start | per screen path |
 | Build | `pnpm build` | ~15 s | before done |
+| CI | `.github/workflows/ci.yml` — all of the above against a production build | on push and PR | always |
 
 ### 7.2 Test doctrine (`.claude/skills/xforge-testing`)
 
-Two runners split by filename — `*.test.tsx` renders components under Vitest, `*.e2e.ts` drives the browser. Component tests query by **role first** (`getByRole`, then label, text; `getByTestId` needs a comment). Interaction uses `user-event`, never `fireEvent`. A component's states, variants and a11y roles are Vitest; navigation, layout and real server responses are Playwright. Playwright uses a dedicated port so a stale server on 3000 is never tested by mistake.
+Two runners split by filename — `*.test.tsx` renders under Vitest, `*.e2e.ts` drives the browser. Roles first; `user-event`, never `fireEvent`; `afterEach(cleanup)` registered explicitly. Mock at the boundary: component tests mock the domain's `actions`, action tests mock `@/lib/data` with a fresh fixture instance. Fixture workspaces have roles (acme counted, orbit mutable, northwind single-owner, glitch faulted, blank-co empty) so parallel runs never share state.
 
-### 7.3 Definition of done for a screen
+### 7.3 Definition of done for a screen (applied to `/[orgSlug]/members`)
 
-- All four states rendered and tested (loading, empty, error, populated).
-- One Playwright path through the screen's primary action.
-- No token added outside `@theme`; no `'use client'` above a leaf.
-- Reads parallelised; nothing awaited in sequence that could be parallel.
-- `pnpm check`, `typecheck`, `test`, `build` green — and the report says so with the commands it ran.
+- All five states rendered and tested; expected mutation failures rendered as `ActionResult`.
+- One Playwright path through each primary action, with `expectNoSeriousViolations(page)`.
+- No token added outside `@theme`; no `'use client'` above a leaf; reads parallelised.
+- `pnpm check`, `typecheck`, `test`, `build`, e2e green — and the report says so, with the commands it ran.
 
 ### 7.4 Budgets — *planned, enforced in CI*
 
-- Core Web Vitals: LCP < 2.5 s, INP < 200 ms, CLS < 0.1 on the product's slowest screen, measured in Playwright.
-- Accessibility: axe (`@axe-core/playwright`) with zero serious/critical violations per screen; WCAG 2.2 AA as the bar.
+- Core Web Vitals on the slowest screen, measured in Playwright: LCP < 2.5 s, INP < 200 ms, CLS < 0.1.
+- Accessibility: **in force** — axe (`@axe-core/playwright`, WCAG 2.2 AA tags) with zero serious/critical violations per screen state.
 - Bundle: `@next/bundle-analyzer` on every build; a client bundle that grows by more than 10 % needs a sentence in the PR.
-- Coverage: when added, `turbo.json`'s `test` task gains `"outputs": ["coverage/**"]` in the same commit — a cached task with no restorable artefact is a trap.
+- Coverage: when added, `turbo.json`'s `test` task gains `"outputs": ["coverage/**"]` in the same commit.
 
 ### 7.5 Performance rules in force
 
-From the Vercel React guidance installed here, the ones that shape architecture rather than code review: eliminate waterfalls (`Promise.all`, Suspense boundaries), import directly rather than through barrel files, `next/dynamic` for heavy client components, load third-party scripts after hydration, derive state during render rather than in effects, and keep interaction logic in event handlers.
+Eliminate waterfalls (`Promise.all`, Suspense boundaries), import directly rather than through barrel files, `next/dynamic` for heavy client components, load third-party scripts after hydration, derive state during render rather than in effects, keep interaction logic in event handlers (the members filter debounces in its handler, not an effect).
 
 ## 8. Security and privacy posture
 
-Frontend-first does not mean security-later; it means the seams that will carry secrets are drawn now.
-
-- Modules that will hold secrets (`lib/data/*`, later `lib/auth/*`) import `server-only`; a client import fails the build rather than leaking at runtime.
-- No secrets in the repository; `.env*` is ignored; Turborepo's `build` task hashes `.env*` so a changed variable invalidates the cache.
-- Fixtures are synthetic (§5.4).
-- When Better Auth lands: `trustedOrigins` for CSRF, rate limiting on, cookie cache versioned; the `security.md` checklist in the `better-auth` skill is the gate.
-- Supply chain: exact pins, pnpm's `minimumReleaseAge` policy, install scripts blocked except the two allow-listed.
+- `lib/data/index.ts` imports `server-only`; a client import fails the build rather than leaking at runtime. Tenant scope is resolved on the server from the URL (§5.4).
+- No secrets in the repository; `.env*` is ignored (`.env.example` is whitelisted); Turborepo's `build` hashes `.env*`.
+- Fixtures are synthetic (§5.4). The not-found page never echoes the requested slug, so "does not exist" and "exists but not yours" read the same once authentication arrives.
+- When Better Auth lands: `trustedOrigins`, rate limiting, versioned cookie cache; the `security.md` checklist in the `better-auth` skill is the gate.
+- Supply chain: exact pins, pnpm's `minimumReleaseAge` policy, install scripts blocked except the allow-listed.
 
 ## 9. Evolution — ordered, each a deliberate step
 
-1. **Contract package** (first screen spec) — `packages/contracts`, fixture adapter, contract tests. *Unblocks every screen.*
-2. **Screens on fixtures** — feature folders, four states each, roles-first tests, one e2e per path.
-3. **Base UI decision** — migrate per component with the `migrate-radix-to-base` skill, or stay on Radix; decided when the design package has enough components for the difference to matter (Base UI's `render` prop model vs Radix's `asChild`).
+1. ~~**Contract package**~~ — done 2026-09-05 (`8253312`): `packages/contracts`, fixture adapter, contract tests.
+2. ~~**First screens on fixtures**~~ — done 2026-09-05 (`0e1a301`, `cdf96be`, `9400dbf`): shell, route groups, members read and mutation slices, five states, axe, CI.
+3. **Base UI decision** — migrate per component with the `migrate-radix-to-base` skill, or stay on Radix; decided when the design package has enough components for the difference (Base UI's `render` prop model vs Radix's `asChild`) to matter.
 4. **Client server-state** — TanStack Query when the first live/optimistic screen appears.
 5. **Backend** — Better Auth + organisations, Drizzle + Neon, `db` adapter; `DATA_SOURCE=db` (§5.5).
 6. **Cache Components on** — with real latency to reason about; audit for `<Activity>` navigation assumptions.
-7. **Hardening** — CI budgets (§7.4), multi-browser Playwright, coverage, TypeScript 7 once the toolchain is validated against it.
+7. **Hardening** — CWV and bundle budgets, multi-browser Playwright, coverage, TypeScript 7 once the toolchain is validated against it.
 
 ## 10. ADR register
 
@@ -304,27 +312,29 @@ Frontend-first does not mean security-later; it means the seams that will carry 
 | --- | --- | --- | --- |
 | 001 | pnpm workspaces + Turborepo; `apps → packages` only | Accepted | New shared code is a package with `exports`; no app imports from another app |
 | 002 | Next.js 16 App Router on Turbopack; Server Components by default | Accepted | `'use client'` at leaves; providers wrap `children` |
-| 003 | Ultracite on Biome (replaced the ESLint provider) | Accepted | One `biome.jsonc`; sub-second checks; shadcn paths exempted narrowly |
+| 003 | Ultracite on Biome (replaced the ESLint provider) | Accepted | One `biome.jsonc`; sub-second checks; boundaries as lint errors |
 | 004 | shadcn/ui on the Radix base now; Base UI (stable, shadcn default) migration decided in step 3 | Accepted | Do not mix `@base-ui/react` into `packages/design` before the decision |
-| 005 | Contract-first data seam: zod contract, `DataSource` interface, in-process fixture adapter now, `db`/`http` adapters later | Accepted | `packages/contracts` is built before the first screen; screens never see adapters |
-| 006 | Test runners split by suffix: `*.test.tsx` Vitest, `*.e2e.ts` Playwright on port 3100 | Accepted | No `.spec.ts` files; roles-first queries |
-| 007 | Exact version pins via the pnpm catalog; `save-exact` | Accepted | Bumps are one-line catalog edits |
+| 005 | Contract-first, not future-first: zod contract, `DomainSources` interface, fixture adapter now, `db`/`http` later; only observed capabilities | Accepted, implemented | Screens never see adapters; new capabilities arrive with the screen and its contract tests |
+| 006 | Test runners split by suffix: `*.test.tsx` Vitest, `*.e2e.ts` Playwright on port 3100 | Accepted | No `.spec.ts` files; roles-first queries; axe per screen state |
+| 007 | Exact version pins via the pnpm catalog; `saveExact` | Accepted | Bumps are one-line catalog edits |
 | 008 | `cacheComponents` off until real data exists | Accepted | Previous caching model; revisit at step 6 |
-| 009 | Backend = Better Auth (organisations) + Drizzle + Neon, behind the same contract | Accepted, not implemented | `[orgSlug]` in the URL from day one; `server-only` on adapters |
+| 009 | Tenant scope in every operation; server resolves the tenant from the URL; backend = Better Auth (organisations) + Drizzle + Neon behind the same contract | Accepted; backend not implemented | `[orgSlug]` in the URL; `organizationId` on every source method; RLS is layer two |
 | 010 | TanStack Query for client server-state | Proposed | Installed only when a screen needs it; SWR is the fallback if bundle size dominates |
+| 011 | Server actions return `ActionResult`; expected outcomes are values, unexpected failures throw | Accepted, implemented | UI understands SUCCESS / FIELD ERROR / CONFLICT / INVARIANT / NOT_FOUND; `error.tsx` sees only operational failures |
+| 012 | Five states, five mechanisms; fault injection is an adapter concern, never a fixture | Accepted, implemented | Every screen ships all five with a test; fixtures stay valid domain state |
 
 ## 11. Open questions
 
-- **Transport for `http`** — Route Handlers, Next server functions, or an RPC layer (oRPC/tRPC) that can serve the contract to a future mobile client. Decide before `packages/mocks` is generated; the contract does not care.
-- **Product domain and first screen** — this document is waiting on the first spec to name the first `packages/contracts` domain.
-- **Tenant URL shape** — `/[orgSlug]/…` (chosen provisionally) vs subdomains; Better Auth's organisation plugin supports both, the URL form is the cheaper one to run locally and in preview deployments.
-- **Design-system governance** — v4 grew a token bridge and an adapter file schema with generated manifests. Whether v5 needs that machinery is decided by evidence from step 2, not up front.
+- **Transport for `http`** — Route Handlers, Next server functions, or an RPC layer (oRPC/tRPC) that can also serve a future mobile client. Decide before `packages/mocks` is generated; the contract does not care.
+- **Product domain and next screens** — the workspace core is built; the next domain names the next `packages/contracts` module.
+- **Tenant URL shape** — `/[orgSlug]/…` is in code; subdomains remain possible (Better Auth's organisation plugin supports both) but would need a proxy and wildcard DNS in every environment.
+- **Design-system governance** — v4 grew a token bridge and an adapter file schema with generated manifests. Whether v5 needs that machinery is decided by evidence as domains multiply, not up front.
 
 ## Sources
 
-- Next.js — [cacheComponents](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents), [project structure](https://nextjs.org/docs/app/getting-started/project-structure), [client-side data fetching](https://nextjs.org/docs/app/guides/client-side-data-fetching), [TanStack Query guide](https://nextjs.org/docs/app/guides/client-side-data-fetching/tanstack-query)
+- Next.js — [cacheComponents](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents), [project structure](https://nextjs.org/docs/app/getting-started/project-structure), [client-side data fetching](https://nextjs.org/docs/app/guides/client-side-data-fetching), [TanStack Query guide](https://nextjs.org/docs/app/guides/client-side-data-fetching/tanstack-query), [error handling / not-found](https://nextjs.org/learn/dashboard-app/error-handling), [mutating data with Server Actions](https://nextjs.org/learn/dashboard-app/mutating-data)
 - shadcn/ui — [July 2026: Base UI as the default](https://ui.shadcn.com/docs/changelog/2026-07-base-ui-default), [January 2026: Base UI documentation](https://ui.shadcn.com/docs/changelog/2026-01-base-ui); npm `@base-ui/react` 1.0.0 (2025-12-11) → 1.8.0 (2026-09-04), verified
-- Better Auth — [Next.js integration](https://better-auth.com/docs/integrations/next), [getSession in RSC with cookie cache (issue #7008)](https://github.com/better-auth/better-auth/issues/7008), [multi-tenant setup discussion](https://github.com/better-auth/better-auth/discussions/3317)
+- Better Auth — [Next.js integration](https://better-auth.com/docs/integrations/next), [getSession in RSC with cookie cache (#7008)](https://github.com/better-auth/better-auth/issues/7008), [multi-tenant setup discussion](https://github.com/better-auth/better-auth/discussions/3317)
 - MSW + Next.js — [Next.js 16 × MSW integration demo](https://github.com/laststance/next-msw-integration), [E2E with Next.js, Playwright and MSW](https://safedep.io/end-to-end-test-nextjs-msw-playwright/), [mocking client- and server-side requests](https://www.ajth.in/blog/msw-with-playwright-nextjs/)
 - Data-layer patterns — [structuring a data access layer in Next.js](https://medium.com/@samrose.mohammed/structuring-your-data-access-layer-in-next-js-patterns-that-actually-scale-2e4c07491866), [contract-first development](https://developers.redhat.com/blog/2020/04/28/contract-first-development-create-a-mock-back-end-for-realistic-data-interactions-with-react), [BFF pattern in Next.js](https://dev.to/behnamrhp/nextjs-and-bff-architecture-the-missing-piece-in-modern-fullstack-apps-5al7)
 - Client data libraries — [TanStack Query vs SWR vs Apollo, 2026](https://www.pkgpulse.com/guides/tanstack-query-vs-swr-vs-apollo-2026)

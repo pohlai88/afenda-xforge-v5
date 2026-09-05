@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectNoSeriousViolations } from "./axe";
 
 const acmeMembers = /\/acme\/members$/;
 
@@ -9,6 +10,7 @@ test("a known workspace renders its overview and navigation", async ({
   await expect(
     page.getByRole("heading", { name: "Acme Industries" })
   ).toBeVisible();
+  await expectNoSeriousViolations(page);
   const nav = page.getByRole("navigation", { name: "Workspace" });
   await expect(nav.getByRole("link", { name: "Overview" })).toHaveAttribute(
     "aria-current",
@@ -28,4 +30,5 @@ test("an unknown workspace is unavailable, without echoing the slug", async ({
     page.getByRole("heading", { name: "Workspace unavailable" })
   ).toBeVisible();
   await expect(page.getByText("nope", { exact: true })).toHaveCount(0);
+  await expectNoSeriousViolations(page);
 });
