@@ -147,7 +147,7 @@ is unaffected (`isCI` makes it false, and the server is built fresh).
 
 ## 8. Where the numbers stand, and what the harness does not yet do
 
-Measured 2026-09-05 after hardening: **79 Vitest tests** (contracts 12, design 15, web 52)
+Measured 2026-09-05 after the design-system steps 1–2: **91 Vitest tests** (contracts 12, design 27, web 52)
 and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 
 - **Cleanup is explicit.** Vitest exposes no globals, so Testing Library cannot register its own
