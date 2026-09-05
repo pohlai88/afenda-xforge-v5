@@ -35,6 +35,11 @@ const webVitalsSource = `${readFileSync(
 )}
 window.webVitals = webVitals;`;
 
+// One at a time, on a server that has already rendered the route once. The
+// warm-up goes through the API context so the browser cache stays cold and
+// the transfer sizes below are what a first visit pays.
+test.describe.configure({ mode: "serial" });
+
 for (const route of ROUTES) {
   test(`${route.path} stays within the Core Web Vitals budget`, async ({
     page,
@@ -51,6 +56,7 @@ for (const route of ROUTES) {
       w.webVitals.onINP(record, { reportAllChanges: true });
     });
 
+    await page.request.get(route.path);
     await page.goto(route.path);
     await expect(
       page.getByRole("heading", { name: route.heading })

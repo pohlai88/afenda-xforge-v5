@@ -175,7 +175,9 @@ and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
   task has no outputs on purpose — never add `--coverage` to it.
 - **Web Vitals are measured, not estimated.** `e2e/vitals.e2e.ts` injects `web-vitals` with
   `addInitScript` before navigation, presses Tab once so LCP finalises and INP has an
-  interaction, then reads the values back; budgets live in the file. INP is undefined when no
+  interaction, then reads the values back; budgets live in the file. It is its own Playwright
+  project depending on `chromium`, so it runs alone after the suite — sharing the server with
+  eleven parallel tests pushed LCP past 2.5 s on this machine. INP is undefined when no
   interaction exceeded 40 ms — that passes and is not a gap.
 - **One test runs on a phone.** `workspace.e2e.ts` uses `test.use({ viewport: 375×812 })` and
   asserts `scrollWidth === clientWidth`. The shell is one DOM re-laid out by CSS, so there is no
