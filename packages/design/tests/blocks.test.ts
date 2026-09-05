@@ -1,22 +1,23 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import type { ComponentContract } from "../src/blocks/contract";
 import type { BlockManifest, PartManifest } from "../src/blocks/manifest";
 import { COMPONENT_RULE_ID_PATTERN } from "../src/foundation/00-principles";
 import { COLOR_PUBLIC_API } from "../src/foundation/02-color";
 import { STATE_SIGNALS } from "../src/foundation/07-interaction";
-import type { ComponentContract } from "../src/foundation/10-components/contract";
 
 /**
  * R15 — a block is held equal to its contract (ADR-016,
  * docs/architecture.md §6.2). A block is DEFINED, not rendered: its
- * folder carries manifest.ts — parts keyed by the data-slot each stamps,
- * every part's base, variants and sizes as ADL utility literals — and
- * index.tsx derives its classes from that data. For every contract in
- * foundation/10-components/, the manifest's part keys equal the contract's
- * anatomy, it defines exactly the admitted variants and sizes, and draws
- * exactly the colour roles it admits — both directions, so the admitted
- * list cannot rot and a boolean-gated part has nowhere to live. Behaviour rules must exist, AF-CMP rule IDs
+ * folder carries the component's whole truth under its own name —
+ * <name>-contract.ts, <name>-manifest.ts (parts keyed by the data-slot each
+ * stamps, every part's base, variants and sizes as ADL utility literals) and
+ * <name>.tsx deriving its classes from that data; never index, never a
+ * numbered file. For every contract, the manifest's part keys equal the
+ * contract's anatomy, it defines exactly the admitted variants and sizes,
+ * and draws exactly the colour roles it admits — both directions, so the
+ * admitted list cannot rot and a boolean-gated part has nowhere to live. Behaviour rules must exist, AF-CMP rule IDs
  * stay inside the grammar, the exemplar must use the block, and a
  * data-slot string literal in a render is refused (the definition owns
  * identity, never the render). Contracts, manifests and block folders are
@@ -103,19 +104,19 @@ const pickExport = <T>(
 };
 
 const contracts = pickExport<ComponentContract>(
-  import.meta.glob("../src/foundation/10-components/*.ts", { eager: true }),
+  import.meta.glob("../src/blocks/*/*-contract.ts", { eager: true }),
   "_CONTRACT",
-  "/contract.ts"
+  "/blocks/contract.ts"
 );
 
 const manifests = pickExport<BlockManifest>(
-  import.meta.glob("../src/blocks/*/manifest.ts", { eager: true }),
+  import.meta.glob("../src/blocks/*/*-manifest.ts", { eager: true }),
   "_MANIFEST",
   "/blocks/manifest.ts"
 );
 
 const blockSource = (id: string): string =>
-  readFileSync(join(BLOCKS_DIR, id, "index.tsx"), "utf8");
+  readFileSync(join(BLOCKS_DIR, id, `${id}.tsx`), "utf8");
 
 const foundationText = (() => {
   const parts: string[] = [];
@@ -145,16 +146,38 @@ const populationFindings = (
     }
     if (!manifestIds.includes(id)) {
       out.push(
-        `contract ${id} has no manifest in src/blocks/${id}/manifest.ts`
+        `contract ${id} has no manifest in src/blocks/${id}/${id}-manifest.ts`
       );
     }
   }
   for (const dir of blockDirs) {
     if (!contractIds.includes(dir)) {
-      out.push(`block ${dir} has no contract in 10-components/${dir}.ts`);
+      out.push(
+        `block ${dir} has no contract in src/blocks/${dir}/${dir}-contract.ts`
+      );
     }
   }
   return out;
+};
+
+/**
+ * The naming law: every file in a block folder carries the component's
+ * actual name — never index, never a numbered file. The globs above can
+ * only pair correctly-named files, so a stray name is surfaced here by
+ * name rather than as a mysterious missing pair.
+ */
+const nameFindings = (dir: string, files: readonly string[]): string[] => {
+  const expected = new Set([
+    `${dir}-contract.ts`,
+    `${dir}-manifest.ts`,
+    `${dir}.tsx`,
+  ]);
+  return files
+    .filter((file) => !expected.has(file))
+    .map(
+      (file) =>
+        `block ${dir} carries ${file}; a block file is named by its component (${dir}-contract.ts, ${dir}-manifest.ts, ${dir}.tsx)`
+    );
 };
 
 const slotFindings = (
@@ -380,6 +403,22 @@ describe("R15 — a block is held equal to its contract", () => {
     expect(populationFindings(contractIds, manifestIds, blockDirs)).toEqual([]);
   });
 
+  it("names every block file by its component, never index", () => {
+    expect(
+      blockDirs.flatMap((dir) =>
+        nameFindings(dir, readdirSync(join(BLOCKS_DIR, dir)))
+      )
+    ).toEqual([]);
+  });
+
+  it("proves itself on an index file smuggled into a block", () => {
+    expect(nameFindings("dialog", ["dialog-contract.ts", "index.tsx"])).toEqual(
+      [
+        "block dialog carries index.tsx; a block file is named by its component (dialog-contract.ts, dialog-manifest.ts, dialog.tsx)",
+      ]
+    );
+  });
+
   it("defines exactly the declared anatomy, never in the render", () => {
     expect(
       paired().flatMap(([c, m]) => slotFindings(c, m, blockSource(c.id)))
@@ -602,6 +641,8 @@ describe("R15 — a block is held equal to its contract", () => {
   it("proves itself on a block without a contract", () => {
     expect(
       populationFindings(contractIds, manifestIds, [...blockDirs, "banner"])
-    ).toEqual(["block banner has no contract in 10-components/banner.ts"]);
+    ).toEqual([
+      "block banner has no contract in src/blocks/banner/banner-contract.ts",
+    ]);
   });
 });

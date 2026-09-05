@@ -4,12 +4,12 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { cn } from "cn";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
-import { Button } from "../common-button";
-import { DIALOG_MANIFEST } from "./manifest";
+import { Button } from "../common-button/common-button";
+import { DIALOG_MANIFEST } from "./dialog-manifest";
 
 /**
  * The Dialog block — AF-CMP-DIALOG. Defined, not rendered: every class comes
- * from ./manifest.ts, the contract lives in foundation/10-components/dialog.ts,
+ * from ./dialog-manifest.ts, the contract is ./dialog-contract.ts,
  * and R15 holds the three equal. Focus trap, Escape, initial focus, focus
  * return and the title/description aria wiring come from Base UI; enter and
  * exit ride af-motion-popup / af-motion-veil at the overlay motion role. The

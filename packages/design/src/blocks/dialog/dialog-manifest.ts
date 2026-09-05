@@ -2,8 +2,8 @@ import type { BlockManifest } from "../manifest";
 
 /**
  * The Dialog definition — what AF-CMP-DIALOG looks like, as data. The render
- * in index.tsx derives every class from this; R15 holds it equal to
- * foundation/10-components/dialog.ts. The M3 rhythm lands on the ADL scale:
+ * in dialog.tsx derives every class from this; R15 holds it equal to
+ * ./dialog-contract.ts. The M3 rhythm lands on the ADL scale:
  * 24dp container padding and body-to-actions gap -> group, 16dp title-to-body
  * -> field, 8dp between buttons -> inline; the shape is the ADL overlay tier.
  * The content centres with inset-0 + m-auto + h-fit, never a translate —

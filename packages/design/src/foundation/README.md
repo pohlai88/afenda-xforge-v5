@@ -39,10 +39,11 @@ Level-1 file must belong to one of these domains.
 | 7 | `07-interaction.ts` | `INT` | Interactive states, selection, focus, disclosure, dragging, modality, gestures |
 | 8 | `08-accessibility.ts` | `A11Y` | Perceivability, operability, understandability, robustness, component a11y invariants |
 | 9 | `09-content.ts` | `CON` | UX writing, labels, errors, internationalisation, formatting, bidirectionality |
-| 10 | `10-components/*` | `CMP` | Per-component contracts: purpose, anatomy, states, public API, constraints (planned) |
+| 10 | `../blocks/*` | `CMP` | Per-component contracts: purpose, anatomy, states, public API, constraints — each lives beside its manifest and render as `src/blocks/<name>/<name>-contract.ts` |
 
-> **Status:** domains 0–9 are authored at version 1.0.0; `10-components/` does
-> not exist yet.
+> **Status:** domains 0–9 are authored at version 1.0.0; the component
+> domain (10) lives in `src/blocks/`, one folder per component, held to
+> this language by R14 and to its realisation by R15.
 
 ## How a domain file is shaped
 

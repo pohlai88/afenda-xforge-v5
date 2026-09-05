@@ -1,7 +1,7 @@
 /**
  * AFENDA DESIGN LANGUAGE — COMPONENT CONTRACT
  *
- * The shape every 10-components/<name>.ts declaration satisfies (ADR-016).
+ * The shape every block's <name>-contract.ts declaration satisfies (ADR-016).
  * A contract is the Level-1 lock on one block: its identity, the intents
  * agents find it by, its anatomy as data-slot parts bound to the closed
  * part classes, its finite public API with a semantic reason per entry,
@@ -15,8 +15,11 @@
  * code already states. It declares only what code cannot: meaning.
  */
 
-import type { PartClass } from "../../anatomy";
-import type { RuleStrength, SourceDisposition } from "../00-principles";
+import type { PartClass } from "../anatomy";
+import type {
+  RuleStrength,
+  SourceDisposition,
+} from "../foundation/00-principles";
 
 export interface ComponentPart {
   /** One of the ten closed part classes in anatomy.ts. */

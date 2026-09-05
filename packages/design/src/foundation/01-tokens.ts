@@ -658,7 +658,7 @@ export const COMPONENT_TOKEN_PARTS = [
  * This is vocabulary available to component contracts.
  *
  * A component is not required to expose these parts.
- * Its actual anatomy is owned by 10-components/<component>.ts.
+ * Its actual anatomy is owned by src/blocks/<component>/<component>-contract.ts.
  */
 export type ComponentTokenPart = (typeof COMPONENT_TOKEN_PARTS)[number];
 

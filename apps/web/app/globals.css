@@ -9,7 +9,7 @@
  * This file owns only what the app alone can know: font provisioning
  * (next/font), source globs for the design package, and the TRANSITIONAL
  * shadcn colour bridge — the legacy component vocabulary aliased onto ADL
- * system roles until 10-components/* rewrites each component as a block.
+ * system roles until the blocks rewrite each component.
  * Bridge lines leave as blocks land; R4 (design-vocabulary.test.ts) holds
  * every bridge token to a consumer, R5 refuses cycles in it, and R10 pins
  * the reduced-motion collapse below.

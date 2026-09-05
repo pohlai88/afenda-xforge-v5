@@ -38,8 +38,9 @@ import { CONTENT_LANGUAGE } from "../src/foundation/09-content";
  * the graph or is a declared input carrying a fallback at every use. R14 —
  * the language holds its own integrity: every domain's identity block
  * agrees with the registry in 00-principles, and every rule ID across the
- * foundation matches the AF grammar and is defined exactly once — the scan
- * that will hold 10-components/* to the same grammar when it lands.
+ * foundation — and the block contracts in src/blocks/<name>/, where the
+ * component domain lives — matches the AF grammar and is defined exactly
+ * once.
  *
  * Minted 2026-09-05, after index.css imported tokens.css while the file on
  * disk was token.css and nothing failed. Every checker takes its inputs as
@@ -510,14 +511,19 @@ const parityFindings = (
   return out;
 };
 
-/** Every foundation source, 10-components included, for the rule-ID scan. */
-const foundationTexts: ReadonlyMap<string, string> = new Map(
-  readdirSync(FOUNDATION, { withFileTypes: true }).flatMap(
+/**
+ * Every rule-defining source: the foundation, plus the block contracts in
+ * src/blocks/(name)/(name)-contract.ts — the component domain lives beside
+ * its manifest and render, not under foundation.
+ */
+const BLOCKS = join(process.cwd(), "src/blocks");
+const foundationTexts: ReadonlyMap<string, string> = new Map([
+  ...readdirSync(FOUNDATION, { withFileTypes: true }).flatMap(
     (entry): [string, string][] => {
       if (entry.isDirectory()) {
         return readdirSync(join(FOUNDATION, entry.name))
           .filter((f) => f.endsWith(".ts"))
-          .map((f) => [
+          .map((f): [string, string] => [
             `${entry.name}/${f}`,
             readFileSync(join(FOUNDATION, entry.name, f), "utf8"),
           ]);
@@ -526,8 +532,17 @@ const foundationTexts: ReadonlyMap<string, string> = new Map(
         ? [[entry.name, readFileSync(join(FOUNDATION, entry.name), "utf8")]]
         : [];
     }
-  )
-);
+  ),
+  ...readdirSync(BLOCKS, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry): [string, string] => [
+      `blocks/${entry.name}/${entry.name}-contract.ts`,
+      readFileSync(
+        join(BLOCKS, entry.name, `${entry.name}-contract.ts`),
+        "utf8"
+      ),
+    ]),
+]);
 
 const ruleIdFindings = (texts: ReadonlyMap<string, string>): string[] => {
   const out: string[] = [];

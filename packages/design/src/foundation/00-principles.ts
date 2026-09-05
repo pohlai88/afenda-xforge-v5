@@ -281,7 +281,9 @@ export const LANGUAGE_DOMAINS = [
 
   {
     code: "CMP",
-    file: "10-components/*",
+    // The component domain lives beside its realisation: each block folder
+    // carries <name>-contract.ts, <name>-manifest.ts and <name>.tsx.
+    file: "../blocks/*",
     id: "component",
     order: 10,
     responsibility:

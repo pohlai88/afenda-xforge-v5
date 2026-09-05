@@ -1,11 +1,11 @@
 /**
  * AFENDA DESIGN LANGUAGE — COMMON BUTTON
  *
- * AF-CMP-COMMON-BUTTON. The first locked block (ADR-016): realised in
- * src/blocks/common-button/, held equal to this contract by R15.
+ * AF-CMP-COMMON-BUTTON. The first locked block (ADR-016): the contract,
+ * manifest and render live side by side in this folder, held equal by R15.
  */
 
-import type { ComponentContract } from "./contract";
+import type { ComponentContract } from "../contract";
 
 export const COMMON_BUTTON_CONTRACT = {
   anatomy: {

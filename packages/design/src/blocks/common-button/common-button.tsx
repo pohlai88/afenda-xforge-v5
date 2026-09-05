@@ -2,12 +2,12 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { classMap } from "../manifest";
-import { COMMON_BUTTON_MANIFEST } from "./manifest";
+import { COMMON_BUTTON_MANIFEST } from "./common-button-manifest";
 
 /**
  * The Button block — AF-CMP-COMMON-BUTTON. Defined, not rendered: every class
- * comes from ./manifest.ts, the contract lives in
- * foundation/10-components/common-button.ts, and R15 holds the three equal.
+ * comes from ./common-button-manifest.ts, the contract is
+ * ./common-button-contract.ts, and R15 holds the three equal.
  * Focus, disabled and invalid presentation come from af-interactive;
  * hover is the state layer at the governed opacity.
  */

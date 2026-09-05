@@ -2,9 +2,9 @@ import type { BlockManifest } from "../manifest";
 
 /**
  * The Button definition — what AF-CMP-COMMON-BUTTON looks like, as data. The
- * render in index.tsx derives its classes from this; R15 holds it equal
- * to foundation/10-components/common-button.ts. One part: the key is the
- * data-slot the render stamps.
+ * render in common-button.tsx derives its classes from this; R15 holds it
+ * equal to ./common-button-contract.ts. One part: the key is the data-slot
+ * the render stamps.
  */
 export const COMMON_BUTTON_MANIFEST = {
   parts: {
