@@ -32,6 +32,8 @@ export default defineConfig({
     command: isCI
       ? `pnpm build && pnpm start -p ${port}`
       : `pnpm dev -p ${port}`,
+    // The northwind members list is faulted so the error state has an e2e.
+    env: { ...process.env, FIXTURE_FAULTS: "members.list@northwind" },
     reuseExistingServer: !isCI,
     timeout: 120_000,
     url: baseURL,

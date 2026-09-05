@@ -54,6 +54,35 @@
       }
     },
     {
+      // Features and routes reach data only through @/lib/data; the adapters
+      // and the fixtures are implementation details of that module.
+      "includes": [
+        "apps/web/app/**",
+        "apps/web/components/**",
+        "apps/web/features/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/lib/data/adapters/*",
+                      "@xforge/contracts/fixtures/*"
+                    ],
+                    "message": "import getDomainSources from @/lib/data instead"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       // shadcn's CLI generates these in its own style: namespace React import,
       // cva variant maps ordered by meaning rather than alphabetically.
       "includes": ["packages/design/src/components/**"],
