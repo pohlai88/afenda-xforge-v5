@@ -147,7 +147,7 @@ is unaffected (`isCI` makes it false, and the server is built fresh).
 
 ## 8. Where the numbers stand, and what the harness does not yet do
 
-Measured 2026-09-05 after hardening: **61 Vitest tests** (contracts 12, design 6, web 43)
+Measured 2026-09-05 after hardening: **79 Vitest tests** (contracts 12, design 15, web 52)
 and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
 
 - **Cleanup is explicit.** Vitest exposes no globals, so Testing Library cannot register its own
@@ -180,6 +180,11 @@ and **13 Playwright tests**, all green; `pnpm check` covers 106 files in ~0.2 s.
   project depending on `chromium`, so it runs alone after the suite — sharing the server with
   eleven parallel tests pushed LCP past 2.5 s on this machine. INP is undefined when no
   interaction exceeded 40 ms — that passes and is not a gap.
+- **The design checks prove themselves.** `packages/design/tests/{tokens,anatomy}.test.ts` and
+  `apps/web/tests/design-vocabulary.test.ts` (R1–R5, architecture §6.2) read CSS and source as
+  text; each carries a planted defect in the same file, so a green means the check ran over a
+  real population, never that it exists. A new design rule follows that shape or ships as
+  labelled prose. They use `process.cwd()` for paths: Vite rewrites `import.meta.url` in tests.
 - **One test runs on a phone.** `workspace.e2e.ts` uses `test.use({ viewport: 375×812 })` and
   asserts `scrollWidth === clientWidth`. The shell is one DOM re-laid out by CSS, so there is no
   second `<nav>` landmark per breakpoint to keep in sync.

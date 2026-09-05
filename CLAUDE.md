@@ -20,7 +20,7 @@ All from the repo root. pnpm 11, Node ≥ 22. `pnpm-workspace.yaml` sets `saveEx
 | Typecheck | `pnpm typecheck` |
 | Lint + format check, whole repo | `pnpm check` (`pnpm lint` is an alias; ~0.2 s) |
 | Auto-fix lint + format | `pnpm fix` — one file: `pnpm exec ultracite fix <path>` |
-| Unit tests, all packages | `pnpm test` (61: contracts 12, design 6, web 43) |
+| Unit tests, all packages | `pnpm test` (79: contracts 12, design 15, web 52) |
 | Unit tests, one package | `pnpm --filter @xforge/contracts test` |
 | One test file | `pnpm --filter @xforge/web exec vitest run tests/members/actions.test.ts` |
 | One test by name | `pnpm --filter @xforge/contracts exec vitest run -t "last active owner"` |
@@ -68,6 +68,7 @@ packages/typescript-config                     base.json → library.json (Bundl
 4. **`features/**`, `app/**` and `components/**` import data only through `@/lib/data`** — never `adapters/*`, never `@xforge/contracts/fixtures/*` (Biome enforces both).
 5. **Fixtures describe valid domain state only.** acme (populated, two owners), blank-co (empty), northwind (one owner — the invariant), orbit (the workspace mutation e2e may change), glitch (ordinary; the e2e harness faults its list). Failure is injected by the adapter (`FIXTURE_FAULTS=op@slug`), never modelled as a fixture. `createFixtureDomainSources()` is always a fresh instance (tests); `getFixtureDomainSources()` is the dev-only singleton.
 6. **Invariants live in the contract suite** (`packages/contracts/src/<domain>/contract.ts`) and every adapter must pass it: tenant isolation, email unique per organization, ≥ 1 active owner, pagination bounds. The fixture adapter passes it today (`apps/web/lib/data/adapters/fixtures/source.test.ts`); the database adapter must later.
+7. **A screen writes vocabulary, not values.** `apps/web/{app,components,features}` may not carry a Tailwind palette colour, a colour literal, an arbitrary `[…]` value or a raw `z-`/`duration-`/`opacity-` step — `apps/web/tests/design-vocabulary.test.ts` (R3) refuses them; a named utility (`z-overlay`, `duration-fast`) is minted in `globals.css` when the first screen needs it. Every token the `@theme` bridge projects has a statically discoverable consumer or a declared reason (R4, same file). A component's parts are its `data-slot` names, pinned in `packages/design/tests/anatomy.test.ts` (R2). Each of these checks carries a planted defect beside it; a rule that cannot be shown failing ships as labelled prose.
 
 ## Lint/format: Ultracite on Biome
 
@@ -77,7 +78,7 @@ Everywhere else Ultracite's standards apply and `pnpm fix` enforces most of them
 
 ## Tests
 
-Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright against a production build on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`. `e2e/vitals.e2e.ts` injects `web-vitals` before navigation and asserts LCP/CLS/INP plus the JavaScript transferred per route against budgets in the file; raise a budget only with the number that justifies it.
+Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. In short: `*.test.tsx` is Vitest 5 + Testing Library + jsdom (roles first, `user-event`, `afterEach(cleanup)` registered in `tests/setup.ts` because Vitest exposes no globals); `*.e2e.ts` is Playwright against a production build on port 3100 with `expectNoSeriousViolations(page)` from `e2e/axe.ts` on every screen state. Mock at the boundary: component tests mock `@/features/<domain>/actions`, action tests mock `@/lib/data` with a fresh `createFixtureDomainSources()` — importing `@/lib/data` itself in jsdom throws, by design (`server-only`). Composite behaviour contracts (Dialog focus return, DropdownMenu keyboard, Field error association) live in `packages/design/tests/`. `e2e/vitals.e2e.ts` injects `web-vitals` before navigation and asserts LCP/CLS/INP plus the JavaScript transferred per route against budgets in the file; raise a budget only with the number that justifies it. The design checks (R1–R5: `packages/design/tests/{tokens,anatomy}.test.ts`, `apps/web/tests/design-vocabulary.test.ts`) read source and CSS as text and each proves itself on a planted defect in the same file.
 
 ## Agent config in `.claude/`
 
