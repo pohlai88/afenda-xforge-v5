@@ -1,0 +1,103 @@
+# Prototyper UI
+> The UI library with the best and most versatile design, built on Base UI, with world-class DX and LLM-friendliness.
+
+## Getting Started
+- [Agent Setup](https://prototyper-ui.com/docs/agent-setup): One-page setup guide for AI agents to install and configure Prototyper UI.
+- [Changelog](https://prototyper-ui.com/docs/changelog): Version history and release notes for Prototyper UI.
+- [CLI Reference](https://prototyper-ui.com/docs/cli): Complete reference for the Prototyper UI CLI — init, add, search, update, browse, diff, inspect, props, suggest, audit, scaffold, migrate, registry, theme, mcp, doctor, and machine-mode commands.
+- [Compose](https://prototyper-ui.com/docs/compose): AI-generated interfaces powered by Prototyper UI
+- [Actions & Events](https://prototyper-ui.com/docs/compose/actions): Handle user interactions with built-in and custom action handlers
+- [Compose API Reference](https://prototyper-ui.com/docs/compose/api-reference): Complete API reference for @prototyperco/compose
+- [Component Catalog](https://prototyper-ui.com/docs/compose/catalog): Zod-based component definitions for AI-driven UI generation
+- [Code Export](https://prototyper-ui.com/docs/compose/code-export): Convert specs to copy-paste React/JSX code
+- [DevTools](https://prototyper-ui.com/docs/compose/devtools): Debug overlay for inspecting specs, state, and actions
+- [Dynamic Expressions](https://prototyper-ui.com/docs/compose/expressions): Data binding, conditional values, and string interpolation in Compose specs
+- [Getting Started with Compose](https://prototyper-ui.com/docs/compose/getting-started): Set up Compose in your Next.js project in under 2 minutes
+- [DX Helpers](https://prototyper-ui.com/docs/compose/helpers): Convenience builders for actions, validation checks, and visibility conditions.
+- [MCP Integration](https://prototyper-ui.com/docs/compose/mcp): Connect AI assistants to Compose via Model Context Protocol
+- [Prompt Engineering](https://prototyper-ui.com/docs/compose/prompts): Customize AI prompts, use structured outputs, and optimize generation quality.
+- [Spec Format](https://prototyper-ui.com/docs/compose/spec-format): The flat JSON structure that describes a Compose interface
+- [Store Adapters](https://prototyper-ui.com/docs/compose/store-adapters): Integrate Compose with external state managers like Zustand, Redux, or Jotai.
+- [Streaming](https://prototyper-ui.com/docs/compose/streaming): Connect Compose to an AI model with JSONL streaming and progressive rendering
+- [Type Safety](https://prototyper-ui.com/docs/compose/type-safety): TypeScript inference, type-safe spec building, and structured output schemas.
+- [Validation](https://prototyper-ui.com/docs/compose/validation): Built-in field validators and custom validation rules
+- [Conditional Rendering](https://prototyper-ui.com/docs/compose/visibility): Show and hide elements based on state, repeat context, and compound logic
+- [Live Canvas](https://prototyper-ui.com/docs/design-bridge): Real-time AI-to-browser design system. Watch AI agents build interfaces live in your browser with collaborative CRDT sync.
+- [Live Canvas API Reference](https://prototyper-ui.com/docs/design-bridge/api-reference): REST API and WebSocket protocol reference for the Live Canvas server.
+- [Getting Started with Live Canvas](https://prototyper-ui.com/docs/design-bridge/getting-started): Set up the Live Canvas and create your first live design session in under 5 minutes.
+- [MCP Tools Reference](https://prototyper-ui.com/docs/design-bridge/mcp-tools): Complete reference for the 7 Live Canvas MCP tools — create, update, theme, get, list, close, and export.
+- [Design Principles](https://prototyper-ui.com/docs/design-principles): Core principles that guide Prototyper UI's design and development.
+- [LLMs.txt](https://prototyper-ui.com/docs/for-agents/llms-txt): Machine-readable documentation endpoints for AI assistants
+- [MCP Server](https://prototyper-ui.com/docs/for-agents/mcp-server): Give your AI assistant structured access to Prototyper UI components via the Model Context Protocol
+- [Agent Skills](https://prototyper-ui.com/docs/for-agents/skills): Install a Prototyper UI skill into Claude Code, Cursor, OpenCode, Gemini CLI, and Google Antigravity
+- [Forms](https://prototyper-ui.com/docs/forms): Build accessible forms with validation using FormField, Field, TextField, and react-hook-form.
+- [Getting Started with Prototyper UI](https://prototyper-ui.com/docs/getting-started): Set up Prototyper UI in your project and build your first page in under 5 minutes.
+- [Installation](https://prototyper-ui.com/docs/installation): How to set up Prototyper UI in your Next.js project with Tailwind CSS v4 and Base UI.
+- [Introduction](https://prototyper-ui.com/docs/introduction): A composable UI library built on Base UI with Tailwind CSS. Own every line of code.
+- [Machine Mode Package](https://prototyper-ui.com/docs/machine-mode): Add an LLM-friendly plain text view to any Next.js App Router site.
+- [Theming](https://prototyper-ui.com/docs/theming): Customize colors, surfaces, and shadows using OKLCH tokens and CSS custom properties.
+- [Design Tokens](https://prototyper-ui.com/docs/tokens): Complete reference of all Prototyper UI design tokens — colors, surfaces, shadows, radius, typography, and animation.
+
+## Components
+- [Accordion](https://prototyper-ui.com/docs/components/accordion): vertically stacked collapsible content panels
+- [Alert](https://prototyper-ui.com/docs/components/alert): A callout for important messages with status variants
+- [Alert Dialog](https://prototyper-ui.com/docs/components/alert-dialog): A modal dialog for confirmations that requires explicit user action
+- [Autocomplete](https://prototyper-ui.com/docs/components/autocomplete): text input with suggestions and free-form input capability
+- [Avatar](https://prototyper-ui.com/docs/components/avatar): visual representation of a user with image and fallback support
+- [Badge](https://prototyper-ui.com/docs/components/badge): A small status indicator with color variants
+- [Breadcrumb](https://prototyper-ui.com/docs/components/breadcrumb): A navigation trail showing the current page location
+- [Button](https://prototyper-ui.com/docs/components/button): A button with gradient variants built on Base UI
+- [Card](https://prototyper-ui.com/docs/components/card): a surface container with variants for grouping content
+- [Checkbox](https://prototyper-ui.com/docs/components/checkbox): A checkbox with label and validation support built on Base UI
+- [Checkbox Group](https://prototyper-ui.com/docs/components/checkbox-group): group of checkboxes with shared state and select-all support
+- [Collapsible](https://prototyper-ui.com/docs/components/collapsible): a collapsible section for revealing or hiding content
+- [Color Picker](https://prototyper-ui.com/docs/components/color-picker): An OKLCH-native color picker with area, sliders, swatches, and eye dropper
+- [Columns](https://prototyper-ui.com/docs/components/columns): A responsive column grid with configurable count, gap, and collapse breakpoint.
+- [Combobox](https://prototyper-ui.com/docs/components/combobox): Autocomplete input with filtering and selection built on Base UI
+- [Command Palette](https://prototyper-ui.com/docs/components/command-palette): A command palette with search, groups, and keyboard navigation built on Base UI
+- [Container](https://prototyper-ui.com/docs/components/container): A content constraint wrapper with max-width and padding options.
+- [Context Menu](https://prototyper-ui.com/docs/components/context-menu): right-click menu with submenus and checkbox/radio items
+- [Dialog](https://prototyper-ui.com/docs/components/dialog): A modal dialog with sheet variant built on Base UI
+- [Drawer](https://prototyper-ui.com/docs/components/drawer): slide-in panel anchored to any viewport edge
+- [Field](https://prototyper-ui.com/docs/components/field): Form field wrapper with label, description, and error message
+- [Fieldset](https://prototyper-ui.com/docs/components/fieldset): A fieldset with accessible legend for grouping related form controls
+- [Form](https://prototyper-ui.com/docs/components/form): form with consolidated error handling on Base UI
+- [FormField](https://prototyper-ui.com/docs/components/form-field): A react-hook-form helper that wires Field, label, description, and error to a Controller in one component
+- [Input](https://prototyper-ui.com/docs/components/input): a styled text input field built on Base UI
+- [InputGroup](https://prototyper-ui.com/docs/components/input-group): a composable input group with addons, buttons, and text
+- [Label](https://prototyper-ui.com/docs/components/label): a form label with disabled and invalid state styling
+- [Menu](https://prototyper-ui.com/docs/components/menu): dropdown menu with submenus and selection built on base ui
+- [Menubar](https://prototyper-ui.com/docs/components/menubar): A horizontal menu bar with multiple dropdown menus, built on Base UI
+- [Meter](https://prototyper-ui.com/docs/components/meter): A meter displaying a value within a known range
+- [Navigation Menu](https://prototyper-ui.com/docs/components/navigation-menu): site navigation component with dropdown menus on Base UI
+- [NumberField](https://prototyper-ui.com/docs/components/number-field): A number input with increment/decrement controls built on Base UI
+- [Popover](https://prototyper-ui.com/docs/components/popover): A popup anchored to a trigger element built on Base UI
+- [Hover Card](https://prototyper-ui.com/docs/components/preview-card): popup showing content preview on link hover
+- [Progress](https://prototyper-ui.com/docs/components/progress): A progress bar showing completion status
+- [Radio Group](https://prototyper-ui.com/docs/components/radio-group): A group of radio buttons built on Base UI
+- [Resizable Panel](https://prototyper-ui.com/docs/components/resizable-panel): Resizable split panels with drag handles for flexible layouts
+- [Row](https://prototyper-ui.com/docs/components/row): A horizontal flex layout with gap, alignment, and justify options.
+- [Scroll Area](https://prototyper-ui.com/docs/components/scroll-area): A scrollable container with custom styled scrollbars
+- [Section](https://prototyper-ui.com/docs/components/section): A full-width page section with background variants and constrained content.
+- [Segmented Control](https://prototyper-ui.com/docs/components/segmented-control): a segmented control for switching between options built on Base UI
+- [Select](https://prototyper-ui.com/docs/components/select): A dropdown select input built on Base UI
+- [Separator](https://prototyper-ui.com/docs/components/separator): a horizontal or vertical divider built on Base UI
+- [Skeleton](https://prototyper-ui.com/docs/components/skeleton): An animated pulse placeholder for loading states
+- [Slider](https://prototyper-ui.com/docs/components/slider): A slider input for selecting values within a range
+- [Spinner](https://prototyper-ui.com/docs/components/spinner): An SVG loading spinner with size variants
+- [Switch](https://prototyper-ui.com/docs/components/switch): A toggle switch built on Base UI
+- [Tabs](https://prototyper-ui.com/docs/components/tabs): Tabbed content panels built on Base UI
+- [TextField](https://prototyper-ui.com/docs/components/text-field): A text input with label and validation built on Base UI
+- [Textarea](https://prototyper-ui.com/docs/components/textarea): a multi-line text input with validation styling
+- [Toast](https://prototyper-ui.com/docs/components/toast): notification system with type variants
+- [Toggle](https://prototyper-ui.com/docs/components/toggle): A two-state toggle button built on Base UI
+- [Toggle Group](https://prototyper-ui.com/docs/components/toggle-group): group of toggles with single or multiple selection
+- [Toolbar](https://prototyper-ui.com/docs/components/toolbar): A toolbar with keyboard navigation built on Base UI
+- [Tooltip](https://prototyper-ui.com/docs/components/tooltip): a tooltip that appears on hover built on Base UI
+- [Tree View](https://prototyper-ui.com/docs/components/tree-view): A hierarchical tree view with collapsible nodes and keyboard navigation built on Base UI
+
+## LLM Endpoints
+- [Full documentation](https://prototyper-ui.com/llms-full.txt): All pages in a single file
+- [Components only](https://prototyper-ui.com/llms-components.txt): All components with source code
+- [Single component](https://prototyper-ui.com/llms/button): Individual component docs + source
+- [compose reference](https://prototyper-ui.com/llms-compose.txt): Complete @prototyperco/compose spec reference for AI-generated UIs

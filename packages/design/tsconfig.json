@@ -1,0 +1,10 @@
+{
+  "extends": "@xforge/typescript-config/react-library.json",
+  "compilerOptions": {
+    "paths": {
+      "@xforge/design/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

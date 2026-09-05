@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/next",
+    "ultracite/biome/react",
+    "ultracite/biome/vitest"
+  ],
+  "files": {
+    // Vendored agent skills / reference docs — not our source; reformatting
+    // them breaks skills-lock.json hashes. Ultracite's own ignores use `!!`
+    // and survive this list.
+    "includes": ["!.agents", "!.claude", "!skills-lock.json"]
+  },
+  "overrides": [
+    {
+      // shadcn's CLI generates these in its own style: namespace React import,
+      // cva variant maps ordered by meaning rather than alphabetically.
+      "includes": ["packages/design/src/components/**"],
+      "assist": { "actions": { "source": { "useSortedKeys": "off" } } },
+      "linter": { "rules": { "performance": { "noNamespaceImport": "off" } } }
+    },
+    {
+      // shadcn's CLI generates lib/utils.ts as a re-export of `cn`.
+      "includes": ["packages/design/src/lib/**"],
+      "linter": { "rules": { "performance": { "noBarrelFile": "off" } } }
+    }
+  ]
+}

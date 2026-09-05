@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "skills": {
+    "api-testing": {
+      "source": "oakoss/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/api-testing/SKILL.md",
+      "computedHash": "6d85348347a6da1342c2f61fdc06cbafb66098b4c8053047fad32ffcdbd46259"
+    },
+    "authoring-design-system": {
+      "source": "bm629/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/authoring-design-system/SKILL.md",
+      "computedHash": "c797c7c2f4fc57e6efa2f891e0091105587fe7da32cd939e9a2f8c09fa303de4"
+    },
+    "avoid-unnecessary-type-params": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/avoid-unnecessary-type-params/SKILL.md",
+      "computedHash": "c3cb0a31b691713d9f02622751ff026f4db8ea108df8ea0f854b1316b3f450ae"
+    },
+    "branded-types": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/branded-types/SKILL.md",
+      "computedHash": "64da6205492625f6baa1942519a050e02a993b721f47aa9b7752e53d68852290"
+    },
+    "codegen-over-complex-types": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/codegen-over-complex-types/SKILL.md",
+      "computedHash": "bb2fc2667adf0d65333bcfb76fef632c1dd079ad273b606bbc54d4bfece52d92"
+    },
+    "compiler-performance": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/compiler-performance/SKILL.md",
+      "computedHash": "03844c5c5c9251df8eff1460019653727b5b7bf650d5553a837ec6096cf1651d"
+    },
+    "constraint-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/constraint-driven-development/SKILL.md",
+      "computedHash": "40df237bb0447cba2b485309e5a9a13b4804dad31413dec186c1e9df73338c64"
+    },
+    "design-consistency-auditor": {
+      "source": "shipshitdev/skills",
+      "sourceType": "github",
+      "skillPath": "skills/design-consistency-auditor/SKILL.md",
+      "computedHash": "c2da8692b0c1e8a5b131ce57919911df193026ce1b04d9b9a99ac92a7546b56d"
+    },
+    "domain-language-types": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/domain-language-types/SKILL.md",
+      "computedHash": "f755caa9d543a8de50eaecbee46707a1296821e7722b9f04a45ee46d6896c277"
+    },
+    "doubt-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/doubt-driven-development/SKILL.md",
+      "computedHash": "880332887b731e34509974dd6b62c8ae3943367f3b8ca0dd1bbb4479f474f73e"
+    },
+    "dry-types": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dry-types/SKILL.md",
+      "computedHash": "b0870e4e9ed88950b4a8f7d5313f8e7fc4e5eba49fbefed9fa8b7ed3ab09b044"
+    },
+    "excess-property-checking": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/excess-property-checking/SKILL.md",
+      "computedHash": "369ff7308cc02d3a78e32647248839d180348932996eda6f1b8c768b4517be8c"
+    },
+    "exclusive-or-properties": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/exclusive-or-properties/SKILL.md",
+      "computedHash": "17cc121bb8942b8c3e2d7903b0e2303c53a5d06a212912a51ac274cc16b36dcf"
+    },
+    "exhaustiveness-checking": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/exhaustiveness-checking/SKILL.md",
+      "computedHash": "a719f4c32f55f567f9b4f90d2a8cd5191c7e1c6e644e55443e928bb9bef376f1"
+    },
+    "export-public-types": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/export-public-types/SKILL.md",
+      "computedHash": "69a530230affc451c7828bf0c434bd9c8ee44a4c01f55cabbb31bcc0b95e97d9"
+    },
+    "hide-unsafe-assertions": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/hide-unsafe-assertions/SKILL.md",
+      "computedHash": "0e914355ce1f40da352dc784105bc4b120000f1686f4734a8f6ad92175661607"
+    },
+    "liberal-accept-strict-return": {
+      "source": "marius-townhouse/effective-typescript-skills",
+      "sourceType": "github",
+      "skillPath": "skills/liberal-accept-strict-return/SKILL.md",
+      "computedHash": "7239b1640c5bb8f957cef97bc16fd15756878c1358779f14cd8f90fc114442a3"
+    },
+    "lint-rule-development": {
+      "source": "biomejs/biome",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/lint-rule-development/SKILL.md",
+      "computedHash": "5fa5a9bd5479ec1ebc60a7b59de6b500aac9a279aeb5a71b0591756914c50730"
+    },
+    "material-design-3-color": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-color/SKILL.md",
+      "computedHash": "7aea2839ffeaf0f80401fb40c9f102b0a5967a996b3e9b95a249265e4418989e"
+    },
+    "material-design-3-components": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-components/SKILL.md",
+      "computedHash": "bb76bff6da9ff964da5bfbf507fa2d16565098665e169baf9a0bb75b1002f507"
+    },
+    "material-design-3-guide": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-guide/SKILL.md",
+      "computedHash": "f6f94d3d1e708a3b41b461505e2eb9377d80ae6dfa4df496d2152bb8d98648d7"
+    },
+    "material-design-3-icons": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-icons/SKILL.md",
+      "computedHash": "891ad59f7e8cd63ffeedc77f780b903e729035de7f7e4c874731b1b227f7ec46"
+    },
+    "material-design-3-layout": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-layout/SKILL.md",
+      "computedHash": "7f15306458bf1b54f2a41728d0f04df404ac5ba425057a3ab3ecd21581b34dfc"
+    },
+    "material-design-3-motion": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-motion/SKILL.md",
+      "computedHash": "830bee85e28591a84cb5cf58893230cff6c1cff945d3d84085d864af9da5e954"
+    },
+    "material-design-3-shape": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-shape/SKILL.md",
+      "computedHash": "c095c3bac66d665a5213ba0240b5dd8c9d204546a6837dd025150a9ddbaddb72"
+    },
+    "material-design-3-typography": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-design-3-typography/SKILL.md",
+      "computedHash": "cb32a8df938cdd08e125c81d128b6e648541140d521bf9187aa6099980c33b00"
+    },
+    "material-theme-builder": {
+      "source": "shelbeely/shelbeely-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/material-theme-builder/SKILL.md",
+      "computedHash": "552fd6debd4beacbbe52b5ebdf9046e0ccc9f6fee4c13600d33ce32ea5a3fdb5"
+    },
+    "migrate-radix-to-base": {
+      "source": "shadcn-ui/ui",
+      "sourceType": "github",
+      "skillPath": "skills/migrate-radix-to-base/SKILL.md",
+      "computedHash": "e1f2030ee5059be3dff0812ca0e4b995ee9fa3132176f049ebe6c90346a6755e"
+    },
+    "msw": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/msw/SKILL.md",
+      "computedHash": "2a8ef7934bbda4992bd1ee44e521922768e55ae7134dfc668efd5cf88bfe4b40"
+    },
+    "pnpm-workspace": {
+      "source": "oakoss/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pnpm-workspace/SKILL.md",
+      "computedHash": "682c406711e9c8517fb740e5f938dd26a6f5b0407b49c988e46daa2d125253b5"
+    },
+    "pr-to-lint-rule": {
+      "source": "zernie/vigiles",
+      "sourceType": "github",
+      "skillPath": "examples/SKILL.md",
+      "computedHash": "ab296a604626a341c33d16cffe07651c73bf3517845ddda3998fba66210df752"
+    },
+    "reviewing-design-system": {
+      "source": "bm629/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/reviewing-design-system/SKILL.md",
+      "computedHash": "815a63b7f590f5ec9c12786e2a8f4afe8b2ba6493eb8081fc607b296d5df25e4"
+    },
+    "shadcn": {
+      "source": "shadcn-ui/ui",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "f615de216e085a84e31593ad0fa9062232adc40cd87b7c7ab2b8e49abf6500be"
+    },
+    "source-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/source-driven-development/SKILL.md",
+      "computedHash": "c48d3c3abb2cb8a5c4a8584ab95db64f8a0261f3acfe2cdb7b8ff88ec3d90211"
+    },
+    "spec-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/spec-driven-development/SKILL.md",
+      "computedHash": "aca026683acdae1cd8a58f335fb26e60fb5db11ae81461a6896b0bf561aacb75"
+    },
+    "tailwind": {
+      "source": "oakoss/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind/SKILL.md",
+      "computedHash": "de81a07914ffc980077bfd446987bdc6f56a06288fcceea04b04c8960dc611f3"
+    },
+    "tailwind-validator": {
+      "source": "shipshitdev/skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-validator/SKILL.md",
+      "computedHash": "7cb9797d0d70e22e9881044c8ca7f16c6fa75ba1494adfcaedfee28ffbfd2fda"
+    },
+    "tailwindcss-performance": {
+      "source": "josiahsiegel/claude-plugin-marketplace",
+      "sourceType": "github",
+      "skillPath": "plugins/tailwindcss-master/skills/tailwindcss-performance/SKILL.md",
+      "computedHash": "79b522ef0eb94cfce040fe0b85f3e3fd062c5508bb33f01aefd9063f83ed61ed"
+    },
+    "turborepo": {
+      "source": "oakoss/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/turborepo/SKILL.md",
+      "computedHash": "3754954e9c20208c6c3afe5f39b6c895a29df2e8f13a8eba1ee7c35472695415"
+    },
+    "typescript-strict": {
+      "source": "laurigates/claude-plugins",
+      "sourceType": "github",
+      "skillPath": "typescript-plugin/skills/typescript-strict/SKILL.md",
+      "computedHash": "ad67d3b0f84b5a15372792ba608dc07bab106dfc32bb1b993eb62bfb6e6666f3"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "be1e5177bdfd6707abe2caf6c499b4afe6991140078affa8ac1e915d8806a59d"
+    },
+    "using-agent-skills": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/using-agent-skills/SKILL.md",
+      "computedHash": "ae93cf505ae7e49da376162da7f9d746c44273704da6765e89d39960f9f6ab67"
+    }
+  }
+}

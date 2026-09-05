@@ -1,0 +1,344 @@
+# Fragments — Full AI Reference
+
+https://www.usefragments.com
+
+Generated — do not edit by hand. Source: `apps/docs/scripts/generate-llms-full.ts`.
+
+## Overview
+
+> Fragments keeps agents on your design system while they write. The loop is local: a card at session start, a check on every save, a repair before you look. The gate is Cloud: the same contract, required to merge. The open-source substrate is @usefragments/ui (component library on Base UI headless primitives) and @usefragments/core (types, schemas, rules engine); @usefragments/cli runs init, discover, check, and repair; Fragments Cloud binds a repository and serves the hosted MCP tools.
+
+## Install
+
+### Source
+
+```bash
+npx @usefragments/cli add button card checkbox alert
+```
+
+### Package
+
+```bash
+npm install @usefragments/ui
+```
+
+## Component Catalog (69 components)
+
+### Actions
+
+- [Button](https://www.usefragments.com/components/button) — Triggers an action — save, submit, delete, open.
+  Members: `Button.Root` · Props: `as=a|button`, `asChild`, `children`, `fullWidth`, `icon`, `size=lg|md|sm`, `tone=accent|danger|info|neutral|success|warning`, `variant=ghost|link|outline|soft|solid`
+- [ButtonGroup](https://www.usefragments.com/components/buttongroup) — Lays out related buttons in a row with one shared gap and alignment.
+  Members: `ButtonGroup.Root` · Props: `align=center|end|start`, `children`, `gap=md|none|sm|xs`, `wrap`
+- [IconButton](https://www.usefragments.com/components/iconbutton) — Runs an action from an icon alone, for toolbars and table rows.
+  Members: `IconButton.Root` · Props: `aria-label`, `aria-labelledby`, `children`, `pressed`, `size=lg|md|sm`, `type=button|reset|submit`, `variant=ghost|outline|soft`
+- [ToggleGroup](https://www.usefragments.com/components/togglegroup) — Picks exactly one option from a short row of toggle buttons.
+  Members: `ToggleGroup.Item` · Props: `children`, `defaultValue`, `gap=none|sm|xs`, `onChange`, `onValueChange`, `selectionMode=single`, `size=lg|md|sm`, `value`, `variant=ghost|outline|soft`
+
+### AI
+
+- [ConversationList](https://www.usefragments.com/components/conversationlist) — Stacks chat messages in a scroller that follows new arrivals.
+  Members: `ConversationList.DateSeparator`, `ConversationList.TypingIndicator` · Props: `autoScroll`, `children`, `emptyState`, `loadingHistory`, `onScrollTop`, `scrollBottomThreshold`, `scrollTopThreshold`, `showAvatars`
+- [Message](https://www.usefragments.com/components/message) — Shows one chat message, styled by who sent it.
+  Members: `Message.Actions`, `Message.Avatar`, `Message.Content`, `Message.Timestamp` · Props: `actions`, `avatar`, `children`, `role=assistant|system|user`, `status=complete|error|pending|streaming`, `timestamp`
+- [Prompt](https://www.usefragments.com/components/prompt) — Collects multi-line input for AI and chat interfaces.
+  Members: `Prompt.ActionButton`, `Prompt.Actions`, `Prompt.Attach`, `Prompt.Attachments`, `Prompt.Info`, `Prompt.ModeButton`, `Prompt.Select`, `Prompt.Submit`, `Prompt.Tab`, `Prompt.Tabs`, `Prompt.Textarea`, `Prompt.Toolbar`, `Prompt.Usage` · Props: `accept`, `autoResize`, `children`, `defaultValue`, `disabled`, `loading`, `maxRows`, `minRows`, `onChange`, `onFiles`, `onSubmit`, `placeholder`, `placement=fixed|inline|sticky`, `submitOnEnter`, `value`, `variant=ghost|outline`
+- [ThinkingIndicator](https://www.usefragments.com/components/thinkingindicator) — Shows that an AI response is being generated.
+  Members: `ThinkingIndicator.Step`, `ThinkingIndicator.Steps` · Props: `active`, `kind=dots|pulse|spinner`, `label`, `showElapsed`, `steps`
+
+### Display
+
+- [Avatar](https://www.usefragments.com/components/avatar) — Shows who someone is — their photo, or their initials when there is none.
+  Members: `Avatar.Group` · Props: `alt`, `color`, `customSize`, `fallback`, `imageProps`, `imageStyle`, `initials`, `name`, `shape=circle|square`, `size=lg|md|sm|xl|xs`, `src`, `style`
+- [Badge](https://www.usefragments.com/components/badge) — Labels a status, count, or category without pulling focus.
+  Members: `Badge.Root` · Props: `active`, `announce`, `children`, `dot`, `dotColor`, `dotPulse`, `icon`, `onRemove`, `role`, `size=lg|md|sm`, `style`, `tone=accent|danger|info|neutral|success|warning`, `variant=ghost|outline|soft`
+- [Chart](https://www.usefragments.com/components/chart) — Plots your data with tooltips, legends, and colors that track the theme.
+  Members: `Chart.Legend`, `Chart.LegendContent`, `Chart.preload`, `Chart.Root`, `Chart.Tooltip`, `Chart.TooltipContent` · Props: `children`, `config`, `dataTable`, `style`, `summary`
+- [CodeBlock](https://www.usefragments.com/components/codeblock) — Shows code with syntax colors, a copy button, and diff or collapse when you need them.
+  Members: `CodeBlock.Tabbed` · Props: `addedLines`, `bg`, `caption`, `code`, `collapseAction=expand|lines`, `collapsedLines`, `collapsible`, `compact`, `copyPlacement=auto|header|overlay`, `defaultCollapsed`, `filename`, `highlightLines`, `language=bash|c|cpp|csharp|css|diff|go|graphql|html|java|javascript|js|json|jsx|kotlin|markdown|md|php|plaintext|py|python|ruby|rust|sass|scss|shell|sql|swift|text|ts|tsx|typescript|xml|yaml|yml`, `maxHeight`, `onCopy`, `persistentCopy`, `removedLines`, `showCopy`, `showLineNumbers`, `startLineNumber`, `theme=css-variables|dracula|github-dark|github-light|min-dark|min-light|monokai|nord|one-dark-pro|synthwave-84|vitesse-dark|vitesse-light`, `title`, `wordWrap`
+- [DataTable](https://www.usefragments.com/components/datatable) — Interactive table — sort, select, expand, and click through rows of data.
+  Members: `DataTable.Columns`, `DataTable.preload`, `DataTable.Root` · Props: `bordered`, `caption`, `captionHidden`, `columns`, `data`, `density=compact|condensed|regular|relaxed`, `emptyMessage`, `emptyState`, `expanded`, `getRowId`, `getRowProps`, `getSubRows`, `hideHeader`, `loading`, `onExpandedChange`, `onRowClick`, `onRowSelectionChange`, `onSortingChange`, `rowSelection`, `selectable`, `showCheckbox`, `size=md|sm`, `skeletonRows`, `sortable`, `sorting`, `striped`, `wrapperClassName`, `wrapperProps`
+- [Icon](https://www.usefragments.com/components/icon) — Sizes and colours any icon so it lines up with the text beside it.
+  Members: `Icon.Root` · Props: `color=primary|secondary|tertiary`, `icon`, `iconProps`, `size=lg|md|sm|xl|xs`, `style`, `tone=accent|danger|info|success|warning`, `weight=bold|duotone|fill|light|regular|thin`
+- [Image](https://www.usefragments.com/components/image) — Renders a picture at a fixed shape with a built-in fallback when loading fails.
+  Members: `Image.Root` · Props: `alt`, `aspectRatio=1:1|16:9|21:9|4:3|auto`, `className`, `fallback`, `height`, `imgProps`, `objectFit=contain|cover|fill|none`, `onImageError`, `onImageLoad`, `rounded=full|lg|md|none|sm`, `src`, `style`, `width`
+- [List](https://www.usefragments.com/components/list) — Stacks items down the page with evenly spaced bullets, numbers, or icons.
+  Members: `List.Item` · Props: `as=ol|ul`, `children`, `gap=lg|md|none|sm|xl|xs`, `marker=decimal|disc|icon|none`, `style`
+- [Markdown](https://www.usefragments.com/components/markdown) — Turns a Markdown string into styled headings, lists, tables, code, and quotes.
+  Members: `Markdown.preload`, `Markdown.Root` · Props: `className`, `components`, `content`
+- [Table](https://www.usefragments.com/components/table) — Renders tabular data as a real HTML table — headers, rows, footer.
+  Members: `Table.Body`, `Table.Caption`, `Table.Cell`, `Table.Footer`, `Table.Head`, `Table.HeaderCell`, `Table.Root`, `Table.Row` · Props: `bordered`, `children`, `density=compact|regular|relaxed`, `size=compact|md|sm`, `striped`, `wrapperClassName`, `wrapperProps`
+- [Text](https://www.usefragments.com/components/text) — Applies the type scale to any text element, without hand-rolling font rules.
+  Members: `Text.Root` · Props: `as=abbr|address|blockquote|cite|code|del|div|em|h1|h2|h3|h4|h5|h6|ins|label|mark|p|small|span|strong|sub|sup|time`, `children`, `color=accent|danger|muted|primary|secondary|success|tertiary|warning`, `font=mono|sans`, `letterSpacing=normal|tight|tighter|tightest`, `lineClamp`, `role=body-compact|body-relaxed|caption|code|display|eyebrow|section-label|title-lg|title-md|title-sm|ui-compact|ui-standard`, `scale=2xl|2xs|3xl|4xl|base|lg|md|sm|xl|xs`, `style`, `tabularNums`, `truncate`, `weight=bold|medium|normal|semibold`
+
+### Feedback
+
+- [Alert](https://www.usefragments.com/components/alert) — Tells the user what just happened, or what is about to.
+  Members: `Alert.Action`, `Alert.Actions`, `Alert.Body`, `Alert.Close`, `Alert.Content`, `Alert.Icon`, `Alert.Title` · Props: `children`, `emphasis=surface|tint`, `tone=danger|info|success|warning`
+- [EmptyState](https://www.usefragments.com/components/emptystate) — Explains why an area is blank and offers the next step.
+  Members: `EmptyState.Actions`, `EmptyState.Description`, `EmptyState.Icon`, `EmptyState.Title` · Props: `children`, `size=lg|md|sm`, `variant=ghost|outline`
+- [Loading](https://www.usefragments.com/components/loading) — Signals that something is happening when you cannot say how long it will take.
+  Members: `Loading.Inline`, `Loading.Screen` · Props: `centered`, `color=accent|current|muted`, `fill`, `kind=dots|pulse|spinner`, `label`, `overlay`, `size=lg|md|sm|xl`
+- [Progress](https://www.usefragments.com/components/progress) — Shows how far along a task is, as a bar or a ring.
+  Members: `Progress.Circular`, `Progress.Root` · Props: `formatValue`, `label`, `max`, `min`, `role`, `showValue`, `size=lg|md|sm`, `tone=accent|danger|neutral|success|warning`, `value`
+- [Skeleton](https://www.usefragments.com/components/skeleton) — Holds the shape of content that has not arrived yet.
+  Members: `Skeleton.Circle`, `Skeleton.Text` · Props: `fill`, `height`, `radius=full|lg|md|none|sm`, `shape=avatar|button|heading|input|rect|text`, `size=lg|md|sm`, `static`, `width`
+- [Toast](https://www.usefragments.com/components/toast) — Briefly reports what just happened, without blocking the page.
+  Members: `Toast.Provider` · Props: `action`, `description`, `duration`, `id`, `onDismiss`, `onPause`, `onResume`, `title`, `tone=danger|info|neutral|success|warning`
+
+### Inputs
+
+- [Checkbox](https://www.usefragments.com/components/checkbox) — Selects options that take effect when a form is submitted.
+  Members: `Checkbox.Root` · Props: `aria-describedby`, `aria-label`, `aria-labelledby`, `checked`, `contentClassName`, `controlClassName`, `defaultChecked`, `description`, `disabled`, `form`, `helperText`, `id`, `indeterminate`, `inputRef`, `label`, `name`, `onChange`, `onCheckedChange`, `parent`, `readOnly`, `required`, `size=lg|md|sm`, `uncheckedValue`, `value`, `variant=outline`
+- [Chip](https://www.usefragments.com/components/chip) — Pill control for filtering, multi-select, and removable tags.
+  Members: `Chip.Group` · Props: `avatar`, `children`, `disabled`, `icon`, `onClick`, `onRemove`, `selected`, `size=lg|md|sm|xs`, `value`, `variant=outline|soft|solid`
+- [ColorPicker](https://www.usefragments.com/components/colorpicker) — Selects a color through a visual picker and hexadecimal input.
+  Members: `ColorPicker.preload`, `ColorPicker.Root` · Props: `defaultValue`, `description`, `disabled`, `error`, `helperText`, `label`, `onChange`, `onValueChange`, `showInput`, `size=lg|md|sm`, `value`
+- [Combobox](https://www.usefragments.com/components/combobox) — Filters a list of options as the user types.
+  Members: `Combobox.Content`, `Combobox.Empty`, `Combobox.Group`, `Combobox.GroupLabel`, `Combobox.Input`, `Combobox.Item`, `Combobox.ItemIndicator`, `Combobox.Trigger` · Props: `autoComplete`, `autoHighlight`, `children`, `className`, `defaultOpen`, `defaultValue`, `disabled`, `error`, `form`, `helperText`, `inputRef`, `label`, `multiple`, `name`, `onChange`, `onOpenChange`, `onValueChange`, `open`, `placeholder`, `readOnly`, `required`, `size=lg|md|sm`, `value`
+- [DatePicker](https://www.usefragments.com/components/datepicker) — Selects a date or date range from a calendar.
+  Members: `DatePicker.Calendar`, `DatePicker.Content`, `DatePicker.preload`, `DatePicker.Preset`, `DatePicker.Trigger` · Props: `children`, `className`, `disabled`, `disabledDates`, `error`, `fixedWeeks`, `formatDate`, `formatRange`, `helperText`, `label`, `locale`, `mode=range|single`, `name`, `numberOfMonths`, `onChange`, `onOpenChange`, `onRangeSelect`, `onSelect`, `open`, `placeholder`, `selected`, `selectedRange`, `size=lg|md|sm`
+- [Editor](https://www.usefragments.com/components/editor) — Edits rich text with formatting, autosave, and a word count.
+  Members: `Editor.Content`, `Editor.preload`, `Editor.Separator`, `Editor.StatusBar`, `Editor.StatusIndicator`, `Editor.Toolbar`, `Editor.ToolbarButton`, `Editor.ToolbarGroup` · Props: `autoSaveInterval`, `children`, `defaultValue`, `disabled`, `formats`, `maxLength`, `onAutoSave`, `onValueChange`, `placeholder`, `readOnly`, `size=lg|md|sm`, `statusBar`, `toolbar`, `toolbarIcons`, `value`
+- [Field](https://www.usefragments.com/components/field) — Composes labels, descriptions, validation, and errors around a form control.
+  Members: `Field.Control`, `Field.Description`, `Field.Error`, `Field.Label`, `Field.Required`, `Field.Validity` · Props: `children`, `disabled`, `invalid`, `name`, `size=lg|md|sm`, `validate`, `validationDebounceTime`, `validationMode=onBlur|onChange|onSubmit`
+- [Fieldset](https://www.usefragments.com/components/fieldset) — Groups related form controls under an accessible legend.
+  Members: `Fieldset.Description`, `Fieldset.Legend` · Props: `children`, `disabled`
+- [Form](https://www.usefragments.com/components/form) — Distributes server-side validation errors to its Field components.
+  Members: `Form.Actions`, `Form.Root` · Props: `children`, `errors`, `onClearErrors`, `onFormSubmit`, `onSubmit`, `validationMode=onBlur|onChange|onSubmit`
+- [Input](https://www.usefragments.com/components/input) — Collects a single line of user-entered text.
+  Members: `Input.Root` · Props: `className`, `defaultValue`, `disabled`, `endAdornment`, `error`, `helperText`, `inputClassName`, `inputStyle`, `label`, `onBlur`, `onChange`, `onFocus`, `onKeyDown`, `onValueChange`, `placeholder`, `required`, `rootProps`, `shortcut`, `shortcutBehavior=display-only|focus-input`, `size=lg|md|sm`, `startAdornment`, `style`, `success`, `type=email|number|password|tel|text|url`, `value`, `withFieldWrapper`
+- [Listbox](https://www.usefragments.com/components/listbox) — Shows a keyboard-navigable list of options with no trigger of its own.
+  Members: `Listbox.Empty`, `Listbox.Group`, `Listbox.Item` · Props: `children`, `onFocus`, `onKeyDown`, `style`, `tabIndex`
+- [RadioGroup](https://www.usefragments.com/components/radiogroup) — Selects one option from a mutually exclusive set.
+  Members: `RadioGroup.Item` · Props: `children`, `defaultValue`, `disabled`, `error`, `form`, `groupClassName`, `groupId`, `helperText`, `inputRef`, `label`, `name`, `onChange`, `onValueChange`, `orientation=horizontal|vertical`, `readOnly`, `required`, `size=lg|md|sm`, `value`, `variant=outline`, `wrapperClassName`
+- [Select](https://www.usefragments.com/components/select) — Opens a list and returns the single option the user picks.
+  Members: `Select.Content`, `Select.Group`, `Select.GroupLabel`, `Select.Item`, `Select.Trigger` · Props: `autoComplete`, `children`, `className`, `defaultOpen`, `defaultValue`, `disabled`, `error`, `form`, `helperText`, `inputRef`, `label`, `name`, `onChange`, `onOpenChange`, `onValueChange`, `open`, `options`, `placeholder`, `readOnly`, `required`, `size=lg|md|sm`, `value`, `variant=ghost|outline`
+- [Slider](https://www.usefragments.com/components/slider) — Selects a numeric value within a defined range.
+  Members: `Slider.Root` · Props: `aria-describedby`, `aria-label`, `aria-labelledby`, `defaultValue`, `disabled`, `error`, `form`, `helperText`, `id`, `label`, `largeStep`, `max`, `min`, `name`, `onChange`, `onValueChange`, `onValueCommitted`, `showValue`, `showValueOnDrag`, `step`, `thumbAlignment=center|edge|edge-client-only`, `value`, `valueSuffix`
+- [Switch](https://www.usefragments.com/components/switch) — Toggles a setting that takes effect immediately.
+  Members: `Switch.Root` · Props: `aria-describedby`, `aria-label`, `aria-labelledby`, `checked`, `className`, `defaultChecked`, `description`, `disabled`, `form`, `helperText`, `id`, `inputRef`, `label`, `name`, `onChange`, `onCheckedChange`, `readOnly`, `required`, `size=lg|md|sm`, `uncheckedValue`, `value`
+- [Textarea](https://www.usefragments.com/components/textarea) — Collects multi-line text for longer form content.
+  Members: `Textarea.Root` · Props: `aria-describedby`, `aria-label`, `aria-labelledby`, `className`, `defaultValue`, `disabled`, `error`, `helperText`, `label`, `maxLength`, `maxRows`, `minRows`, `name`, `onBlur`, `onChange`, `onFocus`, `onValueChange`, `placeholder`, `required`, `resize=both|horizontal|none|vertical`, `rootProps`, `rows`, `showCharCount`, `size=lg|md|sm`, `style`, `success`, `value`
+
+### Layout
+
+- [Accordion](https://www.usefragments.com/components/accordion) — Stacks sections that expand one at a time, or several at once.
+  Members: `Accordion.Content`, `Accordion.Item`, `Accordion.Trigger` · Props: `children`, `collapsible`, `defaultValue`, `headingLevel=2|3|4|5|6`, `onValueChange`, `type=multiple|single`, `value`
+- [AppShell](https://www.usefragments.com/components/appshell) — Lays out header, sidebar, main, and optional aside as one responsive app frame.
+  Members: `AppShell.Aside`, `AppShell.Header`, `AppShell.Main`, `AppShell.Sidebar` · Props: `bg`, `children`, `layout=default|floating|sidebar|sidebar-floating`, `style`
+- [BentoGrid](https://www.usefragments.com/components/bentogrid) — Asymmetric feature grid where tiles span different widths and heights.
+  Props: `children`, `columns=2|3|4`, `gap=lg|md|none|sm|xl|xs`, `style`
+- [Box](https://www.usefragments.com/components/box) — Applies spacing, background, border, and radius to any element.
+  Members: `Box.Root` · Props: `as=article|aside|div|footer|header|main|nav|section|span`, `background=elevated|none|primary|secondary|tertiary`, `border`, `borderBottom`, `borderColor=accent|danger|default|strong`, `borderLeft`, `borderRight`, `borderTop`, `children`, `className`, `color=accent|inverse|primary|secondary|tertiary`, `display=block|flex|grid|inline|inline-block|inline-flex|none`, `height`, `margin=auto|lg|md|none|sm|xl|xs`, `marginX=auto|lg|md|none|sm|xl|xs`, `marginY=auto|lg|md|none|sm|xl|xs`, `maxHeight`, `maxWidth`, `minHeight`, `minWidth`, `overflow=auto|hidden|scroll|visible`, `padding=lg|md|none|sm|xl|xs`, `paddingX=lg|md|none|sm|xl|xs`, `paddingY=lg|md|none|sm|xl|xs`, `rounded=full|lg|md|none|sm`, `shadow=lg|md|none|sm`, `style`, `width`
+- [Card](https://www.usefragments.com/components/card) — Groups related content onto one bounded surface.
+  Members: `Card.Body`, `Card.Description`, `Card.Footer`, `Card.Header`, `Card.Title` · Props: `as=article|div|section`, `children`, `padding=lg|md|none|sm`, `style`, `tone=accent|danger|neutral|warning`, `variant=outline|soft|solid`
+- [Collapsible](https://www.usefragments.com/components/collapsible) — Shows or hides one region of content behind a trigger.
+  Members: `Collapsible.Content`, `Collapsible.Root`, `Collapsible.Trigger` · Props: `children`, `defaultOpen`, `disabled`, `onOpenChange`, `open`
+- [Grid](https://www.usefragments.com/components/grid) — Arranges items into responsive columns with one shared gap.
+  Props: `alignItems=center|end|start|stretch`, `children`, `className`, `columns`, `gap=lg|md|none|sm|xl|xs`, `justifyItems=center|end|start|stretch`, `minChildWidth`, `padding=lg|md|none|sm`, `style`
+- [Header](https://www.usefragments.com/components/header) — Composes brand, navigation, search, and actions into one responsive app bar.
+  Members: `Header.Actions`, `Header.Brand`, `Header.MobileNav`, `Header.MobileNavActions`, `Header.MobileNavLink`, `Header.Nav`, `Header.NavItem`, `Header.NavMenu`, `Header.NavMenuItem`, `Header.Search`, `Header.SkipLink`, `Header.Spacer`, `Header.Trigger` · Props: `children`, `container=full|page`, `elevatedOnScroll`, `height`, `icons`, `navAlign=center|start`, `position=fixed|static|sticky`, `style`
+- [Main](https://www.usefragments.com/components/main) — Owns a page's gutters, reading measure, and vertical rhythm.
+  Members: `Main.Content`, `Main.Description`, `Main.Footer`, `Main.Header` · Props: `as=article|aside|div|footer|header|main|nav|ol|section|ul`, `children`, `measure=full|narrow`
+- [ScrollArea](https://www.usefragments.com/components/scrollarea) — Scrolls overflowing content with a slim scrollbar and optional edge fades.
+  Members: `ScrollArea.Root` · Props: `children`, `className`, `dir`, `orientation=both|horizontal|vertical`, `scrollbarVisibility=always|auto|hover`, `showFades`
+- [Separator](https://www.usefragments.com/components/separator) — Draws a rule between sections of related content.
+  Members: `Separator.Root` · Props: `gap=lg|md|none|sm|xl|xs`, `label`, `orientation=horizontal|vertical`, `soft`, `style`
+- [Sidebar](https://www.usefragments.com/components/sidebar) — Collapsible navigation panel that turns into a drawer on mobile.
+  Members: `Sidebar.CollapseToggle`, `Sidebar.Footer`, `Sidebar.Header`, `Sidebar.Item`, `Sidebar.MenuSkeleton`, `Sidebar.Nav`, `Sidebar.Overlay`, `Sidebar.Rail`, `Sidebar.Section`, `Sidebar.SectionAction`, `Sidebar.SubItem`, `Sidebar.Submenu`, `Sidebar.Trigger` · Props: `activeIndicator=end|start`, `children`, `collapsed`, `collapsedWidth`, `collapsible=icon|none|offcanvas`, `defaultCollapsed`, `defaultOpen`, `onCollapsedChange`, `onOpenChange`, `open`, `position=left|right`, `style`, `width`
+- [Stack](https://www.usefragments.com/components/stack) — Stacks children in a row or column with one consistent gap.
+  Members: `Stack.Root` · Props: `align=baseline|center|end|start|stretch`, `as=article|aside|div|footer|header|main|nav|ol|section|ul`, `children`, `className`, `direction`, `gap`, `justify=between|center|end|start`, `separator`, `style`, `wrap`
+
+### Navigation
+
+- [Breadcrumbs](https://www.usefragments.com/components/breadcrumbs) — Shows where the user is and links back up the hierarchy.
+  Members: `Breadcrumbs.Item`, `Breadcrumbs.Separator` · Props: `children`, `label`, `maxItems`, `separator`
+- [Command](https://www.usefragments.com/components/command) — Filters a list of actions as the user types.
+  Members: `Command.Empty`, `Command.Group`, `Command.Input`, `Command.Item`, `Command.List`, `Command.Separator` · Props: `children`, `defaultSearch`, `filter`, `loop`, `onSearchChange`, `search`
+- [Link](https://www.usefragments.com/components/link) — Navigates somewhere else, inline or in chrome, with real link semantics.
+  Members: `Link.Root` · Props: `asChild`, `children`, `className`, `color=primary|secondary|tertiary`, `external`, `rel`, `style`, `target`, `tone=accent|neutral`, `underline=always|dotted|hover|none`
+- [NavigationMenu](https://www.usefragments.com/components/navigationmenu) — Site navigation whose dropdowns become a drawer on small screens.
+  Members: `NavigationMenu.Content`, `NavigationMenu.Indicator`, `NavigationMenu.Item`, `NavigationMenu.Link`, `NavigationMenu.List`, `NavigationMenu.MobileBrand`, `NavigationMenu.MobileContent`, `NavigationMenu.MobileSection`, `NavigationMenu.Trigger`, `NavigationMenu.Viewport` · Props: `children`, `defaultValue`, `delayDuration`, `icons`, `mobileBreakpoint=lg|md`, `onValueChange`, `orientation=horizontal|vertical`, `skipDelayDuration`, `value`
+- [Pagination](https://www.usefragments.com/components/pagination) — Steps through content split across numbered pages.
+  Members: `Pagination.Ellipsis`, `Pagination.Item`, `Pagination.Items`, `Pagination.Next`, `Pagination.Previous` · Props: `children`, `defaultPage`, `edgeCount`, `onPageChange`, `page`, `siblingCount`, `size=lg|md|sm`, `totalPages`
+- [TableOfContents](https://www.usefragments.com/components/tableofcontents) — Indexes a long page and marks the section currently in view.
+  Members: `TableOfContents.Group`, `TableOfContents.Item` · Props: `children`, `hideSubItems`, `hideTitle`, `label`, `title`
+- [Tabs](https://www.usefragments.com/components/tabs) — Swaps between sibling panels without leaving the page.
+  Members: `Tabs.List`, `Tabs.Panel`, `Tabs.Tab` · Props: `children`, `defaultValue`, `onValueChange`, `orientation=horizontal|vertical`, `size=lg|md|sm`, `value`, `variant=ghost|soft`
+
+### Overlays
+
+- [Dialog](https://www.usefragments.com/components/dialog) — Blocks the page with one focused task the user must finish or dismiss.
+  Members: `Dialog.Body`, `Dialog.Close`, `Dialog.Content`, `Dialog.Description`, `Dialog.Footer`, `Dialog.Header`, `Dialog.Title`, `Dialog.Trigger` · Props: `children`, `defaultOpen`, `modal`, `onOpenChange`, `open`
+- [Drawer](https://www.usefragments.com/components/drawer) — Slides a panel in from a screen edge and dims the page behind it.
+  Members: `Drawer.Body`, `Drawer.Close`, `Drawer.Content`, `Drawer.Description`, `Drawer.Footer`, `Drawer.Header`, `Drawer.SwipeArea`, `Drawer.Title`, `Drawer.Trigger` · Props: `children`, `defaultOpen`, `disablePointerDismissal`, `modal`, `onOpenChange`, `onOpenChangeComplete`, `open`, `snapPoints`, `swipeDirection=down|left|right|up`
+- [Menu](https://www.usefragments.com/components/menu) — Drops a list of actions below a trigger, driveable entirely by keyboard.
+  Members: `Menu.CheckboxItem`, `Menu.Content`, `Menu.Group`, `Menu.GroupLabel`, `Menu.Item`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.Separator`, `Menu.Submenu`, `Menu.SubmenuTrigger`, `Menu.Trigger` · Props: `children`, `defaultOpen`, `modal`, `onOpenChange`, `open`
+- [Popover](https://www.usefragments.com/components/popover) — Anchors interactive content to a trigger without blocking the page.
+  Members: `Popover.Body`, `Popover.Close`, `Popover.Content`, `Popover.Description`, `Popover.Footer`, `Popover.Title`, `Popover.Trigger` · Props: `children`, `defaultOpen`, `modal`, `onOpenChange`, `open`
+- [Tooltip](https://www.usefragments.com/components/tooltip) — Shows a one-line hint when a control is hovered or focused.
+  Members: `Tooltip.Provider`, `Tooltip.Root` · Props: `align=center|end|start`, `arrow`, `children`, `closeDelay`, `closeOnClick`, `content`, `contentProps`, `defaultOpen`, `delay`, `disabled`, `onOpenChange`, `open`, `side=bottom|left|right|top`, `sideOffset`, `style`
+
+### Utilities
+
+- [ComponentDefaults](https://www.usefragments.com/components/componentdefaults) — Utility provider that sets the default control size for every control below it.
+  Props: `children`, `controlSize=lg|md|sm`, `value`
+- [Theme](https://www.usefragments.com/components/theme) — Utility provider that gives everything below it a light, dark, or system color mode.
+  Members: `Theme.Button`, `Theme.Provider`, `Theme.Root`, `Theme.Toggle`, `Theme.useTheme` · Props: `attribute=class|data-theme`, `children`, `componentDefaults`, `defaultMode=dark|light|system`, `defaultTheme=dark|light|system`, `mode=dark|light|system`, `onModeChange`, `storageKey`
+- [VisuallyHidden](https://www.usefragments.com/components/visuallyhidden) — Keeps text in the accessibility tree while taking it off the screen.
+  Members: `VisuallyHidden.Root` · Props: `as=div|span`, `children`
+
+## Blocks (4 blocks)
+
+- **Activity Feed** — Timeline of user activities with avatars and timestamps
+- **Dashboard Layout** — Full application shell with sidebar navigation, header, and metrics grid
+- **Login Form** — Email/password authentication form with card layout and footer links
+- **Stats Card** — Metric card with value, change indicator and icon
+
+## CLI (51 commands)
+
+- `npx @usefragments/cli add` — Install source components from a registry (alias of `registry add`)
+- `npx @usefragments/cli auth` — Inspect CLI authentication
+- `npx @usefragments/cli auth status` — Verify the stored exact-binding OAuth session
+- `npx @usefragments/cli bridges` — Manage confirmed package-to-local canonical bridges
+- `npx @usefragments/cli bridges add` — Append validated canonical bridge entries to fragments.config.ts
+- `npx @usefragments/cli build` — Build compiled fragments.json and .fragments/ directory
+- `npx @usefragments/cli check` — Check source files for design-system drift
+- `npx @usefragments/cli checkpoint` — Pin and manage dirty-worktree snapshots for scoped governance
+- `npx @usefragments/cli checkpoint clear` — Delete one checkpoint or all checkpoints
+- `npx @usefragments/cli checkpoint create` — Create a named checkpoint of the current worktree
+- `npx @usefragments/cli checkpoint list` — List checkpoints and work changed since each snapshot
+- `npx @usefragments/cli codemod` — Mechanical source migrations for consumers of the component kit
+- `npx @usefragments/cli codemod ui-vocabulary` — Rewrite @usefragments/ui call sites to the ruled prop vocabulary (variant/tone/size/gap/status)
+- `npx @usefragments/cli conform` — Conform source files to governance policy and prove a clean pass
+- `npx @usefragments/cli contract` — Edit this repository's Fragments Cloud contract from the terminal
+- `npx @usefragments/cli contract sources` — Token source files pinned by the Cloud contract
+- `npx @usefragments/cli contract sources add` — Add token source paths (applies when the repository scan already sees them)
+- `npx @usefragments/cli contract sources list` — Show the pinned token sources, canonical sources, and pending proposals
+- `npx @usefragments/cli contract sources remove` — Remove token source paths that no longer exist (applies immediately for admins)
+- `npx @usefragments/cli contract sources replace` — Point a token source at the path the file moved to
+- `npx @usefragments/cli contract undo` — Restore the contract an applied edit replaced, while it is still the latest revision
+- `npx @usefragments/cli discover` — Propose fragments.manifest.json from the design-system sources
+- `npx @usefragments/cli doctor` — Prove the Fragments enforcement hook chain is armed
+- `npx @usefragments/cli explain` — Explain a Fragments FUI code
+- `npx @usefragments/cli hook` — Install or remove the Fragments contract hook for an AI agent
+- `npx @usefragments/cli hook install` — Install the Fragments contract hook for an agent
+- `npx @usefragments/cli hook uninstall` — Remove Fragments contract hook entries for an agent
+- `npx @usefragments/cli identity` — Inspect and decide local component identity
+- `npx @usefragments/cli identity consolidate` — Propose proven usage-site swaps through the conform preflight
+- `npx @usefragments/cli identity dismiss` — Dismiss a wrapper decision and classify it as a shadow
+- `npx @usefragments/cli identity migrate-report` — Compare canonical finding reports without updating a baseline
+- `npx @usefragments/cli identity promote` — Promote a component through the canonical contract authoring path
+- `npx @usefragments/cli identity sanction` — Sanction a review-tier wrapper as a local variant
+- `npx @usefragments/cli init` — Install local Fragments guardrails, agent hooks, and CI
+- `npx @usefragments/cli login` — Authorize the CLI for one exact Fragments repository binding
+- `npx @usefragments/cli logout` — Revoke and remove the CLI session for one exact binding
+- `npx @usefragments/cli mcp` — Run the local Fragments MCP server, or print hosted setup
+- `npx @usefragments/cli registry` — Generate and inspect Fragments Registry artifacts
+- `npx @usefragments/cli registry add` — Install source components from a registry (default: the public usefragments-ui)
+- `npx @usefragments/cli registry artifact` — Generate a local installable source registry artifact
+- `npx @usefragments/cli registry diff` — Compare installed registry source against a registry artifact
+- `npx @usefragments/cli registry migrate` — Migrate an npm UI app to registry source install
+- `npx @usefragments/cli registry status` — Inspect the local registry lockfile and installed source state
+- `npx @usefragments/cli registry sync` — Refresh installed registry source using the existing lockfile selection
+- `npx @usefragments/cli scan` — Zero-config fragments.json generation from source code
+- `npx @usefragments/cli status` — Inspect generated Fragments guardrail configuration
+- `npx @usefragments/cli tokens` — Design token discovery, listing, and generation
+- `npx @usefragments/cli tokens generate` — Generate CSS, SCSS, Tailwind, or Figma output from a DTCG .tokens.json file
+- `npx @usefragments/cli tokens list` — Discover and list design tokens from CSS/SCSS/DTCG files
+- `npx @usefragments/cli validate` — Validate fragment files
+- `npx @usefragments/cli view` — Generate a static HTML viewer for fragments.json
+
+## Hosted MCP (6 tools)
+
+- Endpoint: https://app.usefragments.com/api/mcp
+- Interactive clients: OAuth
+- Headless clients: OAuth (same as interactive clients)
+
+- `design_system/conform` — Rewrite a snippet of UI code so it matches THIS project's design system. Swaps raw HTML elements and components from other libraries (Material UI, shadcn/ui, Chakra, or custom) to the project's own components and import paths, renames cross-library props and translates their values when the mapping is confirmed, and replaces hardcoded colors/spacing/radii with the project's design tokens. Call this whenever the user says 'fix this', 'make this match our design system', 'use our components here', right after pasting markup from elsewhere, or before committing UI you wrote. Input is the code itself — no repo access needed. Returns a conformed version plus a list of changes with rationale. Ambiguous prop changes and accessibility gaps (e.g. a button or image with no accessible name) come back as suggestions for you to apply — they are never auto-rewritten.
+- `design_system/edit_contract` — Repair or propose changes to the repository's Cloud contract. Token-source removals, and replacements or additions the current repository discovery evidences, apply immediately for org admins and return an undoable receipt; canonical-source changes, member proposals, and unevidenced paths land as a pending revision an org admin approves on the Contract page. Requires the mcp:write scope and a paid workspace. Pass undoReceiptId to revert an applied edit while it is still the latest revision.
+- `design_system/get_evaluation` — Read one finalized historical governance evaluation by its receipt ID. The server applies the credential's organization, project, binding, and repository scope to the receipt and every related receipt. Missing, unfinished, malformed, and unauthorized receipts all return not_found. Lineage, reasons, publication, and repair metadata are bounded; malformed stored evaluation details project as an error with a null result.
+- `design_system/list_primitives` — List the design-system primitives Fragments Cloud has indexed for this project, with import paths and source file paths where available. May include auto-classified candidates that a human has not yet confirmed.
+- `design_system/list_tokens` — List the design-system tokens Fragments Cloud has indexed for this project. Returns factual token names, values, categories, and source metadata.
+- `design_system/prove_compliant` — Run a closed validate-fix-validate loop over generated UI code until Fragments can prove it has zero design-system findings, or return the remaining issues. Uses deterministic fixes first and may suspend on MCP Sampling; replay is hash-keyed, so only changed code revalidates, and an empty or identical sample ends the loop.
+
+## Rules (25 rules)
+
+Tiers: `contract` = armed by adopting a contract; `opt-in` otherwise.
+
+Until a contract exists, the customer default produces zero findings.
+
+### a11y
+
+- `a11y/required-accessible-name` — [FUI3001](https://www.usefragments.com/errors/FUI3001) — opt-in — Accessible name is required
+- `a11y/standard` — [FUI3002](https://www.usefragments.com/errors/FUI3002) — opt-in — Accessibility standard failed
+
+### components
+
+- `components/forbidden-prop-value` — [FUI6004](https://www.usefragments.com/errors/FUI6004) — opt-in — Prop value is forbidden
+- `components/prefer-library` — [FUI1004](https://www.usefragments.com/errors/FUI1004) — contract — Library component should be preferred
+- `components/preferred-component` — [FUI1002](https://www.usefragments.com/errors/FUI1002) — opt-in — Preferred component should be used
+- `components/shadow-component` — [FUI1007](https://www.usefragments.com/errors/FUI1007) — contract — Component shadows a canonical primitive
+- `components/unknown-prop` — [FUI6005](https://www.usefragments.com/errors/FUI6005) — opt-in — Component prop is unknown
+
+### composition
+
+- `composition/cardinality` — [FUI5003](https://www.usefragments.com/errors/FUI5003) — opt-in — Too many of a component in one region
+- `composition/co-occurrence` — [FUI5004](https://www.usefragments.com/errors/FUI5004) — opt-in — Required companion component is missing from the region
+
+### imports
+
+- `imports/preferred-path` — [FUI1003](https://www.usefragments.com/errors/FUI1003) — opt-in — Import should use the preferred path
+
+### props
+
+- `props/invalid-value` — [FUI6002](https://www.usefragments.com/errors/FUI6002) — opt-in — Prop value is invalid
+
+### styles
+
+- `styles/no-raw-color` — [FUI2005](https://www.usefragments.com/errors/FUI2005) — opt-in — Raw color should use a token
+- `styles/no-raw-dimensions` — [FUI2004](https://www.usefragments.com/errors/FUI2004) — opt-in — Raw dimension should use a token
+- `styles/no-raw-spacing` — [FUI2006](https://www.usefragments.com/errors/FUI2006) — opt-in — Raw spacing should use the scale
+- `styles/no-raw-typography` — [FUI2016](https://www.usefragments.com/errors/FUI2016) — opt-in — Raw typography should use a token
+
+### tailwind
+
+- `tailwind/arbitrary-color` — [FUI2007](https://www.usefragments.com/errors/FUI2007) — opt-in — Tailwind arbitrary color should use a token
+- `tailwind/arbitrary-spacing` — [FUI2008](https://www.usefragments.com/errors/FUI2008) — opt-in — Tailwind arbitrary spacing should use the scale
+- `tailwind/forbidden-palette` — [FUI2009](https://www.usefragments.com/errors/FUI2009) — opt-in — Tailwind palette is forbidden
+- `tailwind/off-scale-spacing-token` — [FUI2011](https://www.usefragments.com/errors/FUI2011) — opt-in — Tailwind spacing token is off scale
+- `tailwind/raw-color-via-token` — [FUI2010](https://www.usefragments.com/errors/FUI2010) — opt-in — Tailwind color should use a resolved token
+- `tailwind/unknown-class` — [FUI2012](https://www.usefragments.com/errors/FUI2012) — opt-in — Tailwind class is unknown
+
+### theme
+
+- `theme/no-theme-coupled-literal` — [FUI2014](https://www.usefragments.com/errors/FUI2014) — opt-in — Theme-coupled literal should use a semantic token
+
+### tokens
+
+- `tokens/css-vars-must-be-defined` — [FUI2015](https://www.usefragments.com/errors/FUI2015) — contract — CSS variable is not in the contract vocabulary
+- `tokens/require-dual-fallback` — [FUI2003](https://www.usefragments.com/errors/FUI2003) — opt-in — Token fallback is required
+- `tokens/upstream-drift` — [FUI2017](https://www.usefragments.com/errors/FUI2017) — contract — Local token differs from its declared upstream source
+
+## Documentation
+
+- https://www.usefragments.com/governance — Design system governance: init, discover, card, check, repair — and the vocabulary.
+- https://www.usefragments.com/governance/manifest — fragments.manifest.json — Fragments, tokens, patterns, grammar, FCID.
+- https://www.usefragments.com/governance/agents — Claude Code, Cursor, and Codex hook payloads.
+- https://www.usefragments.com/governance/mcp — Local stdio tools and the hosted Cloud MCP endpoint.
+- https://www.usefragments.com/governance/cli — Generated CLI command reference.
+- https://www.usefragments.com/errors — FUI error-code catalog and explain pages.
+- https://www.usefragments.com/cloud — Fragments Cloud: binding, verdict, receipt, exceptions, merge ledger.
+- https://www.usefragments.com/cloud/connect — Connect a workspace, pin the FCID, require the check.
+- https://www.usefragments.com/cloud/contract — Pinned FCID and generated rules.
+- https://www.usefragments.com/cloud/verdicts — pass, block, or indeterminate — the receipt, exceptions, merge ledger.
+- https://www.usefragments.com/components — Component examples, props, and usage guidance.
+- https://www.usefragments.com/components/install — Source or package installation, provider setup, registry commands and lockfile.
+- https://www.usefragments.com/components/accessibility — WCAG 2.2 AA mapping and testing guidance.
+- https://www.usefragments.com/pricing — Local and Cloud plan comparison.
+- https://www.usefragments.com/blog — Design-system and AI-tooling articles.
+
+## Licensing
+
+@usefragments/ui and @usefragments/core are MIT; @usefragments/cli is FSL-1.1-MIT (converts to MIT after two years)

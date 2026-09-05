@@ -1,30 +1,36 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import "@xforge/design/globals.css";
+import { cn } from "@xforge/design/lib/utils";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono as GeistMono } from "next/font/google";
+import type { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
 
-import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils";
+export const metadata: Metadata = {
+  description: "Afenda xForge",
+  title: { default: "Afenda xForge", template: "%s · Afenda xForge" },
+};
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+const geistMono = GeistMono({ subsets: ["latin"], variable: "--font-mono" });
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: Readonly<{ children: ReactNode }>) {
   return (
     <html
+      className={cn(
+        "antialiased",
+        geistMono.variable,
+        "font-sans",
+        geist.variable
+      )}
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

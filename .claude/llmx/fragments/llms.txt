@@ -1,0 +1,78 @@
+# Fragments
+
+> Fragments keeps agents on your design system while they write. Two commands start the loop in the editor, with no network. The gate makes the same contract required to merge. The open-source substrate is @usefragments/ui, a customizable React component library built on Base UI headless primitives.
+
+The component library ships two ways: component source copied into your app from the public
+registry (no account), or the npm package `@usefragments/ui`.
+
+## Install
+
+### Start the loop
+
+```bash
+npx @usefragments/cli init
+npx @usefragments/cli discover
+```
+
+`init` writes editor hooks. `discover` proposes `fragments.manifest.json`. You curate; nothing is inferred at check time.
+
+### Source (no account, no key)
+
+```bash
+npx @usefragments/cli add button card checkbox alert
+```
+
+Writes the named components (plus what they import) to `src/fragments/ui`, the globals stylesheet,
+and `.fragments/registry-lock.json`, then prints the `pnpm add …` line for their packages. Import
+components from `@/fragments/ui` and styles from `@/fragments/ui/styles/globals.scss`. Your own
+registry, published from Fragments Cloud: `npx @usefragments/cli add button --registry acme/design-system`
+(workspace key required; connect at https://www.usefragments.com/cloud/connect).
+
+Related commands: `npx @usefragments/cli registry status`, `npx @usefragments/cli registry diff`, `npx @usefragments/cli registry sync`, `npx @usefragments/cli registry migrate`.
+
+### Package
+
+```bash
+npm install @usefragments/ui
+```
+
+Import styles once: `import '@usefragments/ui/styles'` (includes tokens; the SCSS path needs `sass` as a dev dependency).
+
+## The loop
+
+- [The loop in five minutes](https://www.usefragments.com/start): `npx @usefragments/cli init` then `npx @usefragments/cli discover`
+- [Manifest](https://www.usefragments.com/manifest): `fragments.manifest.json` — Fragments, tokens, patterns, grammar, exemplars, FCID
+- [Agents](https://www.usefragments.com/agents): Claude Code, Cursor, and Codex hooks
+- [MCP](https://www.usefragments.com/mcp): local stdio tools (`search`, `get`, `check`, `tokens`) and the hosted endpoint
+- [Words](https://www.usefragments.com/words): the vocabulary
+- [Error codes](https://www.usefragments.com/errors): every FUI#### diagnostic with a per-code explain page
+- [CLI](https://www.usefragments.com/cli): generated command reference
+
+## The gate
+
+- [The gate](https://www.usefragments.com/gate): binding, verdict, receipt, exceptions, merge ledger
+- [Connect](https://www.usefragments.com/gate/connect): workspace, GitHub App, pin the FCID, require the check
+- [Contract](https://www.usefragments.com/gate/contract): the pinned FCID and the generated rules
+- [Verdicts and receipts](https://www.usefragments.com/gate/verdicts): pass, block, or indeterminate
+- [Exceptions](https://www.usefragments.com/gate/exceptions): admin-granted, expiring, reasoned, always logged
+- [Pricing](https://www.usefragments.com/pricing): Pro ($219/month after a 14-day trial; unlimited members, 3 repositories, 100 enrichments and 25 repair PRs per calendar month) and custom-priced Enterprise (unlimited usage, custom rules, organisation audit log, and contracted support/SLA)
+
+## Component library
+
+- [Getting Started](https://www.usefragments.com/getting-started): source and package install paths, providers, theming
+- [Registry](https://www.usefragments.com/registry): verified source installs with a lockfile (`.fragments/registry-lock.json`)
+- [Components](https://www.usefragments.com/components): the live component catalog with props, variants, and usage guidance
+- [Accessibility](https://www.usefragments.com/accessibility): WCAG guidance and keyboard support
+
+## Agents and MCP
+
+- Local: `npx @usefragments/cli mcp --stdio` — zero network; reads the manifest
+- Hosted: `https://app.usefragments.com/api/mcp` with OAuth — tools `design_system/list_primitives`, `design_system/list_tokens`, `design_system/conform`, `design_system/prove_compliant`
+- [Full AI reference](https://www.usefragments.com/llms-full.txt): generated catalog of components, CLI commands, MCP tools, and rules
+
+## Key facts
+
+- Components are built on Base UI headless primitives with full TypeScript support
+- Design tokens are CSS custom properties with SCSS fallbacks (`--fui-*`)
+- `@usefragments/ui` and `@usefragments/core` are MIT; `@usefragments/cli` is FSL-1.1-MIT
+- [Blog](https://www.usefragments.com/blog): guides and engineering posts, RSS at `/blog/feed.xml`

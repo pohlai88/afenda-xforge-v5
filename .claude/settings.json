@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "$comment": "This repository is vibe-coded: the human steers from what the agent reports, never from the code. The four reasoning settings raise the depth of every response and keep every question waiting for a human answer; the one hook is the formatter, which decides nothing and blocks nothing. What a response must carry is written in CLAUDE.md, once.",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "showThinkingSummaries": true,
+  "askUserQuestionTimeout": "never",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "node .claude/hooks/format.mjs",
+            "type": "command",
+            "timeout": 30,
+            "statusMessage": "Formatting the edited file (ultracite fix)"
+          }
+        ],
+        "matcher": "Write|Edit"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install*)",
+      "Bash(pnpm check*)",
+      "Bash(pnpm fix*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm --filter *)",
+      "Bash(pnpm exec biome *)",
+      "Bash(pnpm exec tsc *)",
+      "Bash(pnpm exec vitest *)",
+      "Bash(pnpm exec playwright *)",
+      "Bash(pnpm exec ultracite *)",
+      "Bash(pnpm dlx shadcn@*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ]
+  }
+}

@@ -1,21 +1,19 @@
-# shadcn/ui monorepo template
+# Afenda xForge v5
 
-This is a Next.js monorepo template with shadcn/ui.
+pnpm + Turborepo monorepo. See `CLAUDE.md` for commands and architecture.
 
-## Adding components
+- `apps/web` — Next.js app (`@xforge/web`)
+- `packages/design` — shadcn/ui design system (`@xforge/design`)
+- `packages/typescript-config` — shared tsconfig bases
 
-To add components to your app, run the following command at the root of your `web` app:
+Add a shadcn component (it lands in `packages/design/src/components`):
 
 ```bash
-pnpm dlx shadcn@latest add button -c apps/web
+pnpm dlx shadcn@4.21.0 add dialog -c apps/web
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
+Import it from the design package:
 
 ```tsx
-import { Button } from "@workspace/ui/components/button";
+import { Dialog } from "@xforge/design/components/dialog";
 ```
