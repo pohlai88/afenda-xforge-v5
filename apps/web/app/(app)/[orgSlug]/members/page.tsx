@@ -1,6 +1,7 @@
 import { organizationSlugSchema } from "@xforge/contracts/ids";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/app-shell/page-header";
+import { InviteMemberDialog } from "@/features/members/components/invite-member-dialog";
 import { MembersEmptyState } from "@/features/members/components/members-empty-state";
 import { MembersFilters } from "@/features/members/components/members-filters";
 import { MembersPagination } from "@/features/members/components/members-pagination";
@@ -37,13 +38,17 @@ export default async function MembersPage({
 
   return (
     <>
-      <PageHeader description="People in this workspace" title="Members" />
+      <PageHeader
+        actions={<InviteMemberDialog orgSlug={organization.slug} />}
+        description="People in this workspace"
+        title="Members"
+      />
       {empty ? (
-        <MembersEmptyState />
+        <MembersEmptyState orgSlug={organization.slug} />
       ) : (
         <>
           <MembersFilters filter={filter} />
-          <MembersTable members={page.items} />
+          <MembersTable members={page.items} orgSlug={organization.slug} />
           <MembersPagination
             filter={filter}
             pathname={pathname}

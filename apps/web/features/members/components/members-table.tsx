@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@xforge/design/components/table";
+import { MemberRowActions } from "./member-row-actions";
 
 const joined = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
@@ -25,7 +26,8 @@ const initials = (name: string) =>
 
 export const MembersTable = ({
   members,
-}: Readonly<{ members: readonly Member[] }>) => {
+  orgSlug,
+}: Readonly<{ members: readonly Member[]; orgSlug: string }>) => {
   if (members.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
@@ -41,6 +43,9 @@ export const MembersTable = ({
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Joined</TableHead>
+          <TableHead className="w-12">
+            <span className="sr-only">Actions</span>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -75,6 +80,9 @@ export const MembersTable = ({
             </TableCell>
             <TableCell className="tabular-nums">
               {joined.format(new Date(member.joinedAt))}
+            </TableCell>
+            <TableCell>
+              <MemberRowActions member={member} orgSlug={orgSlug} />
             </TableCell>
           </TableRow>
         ))}

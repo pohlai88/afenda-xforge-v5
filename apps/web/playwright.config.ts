@@ -21,9 +21,11 @@ export default defineConfig({
   testMatch: "**/*.e2e.ts",
   timeout: 30_000,
   use: {
-    actionTimeout: 10_000,
+    actionTimeout: isCI ? 10_000 : 30_000,
     baseURL,
-    navigationTimeout: 15_000,
+    // next dev compiles a route on first visit; six parallel first visits
+    // to a heavy route exceed 15 s locally. CI runs a prebuilt server.
+    navigationTimeout: isCI ? 15_000 : 60_000,
     screenshot: "only-on-failure",
     trace: "on-first-retry",
     video: "retain-on-failure",
@@ -32,8 +34,8 @@ export default defineConfig({
     command: isCI
       ? `pnpm build && pnpm start -p ${port}`
       : `pnpm dev -p ${port}`,
-    // The northwind members list is faulted so the error state has an e2e.
-    env: { ...process.env, FIXTURE_FAULTS: "members.list@northwind" },
+    // The glitch members list is faulted so the error state has an e2e.
+    env: { ...process.env, FIXTURE_FAULTS: "members.list@glitch" },
     reuseExistingServer: !isCI,
     timeout: 120_000,
     url: baseURL,

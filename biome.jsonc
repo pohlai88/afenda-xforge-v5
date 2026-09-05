@@ -87,7 +87,19 @@
       // cva variant maps ordered by meaning rather than alphabetically.
       "includes": ["packages/design/src/components/**"],
       "assist": { "actions": { "source": { "useSortedKeys": "off" } } },
-      "linter": { "rules": { "performance": { "noNamespaceImport": "off" } } }
+      "linter": {
+        "rules": {
+          // Upstream style in generated files; kept pristine so  stays useful.
+          "a11y": { "useSemanticElements": "off" },
+          "performance": { "noNamespaceImport": "off" },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noDoubleEquals": "off",
+            "noLeakedRender": "off",
+            "noUnnecessaryConditions": "off"
+          }
+        }
+      }
     },
     {
       // shadcn's CLI generates lib/utils.ts as a re-export of `cn`.

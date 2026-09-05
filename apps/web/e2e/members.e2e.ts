@@ -26,8 +26,8 @@ test.describe("members list", () => {
   test("shows the error boundary when the list fails, with a retry", async ({
     page,
   }) => {
-    // FIXTURE_FAULTS=members.list@northwind is set for the e2e server.
-    await page.goto("/northwind/members");
+    // FIXTURE_FAULTS=members.list@glitch is set for the e2e server.
+    await page.goto("/glitch/members");
     await expect(
       page.getByRole("heading", { name: "Members could not be loaded" })
     ).toBeVisible();

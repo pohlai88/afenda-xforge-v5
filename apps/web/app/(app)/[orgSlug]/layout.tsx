@@ -1,6 +1,7 @@
 import { isDataSourceError } from "@xforge/contracts/errors";
 import { organizationSlugSchema } from "@xforge/contracts/ids";
 import type { Organization } from "@xforge/contracts/organization/types";
+import { Toaster } from "@xforge/design/components/sonner";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell/app-shell";
@@ -28,5 +29,10 @@ export default async function WorkspaceLayout({
 }: Readonly<{ children: ReactNode; params: Promise<{ orgSlug: string }> }>) {
   const { orgSlug } = await params;
   const organization = await resolveOrganization(orgSlug);
-  return <AppShell organization={organization}>{children}</AppShell>;
+  return (
+    <AppShell organization={organization}>
+      {children}
+      <Toaster />
+    </AppShell>
+  );
 }

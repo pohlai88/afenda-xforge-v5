@@ -12,11 +12,11 @@ runMemberContract(() => createFixtureDomainSources());
 describe("fault injection", () => {
   it("throws only for the faulted operation and organization", async () => {
     const sources = createFixtureDomainSources({
-      faults: parseFaultsEnv("members.list@northwind"),
+      faults: parseFaultsEnv("members.list@glitch"),
     });
     const filter = memberFilterSchema.parse({});
     await expect(
-      sources.members.list(organizations.northwind.id, filter)
+      sources.members.list(organizations.glitch.id, filter)
     ).rejects.toThrow("fixture fault");
     await expect(
       sources.members.list(organizations.acme.id, filter)
@@ -24,8 +24,8 @@ describe("fault injection", () => {
       total: 8,
     });
     await expect(
-      sources.organizations.getBySlug(organizations.northwind.slug)
-    ).resolves.toMatchObject({ slug: "northwind" });
+      sources.organizations.getBySlug(organizations.glitch.slug)
+    ).resolves.toMatchObject({ slug: "glitch" });
   });
 
   it("rejects an unparseable FIXTURE_FAULTS value", () => {

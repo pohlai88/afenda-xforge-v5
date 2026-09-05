@@ -50,7 +50,20 @@ export const northwindMembers: readonly Member[] = make(
   ]
 );
 
+export const orbitMembers: readonly Member[] = make(organizations.orbit.id, [
+  ["Lynn Conway", "lynn@orbit.example", "owner", "active"],
+  ["Sophie Wilson", "sophie@orbit.example", "owner", "active"],
+  ["Ruth Teitelbaum", "ruth@orbit.example", "member", "active"],
+]);
+
+export const glitchMembers: readonly Member[] = make(organizations.glitch.id, [
+  ["Evelyn Boyd Granville", "evelyn@glitch.example", "owner", "active"],
+  ["Jean Bartik", "jean@glitch.example", "member", "active"],
+]);
+
 export const memberList: readonly Member[] = [
   ...acmeMembers,
   ...northwindMembers,
+  ...orbitMembers,
+  ...glitchMembers,
 ];
