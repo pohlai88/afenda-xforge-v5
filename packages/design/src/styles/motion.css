@@ -314,6 +314,47 @@
 }
 
 /* ==========================================================================
+   POPUP TRANSITIONS — the Base UI integration
+   Base UI stamps [data-starting-style] / [data-ending-style] on popup parts
+   and provides --transform-origin from the positioner; transitions are its
+   recommended mechanism because a half-open popup cancels smoothly. This
+   class binds that contract to the governed specs: duration and easing
+   come from the motion role, offsets from the declared relationship, and
+   both reduced-motion strategies compose unchanged (remove collapses the
+   transition, simplify zeroes the offsets).
+   ========================================================================== */
+
+.af-motion-popup {
+  --af-motion-scale-from: 0.98;
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+
+  transform-origin: var(--transform-origin, center);
+  transition-timing-function: var(--af-motion-easing-enter);
+  transition-duration: var(--af-motion-duration);
+
+  transition-property: opacity, transform;
+}
+
+.af-motion-popup[data-ending-style] {
+  transition-timing-function: var(--af-motion-easing-exit);
+}
+
+.af-motion-popup[data-starting-style],
+.af-motion-popup[data-ending-style] {
+  opacity: 0;
+  transform: translate(
+      calc(
+        var(--af-motion-offset-inline, 0px) *
+        var(--af-motion-direction, 1) *
+        var(--af-motion-inline-direction, 1)
+      ),
+      var(--af-motion-offset-block, 0px)
+    )
+    scale(var(--af-motion-scale-from));
+}
+
+/* ==========================================================================
    PROGRESS MOTION
    ========================================================================== */
 

@@ -39,8 +39,25 @@
  * implementations are adapted to Afenda semantics at the component layer.
  */
 
+/*
+ * Namespace override (Tailwind v4 pattern): the COLOUR namespace is wiped
+ * so Tailwind's palette cannot become a parallel colour language — every
+ * colour utility must resolve an ADL role. Structural defaults (spacing,
+ * type scale, weights, breakpoints, containers, easing) stay alive; the
+ * vocabulary checks govern their use, and the ADL's semantic entries
+ * below extend them.
+ *
+ * The wipe MUST keep its own @theme block: a wildcard reset applies to
+ * its whole block regardless of declaration order, and the formatter
+ * sorts declarations — sharing a block with the definitions wiped them
+ * all (found 2026-09-05 when every ADL-backed utility silently vanished
+ * from the build).
+ */
 @theme inline {
-  /* Remove Tailwind's default design-decision vocabulary. */
+  --color-*: initial;
+}
+
+@theme inline {
   --color-primary: var(--af-sys-color-primary);
   --color-on-primary: var(--af-sys-color-on-primary);
   --color-primary-container: var(--af-sys-color-primary-container);
@@ -191,7 +208,6 @@
   --container-medium: 30rem;
   --container-expanded: 48rem;
   /* Remove Tailwind's default design-decision vocabulary. */
-  --*: initial;
 }
 
 /* ==========================================================================
@@ -405,6 +421,17 @@
 /* ==========================================================================
    GEOMETRY
    ========================================================================== */
+
+/* ==========================================================================
+   STATE LAYER
+   Binds interaction.css's state-layer ink to a semantic colour role, so a
+   block writes `af-state-layer state-layer-on-primary` — vocabulary, not a
+   variable assignment at the call site.
+   ========================================================================== */
+
+@utility state-layer-* {
+  --af-int-state-layer-color: --value(--color-*);
+}
 
 @utility border-separator {
   border-width: var(--af-sys-size-stroke-separator);

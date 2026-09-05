@@ -56,7 +56,7 @@ const AF_USE = /var\(\s*(--af-[a-z0-9-]+)\s*(,)?/g;
 const COLOR_DEF = /--af-sys-color-([a-z0-9-]+):/g;
 const LIGHT_BLOCK = /^:root \{([\s\S]*?)\n\}/m;
 const DARK_BLOCK = /^:root\[data-theme="dark"\] \{([\s\S]*?)\n\}/m;
-const THEME_BLOCK = /@theme inline \{([\s\S]*?)\n\}/;
+const THEME_BLOCKS = /@theme inline \{([\s\S]*?)\n\}/g;
 const PROJECTION =
   /--(color|spacing|radius|shadow)-([a-z0-9-]+):\s*var\(\s*--af-sys-([a-z0-9-]+)\s*\)/g;
 const TYPE_UTILITY = /@utility type-([a-z0-9-]+) \{/g;
@@ -186,7 +186,9 @@ const NAMESPACE: Readonly<Record<string, string>> = {
 
 const projectionFindings = (g: Graph): string[] => {
   const css = sheet(g, "tailwind.css");
-  const theme = THEME_BLOCK.exec(css)?.[1] ?? "";
+  const theme = [...css.matchAll(THEME_BLOCKS)]
+    .map((m) => m[1] ?? "")
+    .join("\n");
   const defined = new Set([...joined(g).matchAll(AF_DEF)].map((m) => m[1]));
   const out: string[] = [];
   const projected = new Set<string>();
@@ -508,11 +510,23 @@ const parityFindings = (
   return out;
 };
 
-/** Every foundation source, for the rule-ID scan. */
+/** Every foundation source, 10-components included, for the rule-ID scan. */
 const foundationTexts: ReadonlyMap<string, string> = new Map(
-  readdirSync(FOUNDATION)
-    .filter((f) => f.endsWith(".ts"))
-    .map((f) => [f, readFileSync(join(FOUNDATION, f), "utf8")])
+  readdirSync(FOUNDATION, { withFileTypes: true }).flatMap(
+    (entry): [string, string][] => {
+      if (entry.isDirectory()) {
+        return readdirSync(join(FOUNDATION, entry.name))
+          .filter((f) => f.endsWith(".ts"))
+          .map((f) => [
+            `${entry.name}/${f}`,
+            readFileSync(join(FOUNDATION, entry.name, f), "utf8"),
+          ]);
+      }
+      return entry.name.endsWith(".ts")
+        ? [[entry.name, readFileSync(join(FOUNDATION, entry.name), "utf8")]]
+        : [];
+    }
+  )
 );
 
 const ruleIdFindings = (texts: ReadonlyMap<string, string>): string[] => {

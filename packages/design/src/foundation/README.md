@@ -9,7 +9,7 @@ normative. Nothing here is implementation.
 | Level | Name | Authority | Lives |
 | --- | --- | --- | --- |
 | 1 | language | normative — decides | this directory |
-| 2 | implementation | implementing — realises | `../styles/`, `../components/` |
+| 2 | implementation | implementing — realises | `../styles/`, `../blocks/` (governed components; `../components/` is CLI-vendored raw material) |
 | 3 | governance | verifying — proves | `../../tests/`, `apps/web/tests/` |
 
 There is deliberately no intermediate specification layer: Level 1 decides,

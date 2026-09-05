@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@xforge/design/components/button";
+import { Button } from "@xforge/design/blocks/common-button";
 import {
   Dialog,
   DialogContent,

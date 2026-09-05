@@ -142,18 +142,8 @@ const THEME_TOKEN = /--(color|font|radius)-([a-z0-9-]+):/g;
 
 type Exemptions = Readonly<Record<string, string>>;
 
-/**
- * Tokens without a static consumer today, each with its reason. The radius
- * ladder is one scale derived from `--radius`; an unused rung is kept so a
- * component the CLI adds lands on the ladder, not on Tailwind's default.
- */
-const RADIUS_LADDER =
-  "a rung of shadcn's radius ladder, derived from --radius; kept so a CLI-added component stays on the scale";
-const EXEMPT: Exemptions = {
-  "radius-2xl": RADIUS_LADDER,
-  "radius-3xl": RADIUS_LADDER,
-  "radius-sm": RADIUS_LADDER,
-};
+/** Tokens without a static consumer today, each with its reason. */
+const EXEMPT: Exemptions = {};
 
 interface Projected {
   name: string;

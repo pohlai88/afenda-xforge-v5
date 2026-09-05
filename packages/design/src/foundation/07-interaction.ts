@@ -1586,7 +1586,102 @@ export const STATE_PRESENTATION_RULES = [
     rule: "Colour may support state presentation but must not become the sole representation of consequential state.",
     strength: "must",
   },
+
+  {
+    id: "AF-INT-157",
+
+    rule: "A boolean interaction state is signalled by the presence of its attribute, never by its value.",
+    strength: "must",
+  },
+
+  {
+    id: "AF-INT-158",
+
+    rule: "An interaction-state attribute Afenda owns is data-af- prefixed; the unprefixed attribute namespace belongs to the component library.",
+    strength: "must",
+  },
 ] as const;
+
+// -----------------------------------------------------------------------------
+// STATE SIGNALS
+// -----------------------------------------------------------------------------
+
+/**
+ * The DOM signals each state answers to — the Level-1 fact that Level 2 styles
+ * and a block's contract admits. R15 holds the three together: a contract may
+ * only admit a state named here, and every selector named here must exist in
+ * the Level-2 interaction styles.
+ *
+ * Two conventions are load-bearing:
+ *
+ *   - A BOOLEAN state is signalled by the PRESENCE of its attribute, never by
+ *     its value (AF-INT-157). Base UI serialises a true state as the empty
+ *     string — `data-disabled=""` — so `[data-disabled="true"]` matches
+ *     nothing it renders. Level 2 pairs each with `:not([…="false"])` because
+ *     React stringifies a `false` prop rather than omitting the attribute.
+ *   - An ENUMERATED state carries its value: `data-drag-state="dragging"`.
+ *
+ * The unprefixed attributes are the component library's and keep its spelling.
+ * Attributes Afenda owns are `data-af-` prefixed (AF-INT-158), so
+ * `data-af-current` cannot collide with Base UI's `data-current`, which marks
+ * an entering navigation-menu child rather than the user's location.
+ *
+ * A resting state carries no selector: it is the base rule's fall-through, and
+ * the empty list is the declaration that nothing else styles it.
+ */
+export const STATE_SIGNALS = {
+  availability: {
+    disabled: [":disabled", '[aria-disabled="true"]', "[data-disabled]"],
+    enabled: [],
+    readonly: ["[readonly]", '[aria-readonly="true"]', "[data-readonly]"],
+  },
+
+  check: {
+    checked: ['[aria-checked="true"]', "[data-checked]"],
+    indeterminate: ['[aria-checked="mixed"]', "[data-indeterminate]"],
+    unchecked: [],
+  },
+
+  disclosure: {
+    collapsed: ['[aria-expanded="false"]', '[data-disclosure="collapsed"]'],
+    expanded: ['[aria-expanded="true"]', '[data-disclosure="expanded"]'],
+  },
+
+  drag: {
+    dragging: ['[data-drag-state="dragging"]'],
+    "drop-target": ['[data-drag-state="drop-target"]'],
+    grabbed: ['[data-drag-state="grabbed"]'],
+    idle: [],
+  },
+
+  engagement: {
+    "focus-visible": [":focus-visible", "[data-af-focus-visible]"],
+    hover: [":hover", "[data-hovering]"],
+    pressed: [":active", "[data-pressed]"],
+  },
+
+  navigation: {
+    current: ["[aria-current]", "[data-af-current]"],
+  },
+
+  operation: {
+    idle: [],
+    loading: ['[aria-busy="true"]', "[data-loading]"],
+  },
+
+  selection: {
+    selected: ['[aria-selected="true"]', "[data-selected]"],
+    unselected: [],
+  },
+
+  validation: {
+    invalid: ['[aria-invalid="true"]', "[data-invalid]"],
+    valid: [],
+  },
+} as const satisfies Readonly<
+  Record<InteractionAxis, Readonly<Record<string, readonly string[]>>>
+>;
+
 
 // =============================================================================
 // STATE PRIORITY

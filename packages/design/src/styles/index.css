@@ -33,12 +33,17 @@
 @import "./typography.css";
 @import "./geometry.css";
 
-/* Structural and behavioural implementation. */
-@import "./layout.css";
-@import "./motion.css";
-@import "./interaction.css";
-@import "./accessibility.css";
-@import "./content.css";
+/*
+ * Structural and behavioural implementation. These sheets carry real
+ * declarations on af-* classes, so they live in Tailwind's components
+ * layer: below utilities, letting a block compose `af-interactive` with
+ * `bg-primary` and have the utility win the cascade.
+ */
+@import "./layout.css" layer(components);
+@import "./motion.css" layer(components);
+@import "./interaction.css" layer(components);
+@import "./accessibility.css" layer(components);
+@import "./content.css" layer(components);
 
 /*
  * Browser/document normalization belongs in Tailwind's base cascade layer so

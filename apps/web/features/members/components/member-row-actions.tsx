@@ -1,7 +1,7 @@
 "use client";
 
 import type { Member, MemberRole } from "@xforge/contracts/member/types";
-import { Button } from "@xforge/design/components/button";
+import { Button } from "@xforge/design/blocks/common-button";
 import {
   DropdownMenu,
   DropdownMenuContent,

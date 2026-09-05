@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Button } from "@xforge/design/components/button";
+import { Button } from "@xforge/design/blocks/common-button";
 import { describe, expect, it } from "vitest";
 
 describe("Button", () => {

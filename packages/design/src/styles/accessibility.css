@@ -146,7 +146,7 @@
    ========================================================================== */
 
 .af-focus-ring:focus-visible,
-[data-af-focus-visible="true"] {
+[data-af-focus-visible]:not([data-af-focus-visible="false"]) {
   outline: var(--af-a11y-focus-width) solid var(--af-sys-color-primary);
   outline-offset: var(--af-a11y-focus-offset);
 }
@@ -338,7 +338,7 @@
    */
   .af-interactive:focus-visible,
   .af-focus-ring:focus-visible,
-  [data-af-focus-visible="true"],
+  [data-af-focus-visible]:not([data-af-focus-visible="false"]),
   .af-skip-link:focus-visible {
     outline: var(--af-a11y-focus-width) solid Highlight;
     outline-offset: var(--af-a11y-focus-offset);
@@ -355,7 +355,7 @@
   /* Availability */
   .af-interactive:disabled,
   .af-interactive[aria-disabled="true"],
-  .af-interactive[data-disabled="true"] {
+  .af-interactive[data-disabled]:not([data-disabled="false"]) {
     color: GrayText;
     opacity: 1;
   }
@@ -363,16 +363,16 @@
   /* Readonly stays legible and distinct from disabled. */
   .af-interactive[readonly],
   .af-interactive[aria-readonly="true"],
-  .af-interactive[data-readonly="true"] {
+  .af-interactive[data-readonly]:not([data-readonly="false"]) {
     color: CanvasText;
     border-color: CanvasText;
   }
 
   /* Persistent selection/navigation get explicit structural indicators. */
   .af-interactive[aria-selected="true"],
-  .af-interactive[data-selected="true"],
+  .af-interactive[data-selected]:not([data-selected="false"]),
   .af-interactive[aria-current]:not([aria-current="false"]),
-  .af-interactive[data-current="true"] {
+  .af-interactive[data-af-current]:not([data-af-current="false"]) {
     border-color: Highlight;
     border-style: solid;
     border-width: var(--af-sys-size-stroke-emphasis);
@@ -381,15 +381,15 @@
   /* Checked/mixed state keeps a visible component indicator. */
   .af-interactive[aria-checked="true"],
   .af-interactive[aria-checked="mixed"],
-  .af-interactive[data-checked="true"],
-  .af-interactive[data-check="indeterminate"] {
+  .af-interactive[data-checked]:not([data-checked="false"]),
+  .af-interactive[data-indeterminate]:not([data-indeterminate="false"]) {
     --af-int-indicator-color: Highlight;
     --af-int-indicator-opacity: 1;
   }
 
   /* Validation cannot depend on red/background/shadow. */
   .af-interactive[aria-invalid="true"],
-  .af-interactive[data-invalid="true"] {
+  .af-interactive[data-invalid]:not([data-invalid="false"]) {
     border-color: Mark;
     border-style: solid;
     border-width: var(--af-sys-size-stroke-emphasis);
@@ -397,7 +397,7 @@
 
   /* Busy/loading remains structurally visible even without animation. */
   .af-interactive[aria-busy="true"],
-  .af-interactive[data-loading="true"] {
+  .af-interactive[data-loading]:not([data-loading="false"]) {
     --af-int-indicator-color: Highlight;
     --af-int-indicator-opacity: 1;
   }
@@ -436,12 +436,12 @@
 @media (prefers-contrast: more) {
   .af-interactive:focus-visible,
   .af-focus-ring:focus-visible,
-  [data-af-focus-visible="true"] {
+  [data-af-focus-visible]:not([data-af-focus-visible="false"]) {
     outline-width: var(--af-sys-size-stroke-emphasis);
   }
 
   .af-interactive[aria-invalid="true"],
-  .af-interactive[data-invalid="true"],
+  .af-interactive[data-invalid]:not([data-invalid="false"]),
   .af-interactive[data-drag-state="drop-target"] {
     border-width: var(--af-sys-size-stroke-emphasis);
   }
