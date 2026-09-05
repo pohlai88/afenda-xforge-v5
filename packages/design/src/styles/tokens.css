@@ -84,6 +84,11 @@
 
   /* Registry blue — interaction / information */
   --af-ref-color-blue-97: oklch(97.17% 0.0085 225.08);
+  /* blue-93: light primary-wash — blue-45 at 10% over slate-98, flattened
+     opaque so the measured pair is the rendered pair. blue-45 on it 6.05:1.
+     The dark wash needs no new token: the same flatten over slate-22 lands
+     on slate-28 exactly. */
+  --af-ref-color-blue-93: oklch(92.94% 0.011 234.82);
   --af-ref-color-blue-91: oklch(90.84% 0.0236 231.86);
   --af-ref-color-blue-87: oklch(86.84% 0.0365 228.48);
   --af-ref-color-blue-81: oklch(80.88% 0.0494 231.07);

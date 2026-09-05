@@ -59,6 +59,13 @@
     var(--af-ref-color-blue-39)
   );
 
+  /* Wash: quietest persistent primary emphasis (active nav, selection) —
+     blue-45 at 10% over the surface, flattened opaque. blue-45 on it
+     6.05:1. Not a tenant input: the wash derives from primary and surface,
+     and follows only when tenant theming derives washes itself. */
+  --af-sys-color-primary-wash: var(--af-ref-color-blue-93);
+  --af-sys-color-on-primary-wash: var(--af-ref-color-blue-45);
+
   --af-sys-color-secondary: var(
     --af-tenant-color-secondary,
     var(--af-ref-color-teal-54)
@@ -273,6 +280,12 @@
     --af-tenant-color-on-primary-container,
     var(--af-ref-color-blue-87)
   );
+
+  /* Wash: blue-67 at 10% over slate-22 flattens onto slate-28 exactly.
+     The accent ink is APCA-weak on it (Lc -43), so the dark wash carries
+     the on-surface ink (13.59:1) and the accent stays on icon and edge. */
+  --af-sys-color-primary-wash: var(--af-ref-color-slate-28);
+  --af-sys-color-on-primary-wash: var(--af-ref-color-slate-97);
 
   --af-sys-color-secondary: var(
     --af-tenant-color-secondary,

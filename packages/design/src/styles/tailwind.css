@@ -62,6 +62,8 @@
   --color-on-primary: var(--af-sys-color-on-primary);
   --color-primary-container: var(--af-sys-color-primary-container);
   --color-on-primary-container: var(--af-sys-color-on-primary-container);
+  --color-primary-wash: var(--af-sys-color-primary-wash);
+  --color-on-primary-wash: var(--af-sys-color-on-primary-wash);
   --color-secondary: var(--af-sys-color-secondary);
   --color-on-secondary: var(--af-sys-color-on-secondary);
   --color-secondary-container: var(--af-sys-color-secondary-container);

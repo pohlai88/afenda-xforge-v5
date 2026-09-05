@@ -39,7 +39,7 @@ export const COMMON_BUTTON_CONTRACT = {
         "An informational act — open details, start a walkthrough: the informative-container pair, status colour marking an act whose subject is information.",
       inverse:
         "An action living on an inverse surface (a toast, a snackbar): the inverse-surface pair keeps it legible where the theme flips locally.",
-      link: "A navigation act presented inline with text; underline on hover is the affordance.",
+      link: "A navigation act presented inline with text; underline on hover is the affordance. Its ink is primary on the surface family — the pair this contract declares under AF-COL-014, measured as text by R13 on every surface, not assumed from the boundary probe (AF-COL-034).",
       outline:
         "A secondary action beside a primary: outline boundary, surface ink.",
       positive:

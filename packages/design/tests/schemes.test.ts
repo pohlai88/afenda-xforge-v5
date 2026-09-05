@@ -234,11 +234,19 @@ const derivedPairs = (): Pair[] => {
       );
     }
   }
+  // The wash is a flattened composite, so R13 measures the rendered pair.
+  out.push({ fill: "primary-wash", floor: TEXT, ink: "on-primary-wash" });
   out.push({ fill: "inverse-surface", floor: TEXT, ink: "inverse-on-surface" });
   for (const ink of ["on-surface", "on-surface-variant"]) {
     for (const fill of SURFACES) {
       out.push({ fill, floor: TEXT, ink });
     }
+  }
+  // The button's link variant declares primary as text ink on the surface
+  // family (AF-COL-014 declared pair); the 3:1 probe below is the ring
+  // floor and does not cover it (AF-COL-034), so it is held here at 4.5.
+  for (const fill of SURFACES) {
+    out.push({ fill, floor: TEXT, ink: "primary" });
   }
   return out;
 };
@@ -300,12 +308,20 @@ const probeFindings = (
   return out;
 };
 
+/** Every pair a block manifest hovers with the state layer (button, wash). */
 const HOVERED: readonly [string, string][] = [
   ["on-primary", "primary"],
   ["on-secondary", "secondary"],
   ["on-tertiary", "tertiary"],
   ["on-error", "error"],
   ["on-primary-container", "primary-container"],
+  ["on-primary-wash", "primary-wash"],
+  ["on-error-container", "error-container"],
+  ["on-secondary-container", "secondary-container"],
+  ["on-tertiary-container", "tertiary-container"],
+  ["on-positive-container", "positive-container"],
+  ["on-informative-container", "informative-container"],
+  ["inverse-on-surface", "inverse-surface"],
   ["on-surface", "surface-container-highest"],
 ];
 

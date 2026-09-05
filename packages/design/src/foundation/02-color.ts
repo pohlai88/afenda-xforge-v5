@@ -242,6 +242,11 @@ export type AccentFamily = keyof typeof ACCENT_FAMILIES;
  *
  * Afenda keeps the M3 relationship even if Level 2 exposes different
  * generated property syntax.
+ *
+ * Primary additionally carries a wash pair — the quietest persistent
+ * emphasis fill, for long-lived states (active navigation, selection)
+ * where a container is too loud. Secondary and tertiary gain a wash only
+ * when a screen needs one.
  */
 export const ACCENT_ROLE_PATTERN = [
   "base",
@@ -278,6 +283,17 @@ export const PRIMARY_ROLES = {
     tenantCustomisable: true,
     token: "af.sys.color.on-primary-container",
   },
+
+  "on-primary-wash": {
+    background: "primary-wash",
+
+    domain: "content",
+
+    purpose: "Content displayed directly on primary-wash.",
+
+    tenantCustomisable: false,
+    token: "af.sys.color.on-primary-wash",
+  },
   primary: {
     domain: "accent",
 
@@ -300,6 +316,18 @@ export const PRIMARY_ROLES = {
 
     tenantCustomisable: true,
     token: "af.sys.color.primary-container",
+  },
+
+  "primary-wash": {
+    domain: "accent",
+
+    foreground: "on-primary-wash",
+
+    purpose:
+      "Quietest persistent primary emphasis for long-lived states such as active navigation and selection, where a container is too loud. Derived from primary over surface, so it is not independently tenant-customisable.",
+
+    tenantCustomisable: false,
+    token: "af.sys.color.primary-wash",
   },
 } as const;
 
@@ -1081,6 +1109,7 @@ export const DATA_COLOR_RULES = [
 export const COLOR_PAIRS = [
   ["primary", "on-primary"],
   ["primary-container", "on-primary-container"],
+  ["primary-wash", "on-primary-wash"],
 
   ["secondary", "on-secondary"],
   ["secondary-container", "on-secondary-container"],
@@ -1530,6 +1559,8 @@ export const COLOR_PUBLIC_API = {
       "on-primary",
       "primary-container",
       "on-primary-container",
+      "primary-wash",
+      "on-primary-wash",
     ],
 
     secondary: [
