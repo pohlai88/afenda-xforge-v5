@@ -3,6 +3,12 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
+      "@xforge/design/blocks/avatar": [
+        "../../packages/design/src/blocks/avatar/avatar.tsx"
+      ],
+      "@xforge/design/blocks/badge": [
+        "../../packages/design/src/blocks/badge/badge.tsx"
+      ],
       "@xforge/design/blocks/button": [
         "../../packages/design/src/blocks/button/button.tsx"
       ],

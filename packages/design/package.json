@@ -6,6 +6,8 @@
   "exports": {
     "./styles/index.css": "./src/styles/index.css",
     "./lib/*": "./src/lib/*.ts",
+    "./blocks/avatar": "./src/blocks/avatar/avatar.tsx",
+    "./blocks/badge": "./src/blocks/badge/badge.tsx",
     "./blocks/button": "./src/blocks/button/button.tsx",
     "./blocks/dialog": "./src/blocks/dialog/dialog.tsx",
     "./components/*": "./src/components/*.tsx",

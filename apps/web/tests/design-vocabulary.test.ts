@@ -353,6 +353,8 @@ describe("R10 — motion is a preference", () => {
 
 /** Vendored modules a block has superseded, and the block that replaces each. */
 const SUPERSEDED: Readonly<Record<string, string>> = {
+  "@xforge/design/components/avatar": "@xforge/design/blocks/avatar",
+  "@xforge/design/components/badge": "@xforge/design/blocks/badge",
   "@xforge/design/components/button": "@xforge/design/blocks/button",
   "@xforge/design/components/dialog": "@xforge/design/blocks/dialog",
 };

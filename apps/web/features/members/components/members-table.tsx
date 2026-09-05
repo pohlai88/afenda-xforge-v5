@@ -1,6 +1,6 @@
 import type { Member } from "@xforge/contracts/member/types";
-import { Avatar, AvatarFallback } from "@xforge/design/components/avatar";
-import { Badge } from "@xforge/design/components/badge";
+import { Avatar, AvatarFallback } from "@xforge/design/blocks/avatar";
+import { Badge, type BadgeProps } from "@xforge/design/blocks/badge";
 import {
   Table,
   TableBody,
@@ -23,6 +23,21 @@ const initials = (name: string) =>
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+// One Record per domain vocabulary (AF-CMP-BADGE do): owner wears the
+// identity mark, the other roles stay neutral facts; a status wears the
+// status variant whose semantic it is (AF-CMP-BADGE-002).
+const roleVariant: Readonly<Record<Member["role"], BadgeProps["variant"]>> = {
+  admin: "neutral",
+  member: "neutral",
+  owner: "primary",
+};
+
+const statusVariant: Readonly<Record<Member["status"], BadgeProps["variant"]>> =
+  {
+    active: "positive",
+    invited: "informative",
+  };
 
 export const MembersTable = ({
   members,
@@ -65,16 +80,10 @@ export const MembersTable = ({
               </div>
             </TableCell>
             <TableCell>
-              <Badge
-                variant={member.role === "owner" ? "default" : "secondary"}
-              >
-                {member.role}
-              </Badge>
+              <Badge variant={roleVariant[member.role]}>{member.role}</Badge>
             </TableCell>
             <TableCell>
-              <Badge
-                variant={member.status === "active" ? "outline" : "secondary"}
-              >
+              <Badge variant={statusVariant[member.status]}>
                 {member.status}
               </Badge>
             </TableCell>
