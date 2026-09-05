@@ -88,3 +88,4 @@ Doctrine is in `.claude/skills/xforge-testing` — read it before writing one. I
 
 - **Backend:** Better Auth (organisations) + Drizzle + Neon behind the same contract — `docs/architecture.md` §5.5 is the playbook. `DATA_SOURCE=db` already exists as a switch that throws "not implemented".
 - **Client server-state:** TanStack Query when the first live/optimistic screen appears; not before.
+- **Design-system generator / manifest:** rejected for the current scale, not permanently (ADR-010) — reconsider only on measured, recurring drift that R1–R4 cannot catch economically. **DTCG export:** deferred until a machine-readable consumer outside the CSS build exists.
