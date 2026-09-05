@@ -202,7 +202,7 @@ const slotFindings = (
   }
   if (SLOT_STRING_LITERAL.test(source)) {
     out.push(
-      `${contract.id}: index.tsx carries a data-slot string literal — identity belongs to the manifest, not the render`
+      `${contract.id}: the render carries a data-slot string literal — identity belongs to the manifest, not the render`
     );
   }
   return out;
@@ -387,6 +387,20 @@ const paired = (): [ComponentContract, BlockManifest][] =>
     return manifest ? [[contract, manifest]] : [];
   });
 
+/**
+ * The planted rebuilds anchor to the button block by name: it is the block
+ * that admits states and variants, so every checker can be shown failing.
+ * Positional anchoring ("the first pair") broke when the population grew
+ * past blocks that sort before it.
+ */
+const buttonPair = (): [ComponentContract, BlockManifest] => {
+  const pair = paired().find(([contract]) => contract.id === "button");
+  if (!pair) {
+    throw new Error("no button block");
+  }
+  return pair;
+};
+
 describe("R15 — a block is held equal to its contract", () => {
   const contractIds = [...contracts.keys()];
   const manifestIds = [...manifests.keys()];
@@ -476,11 +490,7 @@ describe("R15 — a block is held equal to its contract", () => {
   });
 
   it("proves itself on a part the contract never declared", () => {
-    const [pair] = paired();
-    if (!pair) {
-      throw new Error("no paired block");
-    }
-    const [contract, manifest] = pair;
+    const [contract, manifest] = buttonPair();
     const [, part] = soleEntry(manifest);
     const planted = { parts: { "button-glow": part } };
     expect(slotFindings(contract, planted, blockSource(contract.id))).toEqual([
@@ -490,25 +500,17 @@ describe("R15 — a block is held equal to its contract", () => {
   });
 
   it("proves itself on a data-slot literal smuggled into the render", () => {
-    const [pair] = paired();
-    if (!pair) {
-      throw new Error("no paired block");
-    }
-    const [contract, manifest] = pair;
+    const [contract, manifest] = buttonPair();
     const source = blockSource(contract.id);
     const planted = source.replace("data-slot={SLOT}", 'data-slot="button"');
     expect(planted).not.toBe(source);
     expect(slotFindings(contract, manifest, planted)).toEqual([
-      `${contract.id}: index.tsx carries a data-slot string literal — identity belongs to the manifest, not the render`,
+      `${contract.id}: the render carries a data-slot string literal — identity belongs to the manifest, not the render`,
     ]);
   });
 
   it("proves itself on a variant the contract never admitted", () => {
-    const [pair] = paired();
-    if (!pair) {
-      throw new Error("no paired block");
-    }
-    const [contract, manifest] = pair;
+    const [contract, manifest] = buttonPair();
     const [slot, part] = soleEntry(manifest);
     const { ghost, ...rest } = part.variants ?? {};
     const planted = {
@@ -526,11 +528,7 @@ describe("R15 — a block is held equal to its contract", () => {
   });
 
   it("proves itself on colour roles outside the admission", () => {
-    const [pair] = paired();
-    if (!pair) {
-      throw new Error("no paired block");
-    }
-    const [contract, manifest] = pair;
+    const [contract, manifest] = buttonPair();
     const [slot, part] = soleEntry(manifest);
     const planted = {
       parts: {
@@ -589,10 +587,7 @@ describe("R15 — a block is held equal to its contract", () => {
   });
 
   it("proves itself on a signal Level 2 stopped matching", () => {
-    const [contract] = contracts.values();
-    if (!contract) {
-      throw new Error("no contract");
-    }
+    const [contract] = buttonPair();
     // The exact regression this check exists for: the presence-matched
     // attribute rewritten to the value form Base UI never renders.
     const planted = interactionText
@@ -604,11 +599,7 @@ describe("R15 — a block is held equal to its contract", () => {
   });
 
   it("proves itself on a block that drops the state mechanism", () => {
-    const [pair] = paired();
-    if (!pair) {
-      throw new Error("no paired block");
-    }
-    const [contract, manifest] = pair;
+    const [contract, manifest] = buttonPair();
     const [slot, part] = soleEntry(manifest);
     const planted = {
       parts: {
